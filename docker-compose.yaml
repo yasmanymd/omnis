@@ -1,0 +1,87 @@
+version: '3.8'
+
+services:
+  portal:
+    build:
+      context: ./portal
+    restart: always
+    ports:
+      - ${PORTAL_PORT}:3000
+    depends_on:
+      - gateway
+    environment:
+      GATEWAY_API_URL: ${GATEWAY_API_URL}
+      GATEWAY_AUTH0_AUDIENCE: ${GATEWAY_AUTH0_AUDIENCE}
+    stdin_open: true
+    volumes:
+      - ./portal:/usr/src/app
+      - /usr/src/app/node_modules
+      - /usr/src/app/.next
+      - "/etc/timezone:/etc/timezone:ro"
+      - "/etc/localtime:/etc/localtime:ro"
+    
+  rabbitmq:
+    image: rabbitmq:3-management-alpine
+    ports:
+        - 5672:5672
+        - 15672:15672
+    volumes:
+        - ~/.docker-conf/rabbitmq/data/:/var/lib/rabbitmq/
+        - ~/.docker-conf/rabbitmq/log/:/var/log/rabbitmq
+
+  omnisdb:
+    image: 'mongo:6.0.2-focal'
+    restart: always
+    ports:
+        - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGODB_ROOT_USER}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_ROOT_PASSWORD}
+
+  mongo-express:
+    image: mongo-express
+    depends_on:
+      - omnisdb
+    restart: always
+    ports:
+      - 8081:8081
+    environment:
+      ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGODB_ROOT_USER}
+      ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGODB_ROOT_PASSWORD}
+      ME_CONFIG_MONGODB_URL: ${MONGO_DSN}
+    
+  gateway: 
+    build:
+      context: ./gateway
+    depends_on:
+      - rabbitmq
+    restart: always
+    ports:
+      - ${GATEWAY_PORT}:3000
+      - 9229:9229
+    environment:
+      RABBITMQ_DSN: ${RABBITMQ_DSN}
+      AUTH0_AUDIENCE: ${GATEWAY_AUTH0_AUDIENCE}
+      AUTH0_ISSUER_URL: ${GATEWAY_AUTH0_ISSUER_URL}
+    stdin_open: true
+    volumes:
+      - ./gateway:/usr/src/app
+      - /usr/src/app/node_modules
+    
+  meetings: 
+    build:
+      context: ./meetings
+    depends_on:
+      - rabbitmq
+      - omnisdb
+    container_name: meetings
+    ports:
+      - 9230:9229
+    restart: always
+    stdin_open: true
+    environment:
+      MONGO_DSN: ${MONGO_DSN}
+      RABBITMQ_DSN: ${RABBITMQ_DSN}
+    volumes:
+      - ./meetings:/usr/src/app
+      - /usr/src/app/node_modules
