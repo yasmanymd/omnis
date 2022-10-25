@@ -2,6 +2,7 @@
 import HomeOutline from 'mdi-material-ui/HomeOutline'
 import EmailOutline from 'mdi-material-ui/EmailOutline'
 import ShieldOutline from 'mdi-material-ui/ShieldOutline'
+import CalendarBlankOutline from 'mdi-material-ui/CalendarBlankOutline'
 
 const navigation = () => [
   {
@@ -20,7 +21,18 @@ const navigation = () => [
     path: '/acl',
     action: 'read',
     subject: 'acl-page'
-  }
+  },
+  {
+    icon: Apps,
+    title: 'Apps',
+    children: [
+      {
+        title: 'Calendar',
+        icon: CalendarBlankOutline,
+        path: '/apps/calendar'
+      }
+    ]
+  },
 ]
 
 export default navigation
