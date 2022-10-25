@@ -8,16 +8,15 @@ import { useRouter } from 'next/router'
 import Spinner from 'src/@core/components/spinner'
 
 // ** Hook Imports
-import { useAuth } from 'src/hooks/useAuth'
-
-export const getHomeRoute = role => {
-  if (role === 'client') return '/acl'
-  else return '/home'
-}
+import { useUser } from '@auth0/nextjs-auth0';
 
 const Home = () => {
   // ** Hooks
-  const auth = useAuth()
+  const { user, error, isLoading } = useUser();
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>{error.message}</div>;
+  
   const router = useRouter()
 
   useEffect(() => {
@@ -25,11 +24,9 @@ const Home = () => {
       return
     }
 
-    if (auth.user && auth.user.role) {
-      const homeRoute = getHomeRoute(auth.user.role)
-
+    if (user) {
       // Redirect user to Home URL
-      router.replace(homeRoute)
+      router.replace('/home')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])

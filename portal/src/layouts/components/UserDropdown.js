@@ -23,8 +23,7 @@ import AccountOutline from 'mdi-material-ui/AccountOutline'
 import MessageOutline from 'mdi-material-ui/MessageOutline'
 import HelpCircleOutline from 'mdi-material-ui/HelpCircleOutline'
 
-// ** Context
-import { useAuth } from 'src/hooks/useAuth'
+import { useUser } from '@auth0/nextjs-auth0';
 
 // ** Styled Components
 const BadgeContentSpan = styled('span')(({ theme }) => ({
@@ -39,12 +38,14 @@ const UserDropdown = props => {
   // ** Props
   const { settings } = props
 
+  const { user } = useUser();
+  const username = user ? user.name : '';
+
   // ** States
   const [anchorEl, setAnchorEl] = useState(null)
 
   // ** Hooks
   const router = useRouter()
-  const { logout } = useAuth()
 
   // ** Vars
   const { direction } = settings
@@ -61,8 +62,8 @@ const UserDropdown = props => {
   }
 
   const handleLogout = () => {
-    logout()
     handleDropdownClose()
+    router.push('/api/auth/logout')
   }
 
   const styles = {
@@ -92,7 +93,7 @@ const UserDropdown = props => {
         }}
       >
         <Avatar
-          alt='John Doe'
+          alt={username}
           onClick={handleDropdownOpen}
           sx={{ width: 40, height: 40 }}
           src='/images/avatars/1.png'
@@ -102,7 +103,7 @@ const UserDropdown = props => {
         anchorEl={anchorEl}
         open={Boolean(anchorEl)}
         onClose={() => handleDropdownClose()}
-        sx={{ '& .MuiMenu-paper': { width: 230, mt: 4 } }}
+        sx={{ '& .MuiMenu-paper': { width: 255, mt: 4 } }}
         anchorOrigin={{
           vertical: 'bottom',
           horizontal: direction === 'ltr' ? 'right' : 'left'
@@ -123,7 +124,7 @@ const UserDropdown = props => {
               }}
             >
               <Avatar
-                alt='John Doe'
+                alt={username}
                 src='/images/avatars/1.png'
                 sx={{ width: '2.5rem', height: '2.5rem' }}
               />
@@ -136,13 +137,7 @@ const UserDropdown = props => {
                 flexDirection: 'column'
               }}
             >
-              <Typography sx={{ fontWeight: 600 }}>John Doe</Typography>
-              <Typography
-                variant='body2'
-                sx={{ fontSize: '0.8rem', color: 'text.disabled' }}
-              >
-                Admin
-              </Typography>
+              <Typography sx={{ fontWeight: 600 }}>{username}</Typography>
             </Box>
           </Box>
         </Box>

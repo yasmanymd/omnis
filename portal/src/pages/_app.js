@@ -1,10 +1,6 @@
 // ** Next Imports
 import Head from 'next/head'
-import { Router } from 'next/router'
-
-
-
-
+import { Router, useRouter } from 'next/router'
 
 // ** Loader Import
 import NProgress from 'nprogress'
@@ -25,17 +21,12 @@ import { Toaster } from 'react-hot-toast'
 
 // ** Component Imports
 import UserLayout from 'src/layouts/UserLayout'
-import AclGuard from 'src/@core/components/auth/AclGuard'
+import AclGuard from 'src/layouts/components/auth/AclGuard'
 import ThemeComponent from 'src/@core/theme/ThemeComponent'
-import AuthGuard from 'src/@core/components/auth/AuthGuard'
-import GuestGuard from 'src/@core/components/auth/GuestGuard'
 import WindowWrapper from 'src/@core/components/window-wrapper'
 
-// ** Spinner Import
-import Spinner from 'src/@core/components/spinner'
-
 // ** Contexts
-import { AuthProvider } from 'src/context/AuthContext'
+import { UserProvider } from '@auth0/nextjs-auth0';
 import { SettingsConsumer, SettingsProvider } from 'src/@core/context/settingsContext'
 
 // ** Styled Components
@@ -56,6 +47,8 @@ import 'react-perfect-scrollbar/dist/css/styles.css'
 // ** Global css styles
 import '../../styles/globals.css'
 
+import { useUser } from '@auth0/nextjs-auth0';
+
 const clientSideEmotionCache = createEmotionCache()
 
 // ** Pace Loader
@@ -71,14 +64,19 @@ if (themeConfig.routingLoader) {
   })
 }
 
-const Guard = ({ children, authGuard, guestGuard }) => {
-  if (guestGuard) {
-    return <GuestGuard fallback={<Spinner />}>{children}</GuestGuard>
-  } else if (!guestGuard && !authGuard) {
-    return <>{children}</>
-  } else {
-    return <AuthGuard fallback={<Spinner />}>{children}</AuthGuard>
+const Guard = ({ children }) => {
+  const { user, error, isLoading } = useUser();
+  const router = useRouter();
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>{error.message}</div>;
+
+  if (!user) {
+    // Redirect user to Home URL
+    router.replace('/api/auth/login')
   }
+  
+  return <>{children}</>
 }
 
 // ** Configure JSS & ClassName
@@ -88,8 +86,6 @@ const App = props => {
   // Variables
   const getLayout = Component.getLayout ?? (page => <UserLayout>{page}</UserLayout>)
   const setConfig = Component.setConfig ?? undefined
-  const authGuard = Component.authGuard ?? true
-  const guestGuard = Component.guestGuard ?? false
   const aclAbilities = Component.acl ?? defaultACLObj
 
   return (
@@ -105,15 +101,15 @@ const App = props => {
           <meta name='viewport' content='initial-scale=1, width=device-width' />
         </Head>
 
-        <AuthProvider>
+        <UserProvider>
           <SettingsProvider {...(setConfig ? { pageSettings: setConfig() } : {})}>
             <SettingsConsumer>
               {({ settings }) => {
                 return (
                   <ThemeComponent settings={settings}>
                     <WindowWrapper>
-                      <Guard authGuard={authGuard} guestGuard={guestGuard}>
-                        <AclGuard aclAbilities={aclAbilities} guestGuard={guestGuard}>
+                      <Guard>
+                        <AclGuard aclAbilities={aclAbilities}>
                           {getLayout(<Component {...pageProps} />)}
                         </AclGuard>
                       </Guard>
@@ -126,7 +122,7 @@ const App = props => {
               }}
             </SettingsConsumer>
           </SettingsProvider>
-        </AuthProvider>
+        </UserProvider>
       </CacheProvider>
    
   )
