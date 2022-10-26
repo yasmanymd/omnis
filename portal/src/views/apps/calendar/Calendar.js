@@ -1,29 +1,26 @@
 // ** React Import
-import { useEffect, useRef } from 'react'
+import { useEffect, useRef } from 'react';
 
 // ** Full Calendar & it's Plugins
-import FullCalendar from '@fullcalendar/react'
-import listPlugin from '@fullcalendar/list'
-import dayGridPlugin from '@fullcalendar/daygrid'
-import timeGridPlugin from '@fullcalendar/timegrid'
-import interactionPlugin from '@fullcalendar/interaction'
+import FullCalendar from '@fullcalendar/react';
+import listPlugin from '@fullcalendar/list';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import timeGridPlugin from '@fullcalendar/timegrid';
+import interactionPlugin from '@fullcalendar/interaction';
 
 // ** Icons Imports
-import Menu from 'mdi-material-ui/Menu'
+import Menu from 'mdi-material-ui/Menu';
 
-const blankEvent = {
-  title: '',
-  start: '',
-  end: '',
-  allDay: false,
-  url: '',
+const blankMeeting = {
+  name: '',
+  startTime: '',
+  endTime: '',
+  max: 4,
   extendedProps: {
-    calendar: '',
-    guests: [],
-    location: '',
+    participants: [],
     description: ''
   }
-}
+};
 
 const Calendar = props => {
   // ** Props
@@ -31,29 +28,30 @@ const Calendar = props => {
     store,
     dispatch,
     direction,
-    updateEvent,
+    updateMeeting,
     calendarApi,
     calendarsColor,
     setCalendarApi,
-    handleSelectEvent,
+    handleSelectMeeting,
     handleLeftSidebarToggle,
-    handleAddEventSidebarToggle
-  } = props
+    handleAddMeetingSidebarToggle
+  } = props;
 
   // ** Refs
-  const calendarRef = useRef()
+  const calendarRef = useRef();
   useEffect(() => {
     if (calendarApi === null) {
       // @ts-ignore
-      setCalendarApi(calendarRef.current.getApi())
+      setCalendarApi(calendarRef.current.getApi());
     }
-  }, [calendarApi, setCalendarApi])
+  }, [calendarApi, setCalendarApi]);
   if (store) {
     // ** calendarOptions(Props)
     const calendarOptions = {
-      events: store.events.length ? store.events : [],
+      events: store.meetings.length ? store.meetings : [],
       plugins: [interactionPlugin, dayGridPlugin, timeGridPlugin, listPlugin],
       initialView: 'dayGridMonth',
+      noEventsContent: 'No meetings to display',
       headerToolbar: {
         start: 'sidebarToggle, prev, next, title',
         end: 'dayGridMonth,timeGridWeek,timeGridDay,listMonth'
@@ -95,7 +93,7 @@ const Calendar = props => {
         return [
           // Background Color
           `bg-${colorName}`
-        ]
+        ];
       },
       eventClick({ event: clickedEvent }) {
         dispatch(handleSelectEvent(clickedEvent))
@@ -110,19 +108,19 @@ const Calendar = props => {
         sidebarToggle: {
           text: <Menu />,
           click() {
-            handleLeftSidebarToggle()
+            handleLeftSidebarToggle();
           }
         }
       },
       dateClick(info) {
-        const ev = { ...blankEvent }
-        ev.start = info.date
-        ev.end = info.date
-        ev.allDay = true
+        const meeting = { ...blankMeeting };
+        meeting.startTime = info.date;
+        meeting.endTime = info.date;
+        
 
         // @ts-ignore
-        dispatch(handleSelectEvent(ev))
-        handleAddEventSidebarToggle()
+        dispatch(handleSelectMeeting(meeting));
+        handleAddMeetingSidebarToggle();
       },
 
       /*
@@ -131,7 +129,7 @@ const Calendar = props => {
             ? We can use `eventDragStop` but it doesn't return updated event so we have to use `eventDrop` which returns updated event
           */
       eventDrop({ event: droppedEvent }) {
-        dispatch(updateEvent(droppedEvent))
+        dispatch(updateMeeting(droppedEvent));
       },
 
       /*
@@ -139,7 +137,7 @@ const Calendar = props => {
             ? Docs: https://fullcalendar.io/docs/eventResize
           */
       eventResize({ event: resizedEvent }) {
-        dispatch(updateEvent(resizedEvent))
+        dispatch(updateMeeting(resizedEvent));
       },
       ref: calendarRef,
 
@@ -152,6 +150,6 @@ const Calendar = props => {
   } else {
     return null
   }
-}
+};
 
-export default Calendar
+export default Calendar;

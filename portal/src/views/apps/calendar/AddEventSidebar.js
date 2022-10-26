@@ -1,61 +1,56 @@
 // ** React Imports
-import { useState, useEffect, forwardRef, useCallback, Fragment } from 'react'
+import { useState, useEffect, forwardRef, useCallback, Fragment } from 'react';
 
 // ** MUI Imports
-import Box from '@mui/material/Box'
-import Drawer from '@mui/material/Drawer'
-import Select from '@mui/material/Select'
-import Switch from '@mui/material/Switch'
-import Button from '@mui/material/Button'
-import MenuItem from '@mui/material/MenuItem'
-import TextField from '@mui/material/TextField'
-import InputLabel from '@mui/material/InputLabel'
-import Typography from '@mui/material/Typography'
-import FormControl from '@mui/material/FormControl'
-import FormHelperText from '@mui/material/FormHelperText'
-import FormControlLabel from '@mui/material/FormControlLabel'
+import Box from '@mui/material/Box';
+import Drawer from '@mui/material/Drawer';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
+import Typography from '@mui/material/Typography';
+import FormControl from '@mui/material/FormControl';
+import FormHelperText from '@mui/material/FormHelperText';
+import Autocomplete from '@mui/material/Autocomplete';
+import Chip from '@mui/material/Chip';
 
 // ** Third Party Imports
-import DatePicker from 'react-datepicker'
-import { useForm, Controller } from 'react-hook-form'
+import DatePicker from 'react-datepicker';
+import { useForm, Controller } from 'react-hook-form';
 
 // ** Icons Imports
-import Close from 'mdi-material-ui/Close'
-import DeleteOutline from 'mdi-material-ui/DeleteOutline'
+import Close from 'mdi-material-ui/Close';
+import DeleteOutline from 'mdi-material-ui/DeleteOutline';
 
 // ** Styled Components
-import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker'
+import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker';
 
-const capitalize = string => string && string[0].toUpperCase() + string.slice(1)
+const capitalize = string => string && string[0].toUpperCase() + string.slice(1);
 
 const defaultState = {
-  url: '',
-  title: '',
-  guests: [],
-  allDay: true,
+  name: '',
+  participants: [],
   description: '',
-  endDate: new Date(),
-  calendar: 'Business',
-  startDate: new Date()
-}
+  endTime: new Date(),
+  startTime: new Date(),
+  max: 4
+};
 
-const AddEventSidebar = props => {
+const AddMeetingSidebar = props => {
   // ** Props
   const {
     store,
     dispatch,
-    addEvent,
-    updateEvent,
+    addMeeting,
+    updateMeeting,
     drawerWidth,
     calendarApi,
-    deleteEvent,
-    handleSelectEvent,
-    addEventSidebarOpen,
-    handleAddEventSidebarToggle
-  } = props
+    deleteMeeting,
+    handleSelectMeeting,
+    addMeetingSidebarOpen,
+    handleAddMeetingSidebarToggle
+  } = props;
 
   // ** States
-  const [values, setValues] = useState(defaultState)
+  const [values, setValues] = useState(defaultState);
 
   const {
     control,
@@ -63,81 +58,80 @@ const AddEventSidebar = props => {
     clearErrors,
     handleSubmit,
     formState: { errors }
-  } = useForm({ defaultValues: { title: '' } })
+  } = useForm({ defaultValues: { name: '' } });
 
   const handleSidebarClose = async () => {
-    setValues(defaultState)
-    clearErrors()
-    dispatch(handleSelectEvent(null))
-    handleAddEventSidebarToggle()
+    setValues(defaultState);
+    clearErrors();
+    dispatch(handleSelectMeeting(null));
+    handleAddMeetingSidebarToggle();
   }
 
   const onSubmit = data => {
-    const modifiedEvent = {
-      url: values.url,
+    const modifiedMeeting = {
       display: 'block',
-      title: data.title,
-      end: values.endDate,
-      allDay: values.allDay,
-      start: values.startDate,
+      name: data.name,
+      startTime: values.startTime,
+      endTime: values.endTime,
       extendedProps: {
-        calendar: capitalize(values.calendar),
-        guests: values.guests && values.guests.length ? values.guests : undefined,
+        participants: values.participants && values.participants.length ? values.participants : undefined,
         description: values.description.length ? values.description : undefined
       }
-    }
-    if (store.selectedEvent === null || (store.selectedEvent !== null && !store.selectedEvent.title.length)) {
-      dispatch(addEvent(modifiedEvent))
+    };
+    if (store.selectedMeeting === null || (store.selectedMeeting !== null && !store.selectedMeeting.name.length)) {
+      dispatch(addMeeting(modifiedMeeting));
     } else {
-      dispatch(updateEvent({ id: store.selectedEvent.id, ...modifiedEvent }))
+      dispatch(updateMeeting({ id: store.selectedMeeting.id, ...modifiedMeeting }));
     }
-    calendarApi.refetchEvents()
-    handleSidebarClose()
+    calendarApi.refetchMeetings();
+    handleSidebarClose();
   }
 
-  const handleDeleteEvent = () => {
-    if (store.selectedEvent) {
-      dispatch(deleteEvent(store.selectedEvent.id))
+  const handleDeleteMeeting = () => {
+    if (store.selectedMeeting) {
+      dispatch(deleteMeeting(store.selectedMeeting.id));
     }
 
-    // calendarApi.getEventById(store.selectedEvent.id).remove()
-    handleSidebarClose()
+    // calendarApi.getMeetingById(store.selectedMeeting.id).remove()
+    handleSidebarClose();
   }
 
-  const handleStartDate = date => {
-    if (date > values.endDate) {
-      setValues({ ...values, startDate: new Date(date), endDate: new Date(date) })
+  const handleStartTime = date => {
+    if (date > values.startTime) {
+      setValues({ ...values, startTime: new Date(date), endTime: new Date(date) });
     }
   }
+
+  const handleParticipants = (event, value) => {
+    setValues({ ...values, participants: value });
+  };
 
   const resetToStoredValues = useCallback(() => {
-    if (store.selectedEvent !== null) {
-      const event = store.selectedEvent
-      setValue('title', event.title || '')
+    if (store.selectedMeeting !== null) {
+      const meeting = store.selectedMeeting;
+      setValue('name', meeting.name || '');
       setValues({
-        url: event.url || '',
-        title: event.title || '',
-        allDay: event.allDay,
-        guests: event.extendedProps.guests || [],
-        description: event.extendedProps.description || '',
-        calendar: event.extendedProps.calendar || 'Business',
-        endDate: event.end !== null ? event.end : event.start,
-        startDate: event.start !== null ? event.start : new Date()
-      })
+        id: meeting.id || '',
+        name: meeting.name || '',
+        participants: meeting.extendedProps.participants || [],
+        description: meeting.extendedProps.description || '',
+        endTime: meeting.endTime !== null ? meeting.endTime : meeting.startTime,
+        startTime: meeting.startTime !== null ? meeting.startTime : new Date()
+      });
     }
-  }, [setValue, store.selectedEvent])
+  }, [setValue, store.selectedMeeting]);
 
   const resetToEmptyValues = useCallback(() => {
-    setValue('title', '')
+    setValue('name', '')
     setValues(defaultState)
-  }, [setValue])
+  }, [setValue]);
   useEffect(() => {
-    if (store.selectedEvent !== null) {
-      resetToStoredValues()
+    if (store.selectedMeeting !== null) {
+      resetToStoredValues();
     } else {
-      resetToEmptyValues()
+      resetToEmptyValues();
     }
-  }, [addEventSidebarOpen, resetToStoredValues, resetToEmptyValues, store.selectedEvent])
+  }, [addMeetingSidebarOpen, resetToStoredValues, resetToEmptyValues, store.selectedMeeting]);
 
   const PickersComponent = forwardRef(({ ...props }, ref) => {
     return (
@@ -153,7 +147,7 @@ const AddEventSidebar = props => {
   })
 
   const RenderSidebarFooter = () => {
-    if (store.selectedEvent === null || (store.selectedEvent !== null && !store.selectedEvent.title.length)) {
+    if (store.selectedMeeting === null || (store.selectedMeeting !== null && !store.selectedMeeting.name.length)) {
       return (
         <Fragment>
           <Button size='large' type='submit' variant='contained' sx={{ mr: 4 }}>
@@ -181,7 +175,7 @@ const AddEventSidebar = props => {
   return (
     <Drawer
       anchor='right'
-      open={addEventSidebarOpen}
+      open={addMeetingSidebarOpen}
       onClose={handleSidebarClose}
       ModalProps={{ keepMounted: true }}
       sx={{ '& .MuiDrawer-paper': { width: ['100%', drawerWidth] } }}
@@ -196,14 +190,14 @@ const AddEventSidebar = props => {
         }}
       >
         <Typography variant='h6'>
-          {store.selectedEvent !== null && store.selectedEvent.title.length ? 'Update Event' : 'Add Event'}
+          {store.selectedMeeting !== null && store.selectedMeeting.name.length ? 'Update Meeting' : 'Add Meeting'}
         </Typography>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          {store.selectedEvent !== null && store.selectedEvent.title.length ? (
+          {store.selectedMeeting !== null && store.selectedMeeting.name.length ? (
             <DeleteOutline
               fontSize='small'
-              sx={{ cursor: 'pointer', mr: store.selectedEvent !== null ? 2 : 0 }}
-              onClick={handleDeleteEvent}
+              sx={{ cursor: 'pointer', mr: store.selectedMeeting !== null ? 2 : 0 }}
+              onClick={handleDeleteMeeting}
             />
           ) : null}
           <Close fontSize='small' onClick={handleSidebarClose} sx={{ cursor: 'pointer' }} />
@@ -214,95 +208,18 @@ const AddEventSidebar = props => {
           <form onSubmit={handleSubmit(onSubmit)} autoComplete='off'>
             <FormControl fullWidth sx={{ mb: 6 }}>
               <Controller
-                name='title'
+                name='name'
                 control={control}
                 rules={{ required: true }}
                 render={({ field: { value, onChange } }) => (
-                  <TextField label='Title' value={value} onChange={onChange} error={Boolean(errors.title)} />
+                  <TextField label='Name' value={value} onChange={onChange} error={Boolean(errors.name)} />
                 )}
               />
-              {errors.title && (
-                <FormHelperText sx={{ color: 'error.main' }} id='event-title-error'>
+              {errors.name && (
+                <FormHelperText sx={{ color: 'error.main' }} id='event-name-error'>
                   This field is required
                 </FormHelperText>
               )}
-            </FormControl>
-            <FormControl fullWidth sx={{ mb: 6 }}>
-              <InputLabel id='event-calendar'>Calendar</InputLabel>
-              <Select
-                label='Calendar'
-                value={values.calendar}
-                labelId='event-calendar'
-                onChange={e => setValues({ ...values, calendar: e.target.value })}
-              >
-                <MenuItem value='Personal'>Personal</MenuItem>
-                <MenuItem value='Business'>Business</MenuItem>
-                <MenuItem value='Family'>Family</MenuItem>
-                <MenuItem value='Holiday'>Holiday</MenuItem>
-                <MenuItem value='ETC'>ETC</MenuItem>
-              </Select>
-            </FormControl>
-            <Box sx={{ mb: 6 }}>
-              <DatePicker
-                selectsStart
-                id='event-start-date'
-                endDate={values.endDate}
-                selected={values.startDate}
-                startDate={values.startDate}
-                showTimeSelect={!values.allDay}
-                dateFormat={!values.allDay ? 'yyyy-MM-dd hh:mm' : 'yyyy-MM-dd'}
-                customInput={<PickersComponent label='Start Date' registername='startDate' />}
-                onChange={date => setValues({ ...values, startDate: new Date(date) })}
-                onSelect={handleStartDate}
-              />
-            </Box>
-            <Box sx={{ mb: 6 }}>
-              <DatePicker
-                selectsEnd
-                id='event-end-date'
-                endDate={values.endDate}
-                selected={values.endDate}
-                minDate={values.startDate}
-                startDate={values.startDate}
-                showTimeSelect={!values.allDay}
-                dateFormat={!values.allDay ? 'yyyy-MM-dd hh:mm' : 'yyyy-MM-dd'}
-                customInput={<PickersComponent label='End Date' registername='endDate' />}
-                onChange={date => setValues({ ...values, endDate: new Date(date) })}
-              />
-            </Box>
-            <FormControl sx={{ mb: 6 }}>
-              <FormControlLabel
-                label='All Day'
-                control={
-                  <Switch checked={values.allDay} onChange={e => setValues({ ...values, allDay: e.target.checked })} />
-                }
-              />
-            </FormControl>
-            <TextField
-              fullWidth
-              type='url'
-              id='event-url'
-              sx={{ mb: 6 }}
-              label='Event URL'
-              value={values.url}
-              onChange={e => setValues({ ...values, url: e.target.value })}
-            />
-            <FormControl fullWidth sx={{ mb: 6 }}>
-              <InputLabel id='event-guests'>Guests</InputLabel>
-              <Select
-                multiple
-                label='Guests'
-                value={values.guests}
-                labelId='event-guests'
-                id='event-guests-select'
-                onChange={e => setValues({ ...values, guests: e.target.value })}
-              >
-                <MenuItem value='bruce'>Bruce</MenuItem>
-                <MenuItem value='clark'>Clark</MenuItem>
-                <MenuItem value='diana'>Diana</MenuItem>
-                <MenuItem value='john'>John</MenuItem>
-                <MenuItem value='barry'>Barry</MenuItem>
-              </Select>
             </FormControl>
             <TextField
               rows={4}
@@ -310,9 +227,69 @@ const AddEventSidebar = props => {
               fullWidth
               sx={{ mb: 6 }}
               label='Description'
-              id='event-description'
+              id='meeting-description'
               value={values.description}
               onChange={e => setValues({ ...values, description: e.target.value })}
+            />
+            <Box sx={{ mb: 6 }}>
+              <Autocomplete
+                multiple
+                id="tags-filled"
+                options={[]}
+                values={values.participants}
+                freeSolo
+                onChange={handleParticipants}
+                renderTags={(value, getTagProps) =>
+                  value.map((option, index) => (
+                    <Chip variant="outlined" label={option} {...getTagProps({ index })} />
+                  ))
+                }
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    variant="outlined"
+                    label="Participants"
+                    helperText="Creator: Yasmany Molina Diaz"
+                  />
+                )}
+              />
+            </Box>
+            <Box sx={{ mb: 6 }}>
+              <DatePicker
+                selectsStart
+                id='meeting-start-time'
+                endDate={values.endTime}
+                selected={values.startTime}
+                startDate={values.startTime}
+                showTimeSelect={true}
+                dateFormat='MM-dd-yyyy hh:mm'
+                customInput={<PickersComponent label='Start Time' registername='startTime' />}
+                onChange={date => setValues({ ...values, startTime: new Date(date) })}
+                onSelect={handleStartTime}
+              />
+            </Box>
+            <Box sx={{ mb: 6 }}>
+              <DatePicker
+                selectsEnd
+                id='meeting-end-time'
+                endDate={values.endTime}
+                selected={values.endTime}
+                minDate={values.startTime}
+                startDate={values.startTime}
+                showTimeSelect={true}
+                dateFormat='MM-dd-yyyy hh:mm'
+                customInput={<PickersComponent label='End Time' registername='endTime' />}
+                onChange={date => setValues({ ...values, endTime: new Date(date) })}
+              />
+            </Box>
+            <TextField
+              fullWidth
+              type='number'
+              sx={{ mb: 6 }}
+              label='Max'
+              defaultValue={values.max}
+              InputProps={{ inputProps: { min: 2 } }}
+              onChange={e => setValues({ ...values, max: e.target.value })}
             />
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <RenderSidebarFooter />
@@ -324,4 +301,4 @@ const AddEventSidebar = props => {
   )
 }
 
-export default AddEventSidebar
+export default AddMeetingSidebar;

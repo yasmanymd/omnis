@@ -1,66 +1,55 @@
 // ** React Imports
-import { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react';
 
 // ** MUI Imports
-import Box from '@mui/material/Box'
-import useMediaQuery from '@mui/material/useMediaQuery'
+import Box from '@mui/material/Box';
+import useMediaQuery from '@mui/material/useMediaQuery';
 
 // ** Redux Imports
-import { useDispatch, useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux';
 
 // ** Hooks
-import { useSettings } from 'src/@core/hooks/useSettings'
+import { useSettings } from 'src/@core/hooks/useSettings';
 
 // ** FullCalendar & App Components Imports
-import Calendar from 'src/views/apps/calendar/Calendar'
-import SidebarLeft from 'src/views/apps/calendar/SidebarLeft'
-import CalendarWrapper from 'src/@core/styles/libs/fullcalendar'
-import AddEventSidebar from 'src/views/apps/calendar/AddEventSidebar'
+import Calendar from 'src/views/apps/calendar/Calendar';
+import SidebarLeft from 'src/views/apps/calendar/SidebarLeft';
+import CalendarWrapper from 'src/@core/styles/libs/fullcalendar';
+import AddMeetingSidebar from 'src/views/apps/calendar/AddEventSidebar';
 
 // ** Actions
 import {
-  addEvent,
-  fetchEvents,
-  deleteEvent,
-  updateEvent,
-  handleSelectEvent,
-  handleAllCalendars,
-  handleCalendarsUpdate
-} from 'src/store/apps/calendar'
+  addMeeting,
+  fetchMeetings,
+  deleteMeeting,
+  updateMeeting,
+  handleSelectMeeting
+} from 'src/store/apps/calendar';
 
 // ** Third Party Styles Imports
-import 'react-datepicker/dist/react-datepicker.css'
-
-// ** CalendarColors
-const calendarsColor = {
-  Personal: 'error',
-  Business: 'primary',
-  Family: 'warning',
-  Holiday: 'success',
-  ETC: 'info'
-}
+import 'react-datepicker/dist/react-datepicker.css';
 
 const AppCalendar = () => {
   // ** States
-  const [calendarApi, setCalendarApi] = useState(null)
-  const [leftSidebarOpen, setLeftSidebarOpen] = useState(false)
-  const [addEventSidebarOpen, setAddEventSidebarOpen] = useState(false)
+  const [calendarApi, setCalendarApi] = useState(null);
+  const [leftSidebarOpen, setLeftSidebarOpen] = useState(false);
+  const [addMeetingSidebarOpen, setAddMeetingSidebarOpen] = useState(false);
 
   // ** Hooks
-  const { settings } = useSettings()
-  const dispatch = useDispatch()
-  const store = useSelector(state => state.calendar)
+  const { settings } = useSettings();
+  const dispatch = useDispatch();
+  const store = useSelector(state => state.calendar);
 
   // ** Vars
-  const leftSidebarWidth = 260
-  const addEventSidebarWidth = 400
-  const { skin, direction } = settings
-  const mdAbove = useMediaQuery(theme => theme.breakpoints.up('md'))
+  const leftSidebarWidth = 260;
+  const addMeetingSidebarWidth = 400;
+  const { skin, direction } = settings;
+  const mdAbove = useMediaQuery(theme => theme.breakpoints.up('md'));
   useEffect(() => {
-    dispatch(fetchEvents(store.selectedCalendars))
-  }, [dispatch, store.selectedCalendars])
+    dispatch(fetchMeetings());
+  }, [dispatch, null]);
   const handleLeftSidebarToggle = () => setLeftSidebarOpen(!leftSidebarOpen)
-  const handleAddEventSidebarToggle = () => setAddEventSidebarOpen(!addEventSidebarOpen)
+  const handleAddMeetingSidebarToggle = () => setAddMeetingSidebarOpen(!addMeetingSidebarOpen)
 
   return (
     <CalendarWrapper
@@ -74,14 +63,11 @@ const AppCalendar = () => {
         store={store}
         mdAbove={mdAbove}
         dispatch={dispatch}
-        calendarsColor={calendarsColor}
         leftSidebarOpen={leftSidebarOpen}
         leftSidebarWidth={leftSidebarWidth}
-        handleSelectEvent={handleSelectEvent}
-        handleAllCalendars={handleAllCalendars}
-        handleCalendarsUpdate={handleCalendarsUpdate}
+        handleSelectMeeting={handleSelectMeeting}
         handleLeftSidebarToggle={handleLeftSidebarToggle}
-        handleAddEventSidebarToggle={handleAddEventSidebarToggle}
+        handleAddMeetingSidebarToggle={handleAddMeetingSidebarToggle}
       />
       <Box
         sx={{
@@ -98,29 +84,28 @@ const AppCalendar = () => {
           store={store}
           dispatch={dispatch}
           direction={direction}
-          updateEvent={updateEvent}
+          updateMeeting={updateMeeting}
           calendarApi={calendarApi}
-          calendarsColor={calendarsColor}
           setCalendarApi={setCalendarApi}
-          handleSelectEvent={handleSelectEvent}
+          handleSelectMeeting={handleSelectMeeting}
           handleLeftSidebarToggle={handleLeftSidebarToggle}
-          handleAddEventSidebarToggle={handleAddEventSidebarToggle}
+          handleAddMeetingSidebarToggle={handleAddMeetingSidebarToggle}
         />
       </Box>
-      <AddEventSidebar
+      <AddMeetingSidebar
         store={store}
         dispatch={dispatch}
-        addEvent={addEvent}
-        updateEvent={updateEvent}
-        deleteEvent={deleteEvent}
+        addMeeting={addMeeting}
+        updateMeeting={updateMeeting}
+        deleteMeeting={deleteMeeting}
         calendarApi={calendarApi}
-        drawerWidth={addEventSidebarWidth}
-        handleSelectEvent={handleSelectEvent}
-        addEventSidebarOpen={addEventSidebarOpen}
-        handleAddEventSidebarToggle={handleAddEventSidebarToggle}
+        drawerWidth={addMeetingSidebarWidth}
+        handleSelectMeeting={handleSelectMeeting}
+        addMeetingSidebarOpen={addMeetingSidebarOpen}
+        handleAddMeetingSidebarToggle={handleAddMeetingSidebarToggle}
       />
     </CalendarWrapper>
   )
-}
+};
 
-export default AppCalendar
+export default AppCalendar;

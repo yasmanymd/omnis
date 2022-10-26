@@ -1,92 +1,67 @@
 // ** Redux Imports
-import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 // ** Axios Imports
-import axios from 'axios'
+import axios from 'axios';
 
-// ** Fetch Events
-export const fetchEvents = createAsyncThunk('appCalendar/fetchEvents', async calendars => {
-  const response = await axios.get('/apps/calendar/events', {
-    params: {
-      calendars
-    }
-  })
-
-  return response.data
+// ** Fetch Meetings
+export const fetchMeetings = createAsyncThunk('appCalendar/fetchMeetings', async () => {
+  const response = await axios.get('/apps/calendar/meetings');
+  return response.data;
 })
 
-// ** Add Event
-export const addEvent = createAsyncThunk('appCalendar/addEvent', async (event, { dispatch }) => {
-  const response = await axios.post('/apps/calendar/add-event', {
+// ** Add Meetings
+export const addMeeting = createAsyncThunk('appCalendar/addMeeting', async (meeting, { dispatch }) => {
+  const response = await axios.post('/apps/calendar/add-meeting', {
     data: {
-      event
+      meeting
     }
-  })
-  await dispatch(fetchEvents(['Personal', 'Business', 'Family', 'Holiday', 'ETC']))
+  });
+  await dispatch(fetchMeetings());
 
-  return response.data.event
+  return response.data.meeting;
 })
 
-// ** Update Event
-export const updateEvent = createAsyncThunk('appCalendar/updateEvent', async (event, { dispatch }) => {
-  const response = await axios.post('/apps/calendar/update-event', {
+// ** Update Meeting
+export const updateMeeting = createAsyncThunk('appCalendar/updateMeeting', async (meeting, { dispatch }) => {
+  const response = await axios.post('/apps/calendar/update-meeting', {
     data: {
-      event
+      meeting
     }
-  })
-  await dispatch(fetchEvents(['Personal', 'Business', 'Family', 'Holiday', 'ETC']))
+  });
+  await dispatch(fetchEvents());
 
-  return response.data.event
+  return response.data.meeting;
 })
 
-// ** Delete Event
-export const deleteEvent = createAsyncThunk('appCalendar/deleteEvent', async (id, { dispatch }) => {
-  const response = await axios.delete('/apps/calendar/remove-event', {
+// ** Delete Meeting
+export const deleteMeeting = createAsyncThunk('appCalendar/deleteMeeting', async (id, { dispatch }) => {
+  const response = await axios.delete('/apps/calendar/remove-meeting', {
     params: { id }
-  })
-  await dispatch(fetchEvents(['Personal', 'Business', 'Family', 'Holiday', 'ETC']))
+  });
+  await dispatch(fetchEvents());
 
-  return response.data
+  return response.data;
 })
 
 export const appCalendarSlice = createSlice({
   name: 'appCalendar',
   initialState: {
-    events: [],
-    selectedEvent: null,
-    selectedCalendars: ['Personal', 'Business', 'Family', 'Holiday', 'ETC']
+    meetings: [],
+    selectedMeeting: null
   },
   reducers: {
-    handleSelectEvent: (state, action) => {
-      state.selectedEvent = action.payload
-    },
-    handleCalendarsUpdate: (state, action) => {
-      const filterIndex = state.selectedCalendars.findIndex(i => i === action.payload)
-      if (state.selectedCalendars.includes(action.payload)) {
-        state.selectedCalendars.splice(filterIndex, 1)
-      } else {
-        state.selectedCalendars.push(action.payload)
-      }
-      if (state.selectedCalendars.length === 0) {
-        state.events.length = 0
-      }
-    },
-    handleAllCalendars: (state, action) => {
-      const value = action.payload
-      if (value === true) {
-        state.selectedCalendars = ['Personal', 'Business', 'Family', 'Holiday', 'ETC']
-      } else {
-        state.selectedCalendars = []
-      }
+    handleSelectMeeting: (state, action) => {
+      state.selectedMeeting = action.payload;
     }
   },
   extraReducers: builder => {
-    builder.addCase(fetchEvents.fulfilled, (state, action) => {
-      state.events = action.payload
+    builder.addCase(fetchMeetings.fulfilled, (state, action) => {
+      state.meetings = action.payload;
     })
   }
-})
+});
 
-export const { handleSelectEvent, handleCalendarsUpdate, handleAllCalendars } = appCalendarSlice.actions
+export const { handleSelectMeeting } = appCalendarSlice.actions;
 
-export default appCalendarSlice.reducer
+export default appCalendarSlice.reducer;
