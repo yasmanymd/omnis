@@ -13,6 +13,8 @@ import Autocomplete from '@mui/material/Autocomplete';
 import Chip from '@mui/material/Chip';
 
 // ** Third Party Imports
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
 import DatePicker from 'react-datepicker';
 import { useForm, Controller } from 'react-hook-form';
 
@@ -25,13 +27,13 @@ import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker';
 
 const capitalize = string => string && string[0].toUpperCase() + string.slice(1);
 
-const defaultState = {
+const defaultValues = {
   name: '',
   participants: [],
   description: '',
-  endTime: new Date(),
   startTime: new Date(),
-  max: 4
+  duration: 30,
+  maxPerson: 4
 };
 
 const AddMeetingSidebar = props => {
@@ -50,7 +52,16 @@ const AddMeetingSidebar = props => {
   } = props;
 
   // ** States
-  const [values, setValues] = useState(defaultState);
+  const [values, setValues] = useState(defaultValues);
+
+  const schema = yup.object().shape({
+    name: yup.string().required('Name is a required field.'),
+    participants: yup.array('prueba').of(yup.string().email(), 'test').min(1, 'Participants must have at least 1 items and valid emails.').required('required'),
+    description: yup.string().required('Description is a required field.'),
+    startTime: yup.date().required('Start Time is a required field.'),
+    duration: yup.number().typeError('Duration must be a number.').min(15, 'Minimun time of meeting is 15 mins.').required('Duration is a required field.'),
+    maxPerson: yup.number().typeError('Max must be a number.').min(2, 'The meeting should have at least 2 participants.').required('Max is a required field.')
+  });
 
   const {
     control,
@@ -58,10 +69,10 @@ const AddMeetingSidebar = props => {
     clearErrors,
     handleSubmit,
     formState: { errors }
-  } = useForm({ defaultValues: { name: '' } });
+  } = useForm({ defaultValues: defaultValues, resolver: yupResolver(schema) });
 
   const handleSidebarClose = async () => {
-    setValues(defaultState);
+    setValues(defaultValues);
     clearErrors();
     dispatch(handleSelectMeeting(null));
     handleAddMeetingSidebarToggle();
@@ -71,12 +82,11 @@ const AddMeetingSidebar = props => {
     const modifiedMeeting = {
       display: 'block',
       name: data.name,
+      description: data.description.length ? data.description : undefined,
+      participants: data.participants && data.participants.length ? data.participants : undefined,
       startTime: values.startTime,
-      endTime: values.endTime,
-      extendedProps: {
-        participants: values.participants && values.participants.length ? values.participants : undefined,
-        description: values.description.length ? values.description : undefined
-      }
+      duration: data.duration,
+      maxPerson: data.maxPerson
     };
     if (store.selectedMeeting === null || (store.selectedMeeting !== null && !store.selectedMeeting.name.length)) {
       dispatch(addMeeting(modifiedMeeting));
@@ -98,7 +108,7 @@ const AddMeetingSidebar = props => {
 
   const handleStartTime = date => {
     if (date > values.startTime) {
-      setValues({ ...values, startTime: new Date(date), endTime: new Date(date) });
+      setValues({ ...values, startTime: new Date(date), duration: new Date(date) });
     }
   }
 
@@ -113,17 +123,17 @@ const AddMeetingSidebar = props => {
       setValues({
         id: meeting.id || '',
         name: meeting.name || '',
-        participants: meeting.extendedProps.participants || [],
-        description: meeting.extendedProps.description || '',
-        endTime: meeting.endTime !== null ? meeting.endTime : meeting.startTime,
-        startTime: meeting.startTime !== null ? meeting.startTime : new Date()
+        description: meeting.description || '',
+        participants: meeting.participants || [],
+        startTime: meeting.startTime !== null ? meeting.startTime : new Date(),
+        duration: meeting.duration !== null ? meeting.duration : 30,
       });
     }
   }, [setValue, store.selectedMeeting]);
 
   const resetToEmptyValues = useCallback(() => {
     setValue('name', '')
-    setValues(defaultState)
+    setValues(defaultValues)
   }, [setValue]);
   useEffect(() => {
     if (store.selectedMeeting !== null) {
@@ -205,7 +215,7 @@ const AddMeetingSidebar = props => {
       </Box>
       <Box className='sidebar-body' sx={{ p: theme => theme.spacing(5, 6) }}>
         <DatePickerWrapper>
-          <form onSubmit={handleSubmit(onSubmit)} autoComplete='off'>
+          <form onSubmit={handleSubmit(onSubmit)} noValidate autoComplete='off'>
             <FormControl fullWidth sx={{ mb: 6 }}>
               <Controller
                 name='name'
@@ -217,48 +227,75 @@ const AddMeetingSidebar = props => {
               />
               {errors.name && (
                 <FormHelperText sx={{ color: 'error.main' }} id='event-name-error'>
-                  This field is required
+                  {errors.name.message}
                 </FormHelperText>
               )}
             </FormControl>
-            <TextField
-              rows={4}
-              multiline
-              fullWidth
-              sx={{ mb: 6 }}
-              label='Description'
-              id='meeting-description'
-              value={values.description}
-              onChange={e => setValues({ ...values, description: e.target.value })}
-            />
-            <Box sx={{ mb: 6 }}>
-              <Autocomplete
-                multiple
-                id="tags-filled"
-                options={[]}
-                values={values.participants}
-                freeSolo
-                onChange={handleParticipants}
-                renderTags={(value, getTagProps) =>
-                  value.map((option, index) => (
-                    <Chip variant="outlined" label={option} {...getTagProps({ index })} />
-                  ))
-                }
-                renderInput={(params) => (
-                  <TextField
-                    {...params}
-                    variant="outlined"
-                    label="Participants"
-                    helperText="Creator: Yasmany Molina Diaz"
+            <FormControl fullWidth sx={{ mb: 6 }}>
+              <Controller
+                name='description'
+                control={control}
+                rules={{ required: true }}
+                render={({ field: { value, onChange } }) => (
+                  <TextField 
+                    id='meeting-description'
+                    rows={4}
+                    multiline
+                    label='Description'
+                    value={value} 
+                    onChange={onChange} 
+                    error={Boolean(errors.description)} 
                   />
                 )}
               />
-            </Box>
+              {errors.description && (
+                <FormHelperText sx={{ color: 'error.main' }} id='event-description-error'>
+                  {errors.description.message}
+                </FormHelperText>
+              )}
+            </FormControl>
+            <FormControl fullWidth sx={{ mb: 6 }}>
+              <Controller
+                name='participants'
+                control={control}
+                rules={{ required: true }}
+                render={({ field: { ref, ...field }, fieldState: { error } }) => (
+                  <Autocomplete
+                    {...field}
+                    multiple
+                    id="tags-filled"
+                    options={[]}
+                    freeSolo
+                    onChange={(event, value) => field.onChange(value)}
+                    renderTags={(v, getTagProps) =>
+                      v.map((option, index) => (
+                        <Chip variant="outlined" label={option} color={Boolean(errors.participants) ? "error" : "default"} {...getTagProps({ index })} />
+                      ))
+                    }
+                    renderInput={(params) => (
+                      <TextField
+                        {...params}
+                        variant="outlined"
+                        label="Participants"
+                        helperText="Creator: Yasmany Molina Diaz"
+                        inputRef={ref}
+                        error={Boolean(errors.participants)}
+                      />
+                    )}
+                  />                  
+                )}
+              />
+              {errors.participants && (
+                <FormHelperText sx={{ color: 'error.main' }} id='event-participants-error'>
+                  {errors.participants.message || "Invalid emails."}
+                </FormHelperText>
+              )}
+            </FormControl>
             <Box sx={{ mb: 6 }}>
               <DatePicker
                 selectsStart
                 id='meeting-start-time'
-                endDate={values.endTime}
+                endDate={values.duration}
                 selected={values.startTime}
                 startDate={values.startTime}
                 showTimeSelect={true}
@@ -268,29 +305,50 @@ const AddMeetingSidebar = props => {
                 onSelect={handleStartTime}
               />
             </Box>
-            <Box sx={{ mb: 6 }}>
-              <DatePicker
-                selectsEnd
-                id='meeting-end-time'
-                endDate={values.endTime}
-                selected={values.endTime}
-                minDate={values.startTime}
-                startDate={values.startTime}
-                showTimeSelect={true}
-                dateFormat='MM-dd-yyyy hh:mm'
-                customInput={<PickersComponent label='End Time' registername='endTime' />}
-                onChange={date => setValues({ ...values, endTime: new Date(date) })}
+            <FormControl fullWidth sx={{ mb: 6 }}>
+              <Controller
+                name='duration'
+                control={control}
+                rules={{ required: true }}
+                render={({ field: { value, onChange } }) => (
+                  <TextField
+                    type='number'
+                    label='Duration'
+                    value={value}
+                    onChange={onChange}
+                    error={Boolean(errors.duration)}
+                    InputProps={{ inputProps: { min: 15 } }}
+                  />
+                )}
               />
-            </Box>
-            <TextField
-              fullWidth
-              type='number'
-              sx={{ mb: 6 }}
-              label='Max'
-              defaultValue={values.max}
-              InputProps={{ inputProps: { min: 2 } }}
-              onChange={e => setValues({ ...values, max: e.target.value })}
-            />
+              {errors.duration && (
+                <FormHelperText sx={{ color: 'error.main' }} id='event-duration-error'>
+                  {errors.duration.message}
+                </FormHelperText>
+              )}
+            </FormControl>
+            <FormControl fullWidth sx={{ mb: 6 }}>
+              <Controller
+                name='maxPerson'
+                control={control}
+                rules={{ required: true }}
+                render={({ field: { value, onChange } }) => (
+                  <TextField
+                    type='number'
+                    label='Maximum of participants'
+                    value={value}
+                    onChange={onChange}
+                    error={Boolean(errors.maxPerson)}
+                    InputProps={{ inputProps: { min: 2 } }}
+                  />
+                )}
+              />
+              {errors.maxPerson && (
+                <FormHelperText sx={{ color: 'error.main' }} id='event-max-person-error'>
+                  {errors.maxPerson.message}
+                </FormHelperText>
+              )}
+            </FormControl>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
               <RenderSidebarFooter />
             </Box>
