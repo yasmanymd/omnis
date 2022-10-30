@@ -11,4 +11,8 @@ export class MeetingsService {
     const meetingModel = new this.meetingModel(meeting);
     return await meetingModel.save();
   }
+
+  public async getMeetingsByUser(user: string): Promise<IMeeting[]> {
+    return this.meetingModel.find({ created_by: user }).exec();
+  }
 }

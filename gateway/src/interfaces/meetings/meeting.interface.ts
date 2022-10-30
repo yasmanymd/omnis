@@ -4,6 +4,7 @@ export interface IMeeting {
   description: string;
   participants: string[];
   start_time: number;
+  duration: number;
   status: string;
   created_at: number;
   created_by: string;

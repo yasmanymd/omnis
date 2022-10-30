@@ -9,9 +9,16 @@ import toast from 'react-hot-toast';
 import ErrorDetails from 'src/layouts/components/ErrorDetails';
 
 // ** Fetch Meetings
-export const fetchMeetings = createAsyncThunk('appCalendar/fetchMeetings', async () => {
-  const response = await axios.get('/apps/calendar/meetings');
-  return response.data;
+export const fetchMeetings = createAsyncThunk('appCalendar/fetchMeetings', async (user) => {
+  const response = await fetch(encodeURI('/api/meetings?user=' + user), {
+    method: 'GET',
+    headers: {
+      'accept': 'application/json',
+      'Content-Type': 'application/json'
+    }
+  });
+  const result = await response.json();
+  return result.data.meetings;
 })
 
 // ** Add Meetings
@@ -31,9 +38,9 @@ export const addMeeting = createAsyncThunk('appCalendar/addMeeting', async (meet
       "start_time": +new Date(meeting.startTime),
       "created_by": meeting.createdBy
     })
-  });    
+  });
   const result = await response.json();
-  await dispatch(fetchMeetings());
+  dispatch(fetchMeetings(meeting.createdBy));
   if (result?.errors) {
     toast.error(<ErrorDetails message='Error creating meeting.' errors={result.errors} />);
   } else {

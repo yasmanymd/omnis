@@ -10,6 +10,7 @@ import { useDispatch, useSelector } from 'react-redux';
 
 // ** Hooks
 import { useSettings } from 'src/@core/hooks/useSettings';
+import { useUser } from '@auth0/nextjs-auth0';
 
 // ** FullCalendar & App Components Imports
 import Calendar from 'src/views/apps/calendar/Calendar';
@@ -39,6 +40,7 @@ const AppCalendar = () => {
   const { settings } = useSettings();
   const dispatch = useDispatch();
   const store = useSelector(state => state.calendar);
+  const { user } = useUser();
 
   // ** Vars
   const leftSidebarWidth = 260;
@@ -46,7 +48,7 @@ const AppCalendar = () => {
   const { skin, direction } = settings;
   const mdAbove = useMediaQuery(theme => theme.breakpoints.up('md'));
   useEffect(() => {
-    dispatch(fetchMeetings());
+    dispatch(fetchMeetings(user.email));
   }, [dispatch, null]);
   const handleLeftSidebarToggle = () => setLeftSidebarOpen(!leftSidebarOpen)
   const handleAddMeetingSidebarToggle = () => setAddMeetingSidebarOpen(!addMeetingSidebarOpen)

@@ -96,7 +96,7 @@ const AddMeetingSidebar = props => {
     } else {
       dispatch(updateMeeting({ id: store.selectedMeeting.id, ...modifiedMeeting }));
     }
-    //calendarApi.refetchMeetings();
+    calendarApi.refetchMeetings(user.email);
     handleSidebarClose();
   }
 

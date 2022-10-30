@@ -30,7 +30,6 @@ const Calendar = props => {
     direction,
     updateMeeting,
     calendarApi,
-    calendarsColor,
     setCalendarApi,
     handleSelectMeeting,
     handleLeftSidebarToggle,
@@ -48,7 +47,7 @@ const Calendar = props => {
   if (store) {
     // ** calendarOptions(Props)
     const calendarOptions = {
-      events: store.meetings.length ? store.meetings : [],
+      events: store.meetings.length ? store.meetings.map(item => { return {id: item._id, title: item.name, start: new Date(item.start_time) }}) : [],
       plugins: [interactionPlugin, dayGridPlugin, timeGridPlugin, listPlugin],
       initialView: 'dayGridMonth',
       noEventsContent: 'No meetings to display',
@@ -87,12 +86,9 @@ const Calendar = props => {
           */
       navLinks: true,
       eventClassNames({ event: calendarEvent }) {
-        // @ts-ignore
-        const colorName = calendarsColor[calendarEvent._def.extendedProps.calendar]
-
         return [
           // Background Color
-          `bg-${colorName}`
+          `bg-primary`
         ];
       },
       eventClick({ event: clickedEvent }) {
