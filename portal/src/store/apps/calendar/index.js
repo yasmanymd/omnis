@@ -16,11 +16,6 @@ export const fetchMeetings = createAsyncThunk('appCalendar/fetchMeetings', async
 
 // ** Add Meetings
 export const addMeeting = createAsyncThunk('appCalendar/addMeeting', async (meeting, { dispatch }) => {
-  /*const response = await axios.post('/apps/calendar/add-meeting', {
-    data: {
-      meeting
-    }
-  });*/
   const response = await fetch('/api/meetings', {
     method: 'POST',
     headers: {
@@ -38,15 +33,14 @@ export const addMeeting = createAsyncThunk('appCalendar/addMeeting', async (meet
     })
   });    
   const result = await response.json();
-  
-  //await dispatch(fetchMeetings());
+  await dispatch(fetchMeetings());
   if (result?.errors) {
     toast.error(<ErrorDetails message='Error creating meeting.' errors={result.errors} />);
   } else {
     toast.success('Meeting created');
   }
   
-  return response.data.meeting;
+  return result.data.meeting;
 })
 
 // ** Update Meeting
