@@ -14,7 +14,6 @@ import { AuthzModule } from './authz/authz.module';
         name: 'MEETING_SERVICE', 
         imports: [ConfigModule],
         useFactory: async (configService: ConfigService) => {
-          console.log('init: ' + configService.get('rabbitmq_dsn'));
           return ({          
             transport: Transport.RMQ,
             options: {

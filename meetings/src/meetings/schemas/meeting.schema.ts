@@ -22,7 +22,10 @@ export class Meeting implements IMeeting {
   start_time: number;
 
   @Prop({ required: true })
-  end_time: number;
+  duration: number;
+
+  @Prop({ required: true })
+  max_person: number;
 
   @Prop({ required: true })
   status: string;

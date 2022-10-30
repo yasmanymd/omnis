@@ -38,7 +38,6 @@ export class MeetingsController {
       },
       createMeetingResponse.status);
     }
-    console.log(createMeetingResponse.meeting);
     return {
       message: createMeetingResponse.message,
       data: {

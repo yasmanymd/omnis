@@ -3,6 +3,10 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 // ** Axios Imports
 import axios from 'axios';
+import { RewindOutline } from 'mdi-material-ui';
+
+import toast from 'react-hot-toast';
+import ErrorDetails from 'src/layouts/components/ErrorDetails';
 
 // ** Fetch Meetings
 export const fetchMeetings = createAsyncThunk('appCalendar/fetchMeetings', async () => {
@@ -12,13 +16,36 @@ export const fetchMeetings = createAsyncThunk('appCalendar/fetchMeetings', async
 
 // ** Add Meetings
 export const addMeeting = createAsyncThunk('appCalendar/addMeeting', async (meeting, { dispatch }) => {
-  const response = await axios.post('/apps/calendar/add-meeting', {
+  /*const response = await axios.post('/apps/calendar/add-meeting', {
     data: {
       meeting
     }
-  });
-  await dispatch(fetchMeetings());
-
+  });*/
+  const response = await fetch('/api/meetings', {
+    method: 'POST',
+    headers: {
+      'accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      "name": meeting.name,
+      "description": meeting.description,
+      "participants": meeting.participants,
+      "duration": meeting.duration,
+      "max_person": meeting.maxPerson,
+      "start_time": +new Date(meeting.startTime),
+      "created_by": meeting.createdBy
+    })
+  });    
+  const result = await response.json();
+  
+  //await dispatch(fetchMeetings());
+  if (result?.errors) {
+    toast.error(<ErrorDetails message='Error creating meeting.' errors={result.errors} />);
+  } else {
+    toast.success('Meeting created');
+  }
+  
   return response.data.meeting;
 })
 

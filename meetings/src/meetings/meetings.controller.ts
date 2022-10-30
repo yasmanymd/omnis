@@ -16,11 +16,12 @@ export class MeetingsController {
     if (meeting) {
       try {
         const createdMeeting = await this.meetingService.createMeeting(
-          Object.assign(meeting, {
+          {
+            ...meeting,
             code: generateId(), 
             status: 'created',
             created_at: +new Date()
-          })
+          }
         );
         result = {
           status: HttpStatus.CREATED,

@@ -8,7 +8,6 @@ export class ConfigService {
     this.envConfig = {
       rabbitmq_dsn: process.env.RABBITMQ_DSN
     };
-    console.log(this.envConfig);
   }
 
   get(key: string): any {
