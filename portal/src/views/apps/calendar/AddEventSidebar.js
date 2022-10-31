@@ -58,7 +58,7 @@ const AddMeetingSidebar = props => {
 
   const schema = yup.object().shape({
     name: yup.string().required('Name is a required field.'),
-    participants: yup.array('prueba').of(yup.string().email(), 'test').min(1, 'Participants must have at least 1 items and valid emails.').required('required'),
+    participants: yup.array().of(yup.string().email()).min(1, 'Participants must have at least 1 items and valid emails.').required('Participants is a required field.'),
     description: yup.string().required('Description is a required field.'),
     startTime: yup.date().required('Start Time is a required field.'),
     duration: yup.number().typeError('Duration must be a number.').min(15, 'Minimun time of meeting is 15 mins.').required('Duration is a required field.'),
@@ -91,7 +91,7 @@ const AddMeetingSidebar = props => {
       maxPerson: data.maxPerson,
       createdBy: user.email
     };
-    if (store.selectedMeeting === null || (store.selectedMeeting !== null && !store.selectedMeeting.name.length)) {
+    if (!store.selectedMeeting || (!store.selectedMeeting && !store.selectedMeeting.name.length)) {
       dispatch(addMeeting(modifiedMeeting));
     } else {
       dispatch(updateMeeting({ id: store.selectedMeeting.id, ...modifiedMeeting }));
@@ -120,17 +120,22 @@ const AddMeetingSidebar = props => {
   };
 
   const resetToStoredValues = useCallback(() => {
-    if (store.selectedMeeting !== null) {
+    if (store.selectedMeeting) {
       const meeting = store.selectedMeeting;
-      setValue('name', meeting.name || '');
-      setValues({
+      setValue('name', meeting.name || defaultValues.name);
+      setValue('description', meeting.description || defaultValues.name);
+      setValue('participants', meeting.participants || defaultValues.participants);
+      setValue('startTime', meeting.startTime || defaultValues.startTime);
+      setValue('duration', meeting.duration || defaultValues.duration);
+      setValue('maxPerson', meeting.maxPerson || defaultValues.maxPerson);
+      /*setValues({
         id: meeting.id || '',
         name: meeting.name || '',
         description: meeting.description || '',
         participants: meeting.participants || [],
         startTime: meeting.startTime !== null ? meeting.startTime : new Date(),
         duration: meeting.duration !== null ? meeting.duration : 30,
-      });
+      });*/
     }
   }, [setValue, store.selectedMeeting]);
 
@@ -160,7 +165,7 @@ const AddMeetingSidebar = props => {
   })
 
   const RenderSidebarFooter = () => {
-    if (store.selectedMeeting === null || (store.selectedMeeting !== null && !store.selectedMeeting.name.length)) {
+    if (!store.selectedMeeting || (!store.selectedMeeting && !store.selectedMeeting.name.length)) {
       return (
         <Fragment>
           <Button size='large' type='submit' variant='contained' sx={{ mr: 4 }}>
@@ -184,7 +189,7 @@ const AddMeetingSidebar = props => {
       )
     }
   }
-
+  
   return (
     <Drawer
       anchor='right'
@@ -203,13 +208,13 @@ const AddMeetingSidebar = props => {
         }}
       >
         <Typography variant='h6'>
-          {store.selectedMeeting !== null && store.selectedMeeting.name.length ? 'Update Meeting' : 'Add Meeting'}
+          {store.selectedMeeting && store.selectedMeeting.name.length ? 'Update Meeting' : 'Add Meeting'}
         </Typography>
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          {store.selectedMeeting !== null && store.selectedMeeting.name.length ? (
+          {store.selectedMeeting && store.selectedMeeting.name.length ? (
             <DeleteOutline
               fontSize='small'
-              sx={{ cursor: 'pointer', mr: store.selectedMeeting !== null ? 2 : 0 }}
+              sx={{ cursor: 'pointer', mr: store.selectedMeeting !== null && store.selectedMeeting !== undefined ? 2 : 0 }}
               onClick={handleDeleteMeeting}
             />
           ) : null}

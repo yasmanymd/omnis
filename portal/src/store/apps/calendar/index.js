@@ -80,7 +80,7 @@ export const appCalendarSlice = createSlice({
   },
   reducers: {
     handleSelectMeeting: (state, action) => {
-      state.selectedMeeting = action.payload;
+      state.selectedMeeting = action.payload?._def?.extendedProps?.ref;
     }
   },
   extraReducers: builder => {

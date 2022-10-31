@@ -47,7 +47,19 @@ const Calendar = props => {
   if (store) {
     // ** calendarOptions(Props)
     const calendarOptions = {
-      events: store.meetings.length ? store.meetings.map(item => { return {id: item._id, title: item.name, start: new Date(item.start_time) }}) : [],
+      events: store.meetings.length ? 
+        store.meetings.map(item => 
+          { 
+            return {
+              id: item._id, 
+              title: item.name, 
+              start: new Date(item.start_time), 
+              extendedProps: {
+                ref: item
+              }
+            }
+          }
+        ) : [],
       plugins: [interactionPlugin, dayGridPlugin, timeGridPlugin, listPlugin],
       initialView: 'dayGridMonth',
       noEventsContent: 'No meetings to display',
@@ -92,8 +104,8 @@ const Calendar = props => {
         ];
       },
       eventClick({ event: clickedEvent }) {
-        dispatch(handleSelectEvent(clickedEvent))
-        handleAddEventSidebarToggle()
+        dispatch(handleSelectMeeting(clickedEvent));
+        handleAddMeetingSidebarToggle();
 
         // * Only grab required field otherwise it goes in infinity loop
         // ! Always grab all fields rendered by form (even if it get `undefined`) otherwise due to Vue3/Composition API you might get: "object is not extensible"
