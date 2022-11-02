@@ -13,7 +13,8 @@ export class CreateMeetingResponseDto {
         participants: ['rick@test.com', 'alan@test.com'],
         start_time: +new Date(),
         status: 'created',
-        created_at: +new Date()
+        created_at: +new Date(),
+        created_by: 'Rick Montaris'
       },
     },
     nullable: true,

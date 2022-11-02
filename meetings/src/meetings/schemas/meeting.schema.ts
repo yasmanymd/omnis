@@ -1,8 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
-import { IMeeting } from '../interfaces/meeting.interface';
 
 @Schema()
-export class Meeting implements IMeeting {
+export class Meeting {
   @Prop({ required: true })
   name: string;
 

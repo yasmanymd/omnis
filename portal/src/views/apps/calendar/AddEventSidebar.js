@@ -25,14 +25,13 @@ import DeleteOutline from 'mdi-material-ui/DeleteOutline';
 
 // ** Styled Components
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker';
-
-const capitalize = string => string && string[0].toUpperCase() + string.slice(1);
+import { fetchMeetings } from '../../../store/apps/calendar';
 
 const defaultValues = {
   name: '',
   participants: [],
   description: '',
-  startTime: new Date(),
+  startTime: new Date(+new Date() - (+new Date()%(3600000)) + 3600000),
   duration: 30,
   maxPerson: 4
 };
@@ -45,7 +44,6 @@ const AddMeetingSidebar = props => {
     addMeeting,
     updateMeeting,
     drawerWidth,
-    calendarApi,
     deleteMeeting,
     handleSelectMeeting,
     addMeetingSidebarOpen,
@@ -55,7 +53,7 @@ const AddMeetingSidebar = props => {
   // ** States
   const [values, setValues] = useState(defaultValues);
   const { user } = useUser();
-
+  
   const schema = yup.object().shape({
     name: yup.string().required('Name is a required field.'),
     participants: yup.array().of(yup.string().email()).min(1, 'Participants must have at least 1 items and valid emails.').required('Participants is a required field.'),
@@ -80,7 +78,7 @@ const AddMeetingSidebar = props => {
     handleAddMeetingSidebarToggle();
   }
 
-  const onSubmit = data => {
+  const onSubmit = async data => {
     const modifiedMeeting = {
       display: 'block',
       name: data.name,
@@ -88,36 +86,31 @@ const AddMeetingSidebar = props => {
       participants: data.participants && data.participants.length ? data.participants : undefined,
       startTime: values.startTime,
       duration: data.duration,
-      maxPerson: data.maxPerson,
-      createdBy: user.email
+      maxPerson: data.maxPerson
     };
     if (!store.selectedMeeting || (!store.selectedMeeting && !store.selectedMeeting.name.length)) {
-      dispatch(addMeeting(modifiedMeeting));
+      await dispatch(addMeeting(modifiedMeeting));
     } else {
-      dispatch(updateMeeting({ id: store.selectedMeeting.id, ...modifiedMeeting }));
+      await dispatch(updateMeeting({ id: store.selectedMeeting.id, ...modifiedMeeting }));
     }
-    calendarApi.refetchMeetings(user.email);
+    dispatch(fetchMeetings());
     handleSidebarClose();
   }
 
-  const handleDeleteMeeting = () => {
+  const handleDeleteMeeting = async () => {
     if (store.selectedMeeting) {
-      dispatch(deleteMeeting(store.selectedMeeting.id));
+      await dispatch(deleteMeeting(store.selectedMeeting._id));
+      dispatch(fetchMeetings());
     }
-
-    // calendarApi.getMeetingById(store.selectedMeeting.id).remove()
+    
     handleSidebarClose();
   }
 
   const handleStartTime = date => {
     if (date > values.startTime) {
-      setValues({ ...values, startTime: new Date(date), duration: new Date(date) });
+      setValues({ ...values, startTime: new Date(date) });
     }
   }
-
-  const handleParticipants = (event, value) => {
-    setValues({ ...values, participants: value });
-  };
 
   const resetToStoredValues = useCallback(() => {
     if (store.selectedMeeting) {
@@ -125,26 +118,32 @@ const AddMeetingSidebar = props => {
       setValue('name', meeting.name || defaultValues.name);
       setValue('description', meeting.description || defaultValues.name);
       setValue('participants', meeting.participants || defaultValues.participants);
-      setValue('startTime', meeting.startTime || defaultValues.startTime);
+      setValue('startTime', meeting.start_time || defaultValues.startTime);
       setValue('duration', meeting.duration || defaultValues.duration);
-      setValue('maxPerson', meeting.maxPerson || defaultValues.maxPerson);
-      /*setValues({
-        id: meeting.id || '',
-        name: meeting.name || '',
-        description: meeting.description || '',
-        participants: meeting.participants || [],
-        startTime: meeting.startTime !== null ? meeting.startTime : new Date(),
-        duration: meeting.duration !== null ? meeting.duration : 30,
-      });*/
+      setValue('maxPerson', meeting.max_person || defaultValues.maxPerson);
+      setValues({
+        id: meeting._id || '',
+        name: meeting.name || defaultValues.name,
+        description: meeting.description || defaultValues.name,
+        participants: meeting.participants || defaultValues.participants,
+        startTime: meeting.start_time || defaultValues.startTime,
+        duration: meeting.duration || defaultValues.duration,
+        maxPerson: meeting.max_person || defaultValues.maxPerson
+      });
     }
   }, [setValue, store.selectedMeeting]);
 
   const resetToEmptyValues = useCallback(() => {
-    setValue('name', '')
-    setValues(defaultValues)
+    setValue('name', defaultValues.name);
+    setValue('description', defaultValues.name);
+    setValue('participants', defaultValues.participants);
+    setValue('startTime', defaultValues.startTime);
+    setValue('duration', defaultValues.duration);
+    setValue('maxPerson', defaultValues.maxPerson);
+    setValues(defaultValues);
   }, [setValue]);
   useEffect(() => {
-    if (store.selectedMeeting !== null) {
+    if (store.selectedMeeting) {
       resetToStoredValues();
     } else {
       resetToEmptyValues();
@@ -214,7 +213,7 @@ const AddMeetingSidebar = props => {
           {store.selectedMeeting && store.selectedMeeting.name.length ? (
             <DeleteOutline
               fontSize='small'
-              sx={{ cursor: 'pointer', mr: store.selectedMeeting !== null && store.selectedMeeting !== undefined ? 2 : 0 }}
+              sx={{ cursor: 'pointer', mr: store.selectedMeeting ? 2 : 0 }}
               onClick={handleDeleteMeeting}
             />
           ) : null}
@@ -285,7 +284,7 @@ const AddMeetingSidebar = props => {
                         {...params}
                         variant="outlined"
                         label="Participants"
-                        helperText="Creator: Yasmany Molina Diaz"
+                        helperText={"Creator: " + user.name}
                         inputRef={ref}
                         error={Boolean(errors.participants)}
                       />
@@ -303,11 +302,11 @@ const AddMeetingSidebar = props => {
               <DatePicker
                 selectsStart
                 id='meeting-start-time'
-                endDate={values.duration}
                 selected={values.startTime}
                 startDate={values.startTime}
                 showTimeSelect={true}
-                dateFormat='MM-dd-yyyy hh:mm'
+                dateFormat='MM-dd-yyyy hh:mm aa'
+                timeIntervals={15}
                 customInput={<PickersComponent label='Start Time' registername='startTime' />}
                 onChange={date => setValues({ ...values, startTime: new Date(date) })}
                 onSelect={handleStartTime}

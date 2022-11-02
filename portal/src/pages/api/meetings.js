@@ -22,7 +22,7 @@ export default withApiAuthRequired(async function meetings(req, res) {
       res.status(200).json(result);
       break;
     case 'GET':
-      response = await fetch(encodeURI(baseUrl + '/meetings?user='+req.query.user), {
+      response = await fetch(encodeURI(baseUrl + '/meetings'), {
         headers: {
           'accept': 'application/json',
           'Content-Type': 'application/json',
@@ -33,8 +33,20 @@ export default withApiAuthRequired(async function meetings(req, res) {
       result = await response.json();
       res.status(200).json(result);
       break;
+    case 'DELETE':
+        response = await fetch(encodeURI(baseUrl + '/meetings/' + req.query.id), {
+          headers: {
+            'accept': 'application/json',
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${accessToken}`
+          },
+          method: 'DELETE'
+        });
+        result = await response.json();
+        res.status(200).json(result);
+        break;
     default:
-      res.setHeader('Allow', ['POST']);
+      res.setHeader('Allow', ['GET', 'POST', 'DELETE']);
       res.status(405).json({
         status: 405, 
         message: 'Method not allowed'

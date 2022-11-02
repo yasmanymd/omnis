@@ -3,14 +3,13 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
 // ** Axios Imports
 import axios from 'axios';
-import { RewindOutline } from 'mdi-material-ui';
 
 import toast from 'react-hot-toast';
 import ErrorDetails from 'src/layouts/components/ErrorDetails';
 
 // ** Fetch Meetings
-export const fetchMeetings = createAsyncThunk('appCalendar/fetchMeetings', async (user) => {
-  const response = await fetch(encodeURI('/api/meetings?user=' + user), {
+export const fetchMeetings = createAsyncThunk('appCalendar/fetchMeetings', async () => {
+  const response = await fetch(encodeURI('/api/meetings'), {
     method: 'GET',
     headers: {
       'accept': 'application/json',
@@ -35,12 +34,11 @@ export const addMeeting = createAsyncThunk('appCalendar/addMeeting', async (meet
       "participants": meeting.participants,
       "duration": meeting.duration,
       "max_person": meeting.maxPerson,
-      "start_time": +new Date(meeting.startTime),
-      "created_by": meeting.createdBy
+      "start_time": +new Date(meeting.startTime)
     })
   });
   const result = await response.json();
-  dispatch(fetchMeetings(meeting.createdBy));
+  dispatch(fetchMeetings());
   if (result?.errors) {
     toast.error(<ErrorDetails message='Error creating meeting.' errors={result.errors} />);
   } else {
@@ -64,9 +62,14 @@ export const updateMeeting = createAsyncThunk('appCalendar/updateMeeting', async
 
 // ** Delete Meeting
 export const deleteMeeting = createAsyncThunk('appCalendar/deleteMeeting', async (id, { dispatch }) => {
-  const response = await axios.delete('/apps/calendar/remove-meeting', {
-    params: { id }
+  const response = await fetch(encodeURI('/api/meetings?id='+id), {
+    method: 'DELETE',
+    headers: {
+      'accept': 'application/json',
+      'Content-Type': 'application/json'
+    }
   });
+  
   await dispatch(fetchEvents());
 
   return response.data;

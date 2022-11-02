@@ -13,6 +13,4 @@ export class CreateMeetingRequestDto {
   max_person: number;
   @ApiProperty({ example: +new Date() })
   start_time: number;
-  @ApiProperty({ example: 'alan@test.com' })
-  created_by: string;
 }

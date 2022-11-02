@@ -14,7 +14,8 @@ export class GetMeetingsResponseDto {
           participants: ['rick@test.com', 'alan@test.com'],
           start_time: +new Date(),
           status: 'created',
-          created_at: +new Date()
+          created_at: +new Date(),
+          created_by: 'Rick Montaris'
         },
         {
           name: 'Meeting with Robert',
@@ -23,7 +24,8 @@ export class GetMeetingsResponseDto {
           participants: ['robert@test.com', 'alan@test.com'],
           start_time: +new Date(),
           status: 'created',
-          created_at: +new Date()
+          created_at: +new Date(),
+          created_by: 'Robert Doe'
         }
       ]
     },

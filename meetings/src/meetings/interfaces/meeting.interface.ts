@@ -1,4 +1,6 @@
-export interface IMeeting {
+import { Document } from 'mongoose';
+
+export interface IMeeting extends Document {
   name: string;
   code: string;
   description: string;
