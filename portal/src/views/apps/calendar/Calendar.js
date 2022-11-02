@@ -13,13 +13,11 @@ import Menu from 'mdi-material-ui/Menu';
 
 const blankMeeting = {
   name: '',
-  startTime: '',
-  endTime: '',
-  max: 4,
-  extendedProps: {
-    participants: [],
-    description: ''
-  }
+  participants: [],
+  description: '',
+  startTime: new Date(+new Date() - (+new Date()%(3600000)) + 3600000),
+  duration: 30,
+  maxPerson: 4
 };
 
 const Calendar = props => {
@@ -123,8 +121,6 @@ const Calendar = props => {
       dateClick(info) {
         const meeting = { ...blankMeeting };
         meeting.startTime = info.date;
-        meeting.endTime = info.date;
-        
 
         // @ts-ignore
         dispatch(handleSelectMeeting(meeting));
