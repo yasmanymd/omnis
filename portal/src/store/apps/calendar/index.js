@@ -42,7 +42,7 @@ export const addMeeting = createAsyncThunk('appCalendar/addMeeting', async (meet
   if (result?.errors) {
     toast.error(<ErrorDetails message='Error creating meeting.' errors={result.errors} />);
   } else {
-    toast.success('Meeting created');
+    toast.success('Meeting created.');
   }
   
   return result.data.meeting;
@@ -50,19 +50,36 @@ export const addMeeting = createAsyncThunk('appCalendar/addMeeting', async (meet
 
 // ** Update Meeting
 export const updateMeeting = createAsyncThunk('appCalendar/updateMeeting', async (meeting, { dispatch }) => {
-  const response = await axios.post('/apps/calendar/update-meeting', {
-    data: {
-      meeting
-    }
+  const response = await fetch(encodeURI('/api/meetings/' + meeting._id), {
+    method: 'PUT',
+    headers: {
+      'accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      "name": meeting.name,
+      "description": meeting.description,
+      "participants": meeting.participants,
+      "duration": meeting.duration,
+      "max_person": meeting.maxPerson,
+      "start_time": +new Date(meeting.startTime)
+    })
   });
-  await dispatch(fetchEvents());
-
-  return response.data.meeting;
+  
+  const result = await response.json();
+  dispatch(fetchMeetings());
+  if (result?.errors) {
+    toast.error(<ErrorDetails message='Error updating meeting.' errors={result.errors} />);
+  } else {
+    toast.success('Meeting updated.');
+  }
+  
+  return result.data.meeting;
 })
 
 // ** Delete Meeting
 export const deleteMeeting = createAsyncThunk('appCalendar/deleteMeeting', async (id, { dispatch }) => {
-  const response = await fetch(encodeURI('/api/meetings?id='+id), {
+  const response = await fetch(encodeURI('/api/meetings/'+id), {
     method: 'DELETE',
     headers: {
       'accept': 'application/json',
@@ -70,9 +87,15 @@ export const deleteMeeting = createAsyncThunk('appCalendar/deleteMeeting', async
     }
   });
   
-  await dispatch(fetchEvents());
-
-  return response.data;
+  const result = await response.json();
+  dispatch(fetchMeetings());
+  if (result?.errors) {
+    toast.error(<ErrorDetails message='Error removing meeting.' errors={result.errors} />);
+  } else {
+    toast.success('Meeting removed.');
+  }
+  
+  return result.data.meeting;
 })
 
 export const appCalendarSlice = createSlice({

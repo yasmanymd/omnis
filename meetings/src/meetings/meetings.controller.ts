@@ -76,7 +76,7 @@ export class MeetingsController {
 
   @MessagePattern('meeting_update_by_id')
   public async meetingUpdateById(params: {
-    meeting: IMeetingUpdateParams;
+    meeting: IMeeting;
     id: string;
     user: string;
   }): Promise<IMeetingUpdateByIdResponse> {
@@ -86,8 +86,7 @@ export class MeetingsController {
         const meeting = await this.meetingService.getMeetingById(params.id);
         if (meeting) {
           if (meeting.created_by === params.user) {
-            const updatedMeeting = Object.assign(meeting, params.meeting);
-            await updatedMeeting.save();
+            const updatedMeeting = await this.meetingService.updateMeetingById(meeting._id, Object.assign(meeting, params.meeting));
             result = {
               status: HttpStatus.OK,
               message: 'meeting_update_by_id_success',

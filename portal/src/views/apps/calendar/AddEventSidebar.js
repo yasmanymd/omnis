@@ -61,7 +61,7 @@ const AddMeetingSidebar = props => {
     startTime: yup.date().required('Start Time is a required field.'),
     duration: yup.number().typeError('Duration must be a number.').min(15, 'Minimun time of meeting is 15 mins.').required('Duration is a required field.'),
     maxPerson: yup.number().typeError('Max must be a number.').min(2, 'The meeting should have at least 2 participants.').required('Max is a required field.')
-  });
+  }).required();
 
   const {
     control,
@@ -78,9 +78,8 @@ const AddMeetingSidebar = props => {
     handleAddMeetingSidebarToggle();
   }
 
-  const onSubmit = async data => {
+  const onSubmit = data => {
     const modifiedMeeting = {
-      display: 'block',
       name: data.name,
       description: data.description.length ? data.description : undefined,
       participants: data.participants && data.participants.length ? data.participants : undefined,
@@ -89,9 +88,9 @@ const AddMeetingSidebar = props => {
       maxPerson: data.maxPerson
     };
     if (!store.selectedMeeting || (!store.selectedMeeting && !store.selectedMeeting.name.length)) {
-      await dispatch(addMeeting(modifiedMeeting));
+      dispatch(addMeeting(modifiedMeeting));
     } else {
-      await dispatch(updateMeeting({ id: store.selectedMeeting.id, ...modifiedMeeting }));
+      dispatch(updateMeeting({ ...modifiedMeeting, _id: store.selectedMeeting._id }));
     }
     dispatch(fetchMeetings());
     handleSidebarClose();
@@ -118,7 +117,7 @@ const AddMeetingSidebar = props => {
       setValue('name', meeting.name || defaultValues.name);
       setValue('description', meeting.description || defaultValues.name);
       setValue('participants', meeting.participants || defaultValues.participants);
-      setValue('startTime', meeting.start_time || defaultValues.startTime);
+      setValue('startTime', new Date(meeting.start_time || defaultValues.startTime));
       setValue('duration', meeting.duration || defaultValues.duration);
       setValue('maxPerson', meeting.max_person || defaultValues.maxPerson);
       setValues({
@@ -126,7 +125,7 @@ const AddMeetingSidebar = props => {
         name: meeting.name || defaultValues.name,
         description: meeting.description || defaultValues.name,
         participants: meeting.participants || defaultValues.participants,
-        startTime: meeting.start_time || defaultValues.startTime,
+        startTime: new Date(meeting.start_time || defaultValues.startTime),
         duration: meeting.duration || defaultValues.duration,
         maxPerson: meeting.max_person || defaultValues.maxPerson
       });

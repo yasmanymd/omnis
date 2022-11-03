@@ -17,8 +17,6 @@ services:
       - ./portal:/usr/src/app
       - /usr/src/app/node_modules
       - /usr/src/app/.next
-      - "/etc/timezone:/etc/timezone:ro"
-      - "/etc/localtime:/etc/localtime:ro"
     
   rabbitmq:
     image: rabbitmq:3-management-alpine

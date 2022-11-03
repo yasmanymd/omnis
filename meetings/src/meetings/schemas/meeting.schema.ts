@@ -1,7 +1,13 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Document } from "mongoose";
+import { IMeeting } from '../interfaces/meeting.interface';
+
+export type MeetingDocument = Meeting & Document;
 
 @Schema()
-export class Meeting {
+export class Meeting implements IMeeting {
+  _id: string;
+
   @Prop({ required: true })
   name: string;
 

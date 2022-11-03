@@ -1,12 +1,12 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
-import { IMeetingUpdateParams } from "./interfaces/meeting-update-params.interface";
 import { IMeeting } from "./interfaces/meeting.interface";
+import { MeetingDocument } from "./schemas/meeting.schema";
 
 @Injectable()
 export class MeetingsService {
-  constructor(@InjectModel('Meeting') private readonly meetingModel: Model<IMeeting>) {}
+  constructor(@InjectModel('Meeting') private readonly meetingModel: Model<MeetingDocument>) {}
 
   public async createMeeting(meeting: IMeeting): Promise<IMeeting> {
     const meetingModel = new this.meetingModel(meeting);
@@ -17,7 +17,7 @@ export class MeetingsService {
     return this.meetingModel.find({ created_by: user }).exec();
   }
 
-  public async getMeetingById(id: string) {
+  public async getMeetingById(id: string): Promise<IMeeting> {
     return await this.meetingModel.findById(id);
   }
 
@@ -25,10 +25,10 @@ export class MeetingsService {
     return await this.meetingModel.findOneAndDelete({ _id: id });
   }
 
-  /*public async updateMeetingById(
+  public async updateMeetingById(
     id: string,
-    params: IMeetingUpdateParams,
+    params: IMeeting,
   ): Promise<IMeeting> {
-    return await this.meetingModel.updateOne({ _id: id }, params);
-  }*/
+    return await this.meetingModel.findByIdAndUpdate({ _id: id }, params);
+  }
 }

@@ -1,4 +1,4 @@
-import { Body, Controller, Delete, Get, HttpException, HttpStatus, Inject, Param, Post, Query, Req, UseGuards } from '@nestjs/common';
+import { Body, Controller, Delete, Get, HttpException, HttpStatus, Inject, Param, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { ApiOkResponse, ApiCreatedResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { CreateMeetingResponseDto } from './interfaces/meetings/dto/create-meeting-response.dto';
@@ -13,6 +13,9 @@ import { IServiceGetMeetingsResponse } from './interfaces/meetings/service-get-m
 import { DeleteMeetingResponseDto } from './interfaces/meetings/dto/delete-meeting-response.dto';
 import { IUser } from './interfaces/user/user.interface';
 import { IServiceMeetingDeleteResponse } from './interfaces/meetings/service-meeting-delete-response.interface';
+import { UpdateMeetingResponseDto } from './interfaces/meetings/dto/update-meeting-response.dto';
+import { UpdateMeetingRequestDto } from './interfaces/meetings/dto/update-meeting-request.dto';
+import { IServiceMeetingUpdateByIdResponse } from './interfaces/meetings/service-meeting-update-by-id-response.interface';
 
 @Controller('meetings')
 export class MeetingsController {
@@ -62,7 +65,7 @@ export class MeetingsController {
   @Permissions('read:meeting')
   @ApiOkResponse({
     type: GetMeetingsResponseDto,
-    description: 'List of meetings of user',
+    description: 'List of meetings of user'
   })
   public async getMeetings(
     @Req() req: { user: IUser }
@@ -86,9 +89,9 @@ export class MeetingsController {
   @Permissions('delete:meeting')
   @ApiOkResponse({
     type: DeleteMeetingResponseDto,
-    description: 'Delete meeting',
+    description: 'Delete meeting'
   })
-  public async deleteTask(
+  public async deleteMeeting(
     @Req() req: { user: IUser },
     @Param('id') id: string,
   ): Promise<DeleteMeetingResponseDto> {
@@ -113,6 +116,47 @@ export class MeetingsController {
     return {
       message: deleteMeetingResponse.message,
       data: null,
+      errors: null,
+    };
+  }
+
+  @Put(':id')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'), PermissionsGuard)
+  @Permissions('edit:meeting')
+  @ApiOkResponse({
+    type: UpdateMeetingResponseDto,
+    description: 'Update meeting'
+  })
+  public async updateMeeting(
+    @Req() req: { user: IUser },
+    @Param('id') id: string,
+    @Body() meetingRequest: UpdateMeetingRequestDto,
+  ): Promise<UpdateMeetingResponseDto> {
+    const updateMeetingResponse: IServiceMeetingUpdateByIdResponse = await firstValueFrom(
+      this.meetingService.send('meeting_update_by_id', {
+        id: id,
+        user: req.user.email,
+        meeting: meetingRequest,
+      }),
+    );
+
+    if (updateMeetingResponse.status !== HttpStatus.OK) {
+      throw new HttpException(
+        {
+          message: updateMeetingResponse.message,
+          errors: updateMeetingResponse.errors,
+          data: null,
+        },
+        updateMeetingResponse.status,
+      );
+    }
+
+    return {
+      message: updateMeetingResponse.message,
+      data: {
+        meeting: updateMeetingResponse.meeting,
+      },
       errors: null,
     };
   }
