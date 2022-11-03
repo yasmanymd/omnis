@@ -19,7 +19,6 @@ export default withApiAuthRequired(async function handler(req, res) {
         body: JSON.stringify(req.body)
       });
       result = await response.json();
-      console.log(result)
       res.status(200).json(result);
       break;
     case 'DELETE':
