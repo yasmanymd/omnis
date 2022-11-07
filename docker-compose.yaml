@@ -83,3 +83,14 @@ services:
     volumes:
       - ./meetings:/usr/src/app
       - /usr/src/app/node_modules
+  
+  #ngrok:
+  #  image: shkoliar/ngrok:latest
+  #  ports:
+  #    - 4551:4551
+  #  links:
+  #    - portal
+  #  environment:
+  #    - DOMAIN=portal
+  #    - PORT=3000
+  #    - AUTH_TOKEN=2H3Ahvv4pV6UVFlyESfgtmExDbf_JkyHuWPrSVSAHjPBwFeD

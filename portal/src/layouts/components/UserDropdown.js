@@ -96,7 +96,7 @@ const UserDropdown = props => {
           alt={username}
           onClick={handleDropdownOpen}
           sx={{ width: 40, height: 40 }}
-          src={user.picture}
+          src={user?.picture}
         />
       </Badge>
       <Menu
@@ -125,7 +125,7 @@ const UserDropdown = props => {
             >
               <Avatar
                 alt={username}
-                src={user.picture}
+                src={user?.picture}
                 sx={{ width: '2.5rem', height: '2.5rem' }}
               />
             </Badge>

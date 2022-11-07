@@ -1,7 +1,4 @@
-import React, { useState, forwardRef, useCallback } from "react";
-import { useSnackbar, SnackbarContent } from "notistack";
-import Alert from '@mui/material/Alert';
-import AlertTitle from '@mui/material/AlertTitle';
+import React, { forwardRef } from "react";
 
 const ErrorDetails = forwardRef((props, ref) => {
   let msgs = [];
