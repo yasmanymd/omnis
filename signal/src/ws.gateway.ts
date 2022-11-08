@@ -16,7 +16,6 @@ export class WsGateway implements OnGatewayConnection, OnGatewayDisconnect {
   private users = {};
 
   async handleConnection(socket: Socket) {
-    console.log('connected');
     const id = Math.floor(Math.random() * 10000) 
     this.users[id] = socket.id
     socket.emit('me', id)
