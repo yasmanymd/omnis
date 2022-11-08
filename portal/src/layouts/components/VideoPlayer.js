@@ -1,9 +1,28 @@
 import React, { useContext } from 'react';
+import { useWebRTC } from '../../hooks/useWebRTC';
 
-import { SocketContext } from '../../layouts/context/SocketContext';
+const VideoPlayer = props => {
+  const { signalingServerUrl } = props;
 
-const VideoPlayer = () => {
-  const { myVideo, stream } = useContext(SocketContext);
+  const {
+    name,
+    setName,
+    userVideo,
+    myVideo,
+    callAccepted,
+    callPeer,
+    stream,
+    acceptCall,
+    me,
+    receivingCall,
+    caller,
+    sendMessage,
+    messages,
+    rejectCall,
+    calling,
+    cancelCall,
+    endCall,
+  } = useWebRTC(signalingServerUrl);
   
   return (
     <div>

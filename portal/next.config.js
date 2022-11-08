@@ -12,6 +12,9 @@ const withTM = require('next-transpile-modules')([
 ])
 
 module.exports = withTM({
+  publicRuntimeConfig: {
+    signalingServerUrl: process.env.NEXT_PUBLIC_SIGNALING_SERVER_URL
+  },
   trailingSlash: true,
   reactStrictMode: false,
   experimental: {

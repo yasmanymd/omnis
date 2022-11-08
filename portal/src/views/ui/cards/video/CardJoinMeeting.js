@@ -9,11 +9,13 @@ import CardContent from '@mui/material/CardContent'
 import AvatarGroup from '@mui/material/AvatarGroup'
 import VideoPlayer from '../../../../layouts/components/VideoPlayer'
 
-const CardJoinMeeting = () => {
+const CardJoinMeeting = props => {
+  const { signalingServerUrl } = props;
+
   return (
     <Card sx={{ position: 'relative' }}>
       <CardMedia sx={{ height: '12.625rem' }}>
-        <VideoPlayer />
+        <VideoPlayer signalingServerUrl={signalingServerUrl} />
       </CardMedia>
       <Avatar
         alt='Robert Meyer'

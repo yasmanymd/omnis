@@ -54,7 +54,8 @@ const CallContent = props => {
     sidebarWidth,
     userProfileRightOpen,
     handleLeftSidebarToggle,
-    handleUserProfileRightSidebarToggle
+    handleUserProfileRightSidebarToggle,
+    signalingServerUrl
   } = props
 
   // ** State
@@ -102,7 +103,7 @@ const CallContent = props => {
             <Box
               onClick={handleJoinMeeting}
             >
-              <CardJoinMeeting />
+              <CardJoinMeeting signalingServerUrl={signalingServerUrl} />
             </Box>
           </CallWrapperStartCall>
         )

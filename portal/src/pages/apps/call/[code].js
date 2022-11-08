@@ -24,7 +24,9 @@ import CallContent from 'src/views/apps/call/CallContent'
 
 // ** Layout Import
 import BlankLayoutWithAppBar from 'src/@core/layouts/BlankLayoutWithAppBar'
-import { ContextProvider } from '../../../layouts/context/SocketContext'
+
+import getConfig from 'next/config';
+const { publicRuntimeConfig } = getConfig();
 
 const AppCall = ({ meeting }) => {
   const router = useRouter();  
@@ -103,21 +105,22 @@ const AppCall = ({ meeting }) => {
         handleLeftSidebarToggle={handleLeftSidebarToggle}
         handleUserProfileLeftSidebarToggle={handleUserProfileLeftSidebarToggle}
       />
-      <ContextProvider>
-        <CallContent
-          store={store}
-          hidden={hidden}
-          sendMsg={sendMsg}
-          mdAbove={mdAbove}
-          dispatch={dispatch}
-          statusObj={statusObj}
-          getInitials={getInitials}
-          sidebarWidth={sidebarWidth}
-          userProfileRightOpen={userProfileRightOpen}
-          handleLeftSidebarToggle={handleLeftSidebarToggle}
-          handleUserProfileRightSidebarToggle={handleUserProfileRightSidebarToggle}
-        />
-      </ContextProvider>
+      
+      <CallContent
+        signalingServerUrl={publicRuntimeConfig.signalingServerUrl}
+        store={store}
+        hidden={hidden}
+        sendMsg={sendMsg}
+        mdAbove={mdAbove}
+        dispatch={dispatch}
+        statusObj={statusObj}
+        getInitials={getInitials}
+        sidebarWidth={sidebarWidth}
+        userProfileRightOpen={userProfileRightOpen}
+        handleLeftSidebarToggle={handleLeftSidebarToggle}
+        handleUserProfileRightSidebarToggle={handleUserProfileRightSidebarToggle}
+      />
+      
     </Box>
   )
 }
