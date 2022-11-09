@@ -91,6 +91,7 @@ services:
     container_name: signal
     ports:
       - ${SIGNAL_PORT}:3000
+      - 9231:9229
     restart: always
     stdin_open: true
     volumes:

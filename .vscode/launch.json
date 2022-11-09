@@ -27,6 +27,17 @@
       "remoteRoot": "/usr/src/app"
     },
     {
+      "type": "node",
+      "request": "attach",
+      "name": "Signal Debugger",
+      "address": "localhost",
+      "port": 9231,
+      "sourceMaps": true,
+      "restart": true,
+      "localRoot": "${workspaceFolder}/signal",
+      "remoteRoot": "/usr/src/app"
+    },
+    {
       "name": "Next.js: debug server-side",
       "type": "node-terminal",
       "request": "launch",
