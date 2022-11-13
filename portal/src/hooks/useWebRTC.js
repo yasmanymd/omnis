@@ -6,284 +6,187 @@ import Peer from "simple-peer";
 import { useRouter } from "next/dist/client/router";
 import toast from 'react-hot-toast';
 import ErrorDetails from '../layouts/components/ErrorDetails';
+import SimplePeer from "simple-peer";
 //import { useMediaQuery } from "@material-ui/core";
 //import { MyTheme } from "./theme";
 
 const ab2str = (buf) => {
-    return new TextDecoder().decode(buf);
+  return new TextDecoder().decode(buf);
 }
 
 export const useWebRTC = (signalingServerUrl) => {
-    const router = useRouter();
-    const [name, setName] = useState("");
-    const [me, setMe] = useState("");
-    const [stream, setStream] = useState();
-    const [receivingCall, setReceivingCall] = useState(false);
-    const [calling, setCalling] = useState(false);
-    const [callReciever, setCallReciever] = useState(false);
-    const [caller, setCaller] = useState(null);
-    const [callerSignal, setCallerSignal] = useState(null);
-    const [callAccepted, setCallAccepted] = useState(false);
+  const socket = useRef(null);
+  const peers = useRef({});
+  const videos = useRef();
+  const localStream = useRef();
+  const myVideo = useRef();
+  const configuration = {
+    // Using From https://www.metered.ca/tools/openrelay/
+    "iceServers": [
+      {
+        urls: "stun:openrelay.metered.ca:80"
+      },
+      {
+        urls: "turn:openrelay.metered.ca:80",
+        username: "openrelayproject",
+        credential: "openrelayproject"
+      },
+      {
+        urls: "turn:openrelay.metered.ca:443",
+        username: "openrelayproject",
+        credential: "openrelayproject"
+      },
+      {
+        urls: "turn:openrelay.metered.ca:443?transport=tcp",
+        username: "openrelayproject",
+        credential: "openrelayproject"
+      }
+    ]
+  };
+  /*const router = useRouter();
+  const [name, setName] = useState("");
+  const [me, setMe] = useState("");
+  
+  const [receivingCall, setReceivingCall] = useState(false);
+  const [calling, setCalling] = useState(false);
+  const [callReciever, setCallReciever] = useState(false);
+  const [caller, setCaller] = useState(null);
+  const [callerSignal, setCallerSignal] = useState(null);
+  const [callAccepted, setCallAccepted] = useState(false);
 
-    //const mobile = useMediaQuery((theme: MyTheme) => theme.breakpoints.down('sm'))
-   
+  //const mobile = useMediaQuery((theme: MyTheme) => theme.breakpoints.down('sm'))
+ 
 
-    const [callCancelled, setCallCancelled] = useState(false);
+  const [callCancelled, setCallCancelled] = useState(false);
 
-    const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState([]);
+  
+  const userVideo = useRef(null);
 
-    const socket = useRef(null);
-    const myVideo = useRef(null);
-    const userVideo = useRef(null);
+  const callerPeer = useRef(null);
+  const answerPeer = useRef(null);
 
-    const callerPeer = useRef(null);
-    const answerPeer = useRef(null);
+  const messageSound = useRef(null);
+  const callSound = useRef(null);
+  const recieveCallSound = useRef(null);*/
 
-    const messageSound = useRef(null);
-    const callSound = useRef(null);
-    const recieveCallSound = useRef(null);
+  useEffect(() => {
+    navigator.mediaDevices
+      .getUserMedia({
+        video: true,
+        audio: false,
+      })
+      .then((stream) => {
+        myVideo.current.srcObject = stream;
+        localStream.current = stream;
+        init();
+      })
+      .catch(error => {
+        toast.error(<ErrorDetails message='Error accessing media devices.' errors={{ 'details': { message: error.message } }} />);
+      });
+  }, []);
 
-    useEffect(() => {
-        messageSound.current = new Audio("/message.wav");
-        callSound.current = new Audio("/make-call.wav");
-        recieveCallSound.current = new Audio("/recieving-call.wav");
-    }, []);
+  const init = () => {
+    socket.current = io(signalingServerUrl);
 
-    useEffect(() => {
-        if (callAccepted && recieveCallSound.current) {
-            recieveCallSound.current.pause();
-        }
-        if (callAccepted && callSound.current) {
-            callSound.current.pause();
-        }
-    }, [callAccepted]);
+    socket.current.on('initReceive', socket_id => {
+      console.log('INIT RECEIVE ' + socket_id);
+      addPeer(socket_id, false);
 
-    useEffect(() => {
-        socket.current = io(signalingServerUrl);
-        navigator.mediaDevices
-            .getUserMedia({
-                video: true,
-                audio: false,
-            })
-            .then((stream) => {
-                setStream(stream);
-                setTimeout(() => {
-                    myVideo.current.srcObject = stream;
-                }, 500);
-            })
-            .catch(error => {
-                toast.error(<ErrorDetails message='Error accessing media devices.' errors={{'details': {message: error.message}}} />);
-            });
+      socket.current.emit('initSend', { init_socket_id: socket_id });
+    })
 
-        socket.current.on("me", (id) => {
-            setMe(id);
-        });
+    socket.current.on('initSend', ({ init_socket_id: socket_id }) => {
+      console.log('INIT SEND ' + socket_id);
+      addPeer(socket_id, true);
+    })
 
-        socket.current.on("user.calling", (data) => {
-            if (callCancelled) {
-                setCallCancelled(false);
-                return;
-            }
-            setReceivingCall(true);
-            setCallReciever(true);
-            setCaller(data.from);
-            setCallerSignal(data.signal);
-            if (recieveCallSound.current) {
-                recieveCallSound.current.loop = true;
-                recieveCallSound.current.play();
-            }
-        });
+    socket.current.on('removePeer', socket_id => {
+      console.log('removing peer ' + socket_id);
+      removePeer(socket_id);
+    })
 
-        socket.current.on("call.cancelled", () => {
-            setReceivingCall(false);
-            setCallReciever(false);
-            setCaller(null);
-            setCallerSignal(null);
-            setCallCancelled(true);
-            if (recieveCallSound.current) {
-                recieveCallSound.current.pause();
-            }
-        });
+    socket.current.on('disconnect', () => {
+      console.log('GOT DISCONNECTED')
+      for (let socket_id in peers) {
+        removePeer(socket_id)
+      }
+    });
 
-        socket.current.on("call.ended", () => {
-            router.reload();
-        });
-    }, []);
+    socket.current.on('signal', data => {
+      peers[data.socket_id].signal(data.signal);
+    })
+  }
 
-    function callPeer(id) {
-        setCalling(true);
-        if (callSound.current) {
-            callSound.current.loop = true;
-            callSound.current.play();
-        }
-        callerPeer.current = new Peer({
-            initiator: true,
-            trickle: false,
-            config: {
-                iceServers: [
-                    {
-                        urls: "stun:numb.viagenie.ca",
-                        username: "sultan1640@gmail.com",
-                        credential: "98376683",
-                    },
-                    {
-                        urls: "turn:numb.viagenie.ca",
-                        username: "sultan1640@gmail.com",
-                        credential: "98376683",
-                    },
-                ],
-            },
-            stream: stream,
-        });
-
-        callerPeer.current.on("signal", (data) => {
-            socket.current.emit("call.user", {
-                user_to_call: id,
-                signal: data,
-                from: { socket_id: me.toString(), name },
-            });
-        });
-
-        callerPeer.current.on("stream", (stream) => {
-            if (userVideo.current) {
-                userVideo.current.srcObject = stream;
-            }
-        });
-
-        callerPeer.current.on("data", (m) => {
-            console.log("caller get message >>", ab2str(m));
-            setMessages((prev) => [
-                ...prev,
-                { position: "right", text: ab2str(m) },
-            ]);
-            if (messageSound.current) {
-                messageSound.current.play();
-            }
-        });
-
-        socket.current.on("call.accepted", ({ signal }) => {
-            setCallAccepted(true);
-            setCalling(false);
-            callerPeer.current.signal(signal);
-        });
-
-        socket.current.on("call.rejected", ({ from }) => {
-            setCalling(false);
-            if (callSound.current) {
-                callSound.current.pause();
-            }
-            if (callerPeer.current) {
-                callerPeer.current.destroy();
-            }
-            router.reload();
-        });
+  const resize = (videos) => {
+    const mh = [0, 100, 100, 100, 50, 50, 50, 50, 50, 33, 33, 33, 33, 25, 25, 25, 25];
+    const mw = [0, 100, 50, 33, 50, 33, 33, 25, 25, 33, 25, 25, 25, 25, 25, 25, 25];
+    const pos = videos.children.length;
+    for (let idx in peers) {
+      let elem = document.getElementById(idx);
+      if (elem) {
+        elem.style.minHeight = mh[pos] + '%';
+        elem.style.maxHeight = mh[pos] + '%';
+        elem.style.minWidth = mw[pos] + '%';
+        elem.style.maxWidth = mw[pos] + '%';
+        elem.style.objectFit = 'cover';
+      }
     }
+    myVideo.current.style.minHeight = mh[pos] + '%';
+    myVideo.current.style.maxHeight = mh[pos] + '%';
+    myVideo.current.style.minWidth = mw[pos] + '%';
+    myVideo.current.style.maxWidth = mw[pos] + '%';
+    myVideo.current.style.objectFit = 'cover';
+  }
 
-    function acceptCall() {
-        setCallAccepted(true);
-        setReceivingCall(false);
-        answerPeer.current = new Peer({
-            initiator: false,
-            trickle: false,
-            stream: stream,
-        });
-        answerPeer.current.on("signal", (data) => {
-            socket.current.emit("answer.call", {
-                signal: data,
-                to: caller.socket_id.toString(),
-            });
-        });
+  const addPeer = (socket_id, am_initiator) => {
+    peers[socket_id] = new SimplePeer({
+      initiator: am_initiator,
+      stream: localStream.current,
+      config: configuration
+    });
 
-        answerPeer.current.on("stream", (stream) => {
-            if (userVideo.current) {
-                userVideo.current.srcObject = stream;
-            }
-        });
+    peers[socket_id].on('signal', data => {
+      socket.current.emit('signal', {
+        signal: data,
+        socket_id: socket_id
+      })
+    });
 
-        answerPeer.current.on("data", (m) => {
-            console.log("answer got message >> ", ab2str(m));
-            setMessages((prev) => [
-                ...prev,
-                { position: "right", text: ab2str(m) },
-            ]);
-            if (messageSound.current) {
-                messageSound.current.play();
-            }
-        });
+    peers[socket_id].on('stream', stream => {
+      let newVid = document.createElement('video');
+      newVid.srcObject = stream;
+      newVid.id = socket_id;
+      newVid.playsinline = false;
+      newVid.autoplay = true;
+      videos.current.appendChild(newVid);
+      resize(videos.current);
+    });
+  }
 
-        answerPeer.current.signal(callerSignal);
+  const removePeer = (socket_id) => {
+    let videoEl = document.getElementById(socket_id);
+    if (videoEl) {
+
+      const tracks = videoEl.srcObject.getTracks();
+
+      tracks.forEach(function (track) {
+        track.stop();
+      });
+
+      videoEl.srcObject = null;
+      videoEl.parentNode.removeChild(videoEl);
     }
-
-    async function rejectCall() {
-        await socket.current.emit("reject.call", {
-            from: me,
-            to: caller.socket_id,
-        });
-        setReceivingCall(false);
-        setCallReciever(false);
-        setCaller(null);
-        setCallerSignal(null);
-        if (recieveCallSound.current) {
-            recieveCallSound.current.pause();
-        }
+    if (peers[socket_id]) {
+      peers[socket_id].destroy();
     }
+    delete peers[socket_id];
+    resize(videos.current);
+  }
 
-    async function cancelCall(id) {
-        setCalling(false);
-        if (callSound.current) {
-            callSound.current.pause();
-        }
-        await socket.current.emit("cancel.call", {
-            from: me,
-            to: id,
-        });
-        callerPeer.current.destroy();
-        router.reload();
-    }
-
-    async function endCall(id) {
-        await socket.current.emit("end.call", {
-            from: me,
-            to: callReciever ? caller.socket_id : id,
-        });
-        router.reload();
-    }
-
-    function sendMessage(message) {
-        if(message === '') return
-        if (callReciever) {
-            answerPeer.current.send(message);
-            setMessages((prev) => [
-                ...prev,
-                { position: "left", text: message },
-            ]);
-        } else {
-            callerPeer.current.send(message);
-            setMessages((prev) => [
-                ...prev,
-                { position: "left", text: message },
-            ]);
-        }
-    }
-
-    return {
-        me,
-        stream,
-        callPeer,
-        acceptCall,
-        receivingCall,
-        callAccepted,
-        myVideo,
-        userVideo,
-        name,
-        setName,
-        caller,
-        callerSignal,
-        sendMessage,
-        messages,
-        rejectCall,
-        calling,
-        cancelCall,
-        endCall,
-    };
+  return {
+    localStream,
+    myVideo,
+    videos
+  };
 };

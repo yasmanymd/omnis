@@ -1,0 +1,8 @@
+{
+  "appService.zipIgnorePattern": [
+    "node_modules{,/**}",
+    ".vscode{,/**}"
+  ],
+  "appService.defaultWebAppToDeploy": "/subscriptions/86f053a3-b28c-4509-ab37-f7543c998d1c/AppServices/subscriptions/86f053a3-b28c-4509-ab37-f7543c998d1c/resourceGroups/rg-signal/providers/Microsoft.Web/sites/omnis-signal",
+  "appService.deploySubpath": "signal"
+}

@@ -81,31 +81,7 @@ const CallContent = props => {
       const selectedCall = store.selectedCall
       if (!selectedCall) {
         return (
-          <CallWrapperStartCall
-            sx={{
-              ...(mdAbove ? { borderTopLeftRadius: 0, borderBottomLeftRadius: 0 } : {})
-            }}
-          >
-            <MuiAvatar
-              sx={{
-                mb: 6,
-                pt: 8,
-                pb: 7,
-                px: 7.5,
-                width: 110,
-                height: 110,
-                backgroundColor: 'background.paper',
-                boxShadow: theme => theme.shadows[3]
-              }}
-            >
-              <VideocamIcon sx={{ fontSize: '3.125rem' }} />
-            </MuiAvatar>
-            <Box
-              onClick={handleJoinMeeting}
-            >
-              <CardJoinMeeting signalingServerUrl={signalingServerUrl} />
-            </Box>
-          </CallWrapperStartCall>
+          <CardJoinMeeting signalingServerUrl={signalingServerUrl} />
         )
       } else {
         return (
