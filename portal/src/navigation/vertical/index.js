@@ -31,6 +31,11 @@ const navigation = () => {
       icon: CalendarBlankOutline,
       path: '/apps/calendar'
     },
+    {
+      title: 'Candidates',
+      icon: CalendarBlankOutline,
+      path: '/apps/candidate/list'
+    }
   ]
 }
 

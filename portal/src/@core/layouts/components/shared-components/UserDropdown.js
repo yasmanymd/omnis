@@ -127,7 +127,7 @@ const UserDropdown = props => {
           </Box>
         </Box>
         <Divider sx={{ mt: 0, mb: 1 }} />
-        <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose('/apps/user/view/12')}>
+        <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose('/apps/candidate/view/12')}>
           <Box sx={styles}>
             <AccountOutline sx={{ mr: 2 }} />
             Profile
