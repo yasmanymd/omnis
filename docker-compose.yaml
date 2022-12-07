@@ -98,13 +98,30 @@ services:
       - ./signal:/usr/src/app
       - /usr/src/app/node_modules
 
-  ngrok1:
-    image: shkoliar/ngrok:latest
+  recruitment:
+    build:
+      context: ./recruitment
+    depends_on:
+      - rabbitmq
+      - omnisdb
+    container_name: recruitment
     ports:
-      - 4551:4551
-    links:
-      - portal
+      - 9232:9229
+    restart: always
+    stdin_open: true
     environment:
-      - DOMAIN=portal
-      - PORT=3000
-      - AUTH_TOKEN=2H3Ahvv4pV6UVFlyESfgtmExDbf_JkyHuWPrSVSAHjPBwFeD
+      MONGO_DSN: ${MONGO_DSN}
+      RABBITMQ_DSN: ${RABBITMQ_DSN}
+    volumes:
+      - ./recruitment:/usr/src/app
+      - /usr/src/app/node_modules
+  #ngrok1:
+  #  image: shkoliar/ngrok:latest
+  #  ports:
+  #    - 4551:4551
+  #  links:
+  #    - portal
+  #  environment:
+  #    - DOMAIN=portal
+  #    - PORT=3000
+  #    - AUTH_TOKEN=2H3Ahvv4pV6UVFlyESfgtmExDbf_JkyHuWPrSVSAHjPBwFeD

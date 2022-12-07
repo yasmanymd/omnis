@@ -5,16 +5,17 @@ import { Transport } from '@nestjs/microservices';
 import { ConfigService } from './config/config.service';
 import { ConfigModule } from './config/config.module';
 import { AuthzModule } from './authz/authz.module';
+import { CandidatesController } from './candidates.controller';
 
 @Module({
   imports: [
     ConfigModule,
     ClientsModule.registerAsync([
-      { 
-        name: 'MEETING_SERVICE', 
+      {
+        name: 'MEETING_SERVICE',
         imports: [ConfigModule],
         useFactory: async (configService: ConfigService) => {
-          return ({          
+          return ({
             transport: Transport.RMQ,
             options: {
               urls: [configService.get('rabbitmq_dsn')],
@@ -28,9 +29,28 @@ import { AuthzModule } from './authz/authz.module';
         inject: [ConfigService]
       }
     ]),
+    ClientsModule.registerAsync([
+      {
+        name: 'CANDIDATE_SERVICE',
+        imports: [ConfigModule],
+        useFactory: async (configService: ConfigService) => {
+          return ({
+            transport: Transport.RMQ,
+            options: {
+              urls: [configService.get('rabbitmq_dsn')],
+              queue: 'recruitment_queue',
+              queueOptions: {
+                durable: false
+              },
+            }
+          });
+        },
+        inject: [ConfigService]
+      }
+    ]),
     AuthzModule
   ],
-  controllers: [MeetingsController],
+  controllers: [MeetingsController, CandidatesController],
   providers: [],
 })
-export class AppModule {}
+export class AppModule { }
