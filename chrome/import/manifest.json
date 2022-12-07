@@ -1,0 +1,20 @@
+{
+  "manifest_version": 3,
+  "name": "Omnis import",
+  "version": "1.0",
+  "description": "Import profile from Linked.",
+  "action": {},
+  "icons": {
+    "16": "images/icon-16.png",
+    "32": "images/icon-32.png",
+    "48": "images/icon-48.png",
+    "128": "images/icon-128.png"
+  },
+  "permissions": [
+    "activeTab",
+    "scripting"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  }
+}
