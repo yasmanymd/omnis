@@ -4,6 +4,7 @@
   "version": "1.0",
   "description": "Import profile from Linked.",
   "action": {},
+  "options_page": "options.html",
   "icons": {
     "16": "images/icon-16.png",
     "32": "images/icon-32.png",
@@ -12,7 +13,8 @@
   },
   "permissions": [
     "activeTab",
-    "scripting"
+    "scripting",
+    "storage"
   ],
   "background": {
     "service_worker": "background.js"
