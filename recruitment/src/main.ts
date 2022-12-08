@@ -1,5 +1,5 @@
 import { NestFactory } from '@nestjs/core';
-import { CandidateModule } from './meetings/candidates.module';
+import { CandidateModule } from './candidates/candidates.module';
 import { ConfigService } from './services/config/config.service';
 import { Transport } from '@nestjs/microservices';
 

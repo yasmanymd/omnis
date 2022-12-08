@@ -8,6 +8,11 @@ export class UpdateCandidateResponseDto {
     example: {
       candidate: {
         name: 'Alan Rickman',
+        contacts: {
+          email: 'alan@gmail.com',
+          phone: '514-123-4567',
+          linkedin: 'https://linkedin.com/in/alarickman'
+        },
         created_at: +new Date(),
         created_by: 'Rick Montaris'
       },

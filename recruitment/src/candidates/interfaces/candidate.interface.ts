@@ -3,6 +3,10 @@ import { Document } from 'mongoose';
 export interface ICandidate {
   _id: string;
   name: string;
+  title: string;
+  contacts: { [key: string]: any };
+  status: string;
+  salary: string;
   created_at: number;
   created_by: string;
 }

@@ -38,6 +38,17 @@
       "remoteRoot": "/usr/src/app"
     },
     {
+      "type": "node",
+      "request": "attach",
+      "name": "Recruitment Debugger",
+      "address": "localhost",
+      "port": 9232,
+      "sourceMaps": true,
+      "restart": true,
+      "localRoot": "${workspaceFolder}/recruitment",
+      "remoteRoot": "/usr/src/app"
+    },
+    {
       "name": "Next.js: debug server-side",
       "type": "node-terminal",
       "request": "launch",

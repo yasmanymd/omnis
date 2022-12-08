@@ -6,8 +6,11 @@ export class CreateCandidateResponseDto {
   message: string;
   @ApiProperty({
     example: {
-      meeting: {
+      candidate: {
         name: 'Alan Rickman',
+        contacts: {
+          email: 'alan@gmail.com'
+        },
         created_at: +new Date(),
         created_by: 'Rick Montaris'
       },

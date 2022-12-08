@@ -4,12 +4,23 @@ import { ICandidate } from '../interfaces/candidate.interface';
 
 export type CandidateDocument = Candidate & Document;
 
-@Schema()
+@Schema({ strict: false })
 export class Candidate implements ICandidate {
   _id: string;
 
   @Prop({ required: true })
   name: string;
+
+  @Prop({ required: false })
+  title: string;
+
+  contacts: { [key: string]: any };
+
+  @Prop({ required: false })
+  status: string;
+
+  @Prop({ required: false })
+  salary: string;
 
   @Prop({ required: true })
   created_at: number;
