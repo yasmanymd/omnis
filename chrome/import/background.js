@@ -4,6 +4,8 @@ function importOmnis() {
       token: '',
       api: ''
     }, function (items) {
+      document.querySelector('#top-card-text-details-contact-info').click();
+
       const api = items.api;
       let profile = {
         token: items.token,
@@ -53,6 +55,7 @@ function importOmnis() {
           profile.contacts.twitter = twitter;
         }
       }
+      document.querySelector('button[data-test-modal-close-btn]').click();
 
       (async () => {
         const rawResponse = await fetch(api, {

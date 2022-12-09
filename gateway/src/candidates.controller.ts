@@ -17,6 +17,7 @@ import { UpdateCandidateResponseDto } from './interfaces/candidates/dto/update-c
 import { UpdateCandidateRequestDto } from './interfaces/candidates/dto/update-candidate-request.dto';
 import { IServiceCandidateUpdateByIdResponse } from './interfaces/candidates/service-candidate-update-by-id-response.interface';
 import { ImportCandidateRequestDto } from './interfaces/candidates/dto/import-candidate-request.dto';
+import { ImportCandidateResponseDto } from './interfaces/candidates/dto/import-candidate-response.dto';
 
 @Controller('candidates')
 export class CandidatesController {
@@ -168,7 +169,7 @@ export class CandidatesController {
   })
   async importCandidate(
     @Body() candidateRequest: ImportCandidateRequestDto
-  ): Promise<CreateCandidateResponseDto> {
+  ): Promise<ImportCandidateResponseDto> {
     const createCandidateResponse: IServiceCreateCandidateResponse = await firstValueFrom(
       this.candidateService.send('candidate_import', candidateRequest)
     );
@@ -176,16 +177,12 @@ export class CandidatesController {
     if (createCandidateResponse.status != HttpStatus.CREATED) {
       throw new HttpException({
         message: createCandidateResponse.message,
-        data: null,
         errors: createCandidateResponse.errors,
       },
         createCandidateResponse.status);
     }
     return {
       message: createCandidateResponse.message,
-      data: {
-        candidate: createCandidateResponse.candidate
-      },
       errors: null
     };
   }
