@@ -10,3 +10,7 @@ export interface ICandidate {
   created_at: number;
   created_by: string;
 }
+
+export interface ICandidateImport extends ICandidate {
+  token: string;
+}

@@ -16,6 +16,7 @@ import { IServiceCandidateDeleteResponse } from './interfaces/candidates/service
 import { UpdateCandidateResponseDto } from './interfaces/candidates/dto/update-candidate-response.dto';
 import { UpdateCandidateRequestDto } from './interfaces/candidates/dto/update-candidate-request.dto';
 import { IServiceCandidateUpdateByIdResponse } from './interfaces/candidates/service-candidate-update-by-id-response.interface';
+import { ImportCandidateRequestDto } from './interfaces/candidates/dto/import-candidate-request.dto';
 
 @Controller('candidates')
 export class CandidatesController {
@@ -158,6 +159,34 @@ export class CandidatesController {
         candidate: updateCandidateResponse.candidate,
       },
       errors: null,
+    };
+  }
+
+  @Post('import')
+  @ApiCreatedResponse({
+    type: CreateCandidateResponseDto
+  })
+  async importCandidate(
+    @Body() candidateRequest: ImportCandidateRequestDto
+  ): Promise<CreateCandidateResponseDto> {
+    const createCandidateResponse: IServiceCreateCandidateResponse = await firstValueFrom(
+      this.candidateService.send('candidate_import', candidateRequest)
+    );
+
+    if (createCandidateResponse.status != HttpStatus.CREATED) {
+      throw new HttpException({
+        message: createCandidateResponse.message,
+        data: null,
+        errors: createCandidateResponse.errors,
+      },
+        createCandidateResponse.status);
+    }
+    return {
+      message: createCandidateResponse.message,
+      data: {
+        candidate: createCandidateResponse.candidate
+      },
+      errors: null
     };
   }
 }

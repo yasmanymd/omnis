@@ -6,6 +6,7 @@ import { ConfigService } from './config/config.service';
 import { ConfigModule } from './config/config.module';
 import { AuthzModule } from './authz/authz.module';
 import { CandidatesController } from './candidates.controller';
+import { TokenController } from './token.controller';
 
 @Module({
   imports: [
@@ -48,9 +49,28 @@ import { CandidatesController } from './candidates.controller';
         inject: [ConfigService]
       }
     ]),
+    ClientsModule.registerAsync([
+      {
+        name: 'TOKEN_SERVICE',
+        imports: [ConfigModule],
+        useFactory: async (configService: ConfigService) => {
+          return ({
+            transport: Transport.RMQ,
+            options: {
+              urls: [configService.get('rabbitmq_dsn')],
+              queue: 'recruitment_queue',
+              queueOptions: {
+                durable: false
+              },
+            }
+          });
+        },
+        inject: [ConfigService]
+      }
+    ]),
     AuthzModule
   ],
-  controllers: [MeetingsController, CandidatesController],
+  controllers: [MeetingsController, CandidatesController, TokenController],
   providers: [],
 })
 export class AppModule { }

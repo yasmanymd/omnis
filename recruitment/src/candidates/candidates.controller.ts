@@ -1,16 +1,16 @@
 import { Controller, HttpStatus } from "@nestjs/common";
 import { ICandidateCreateResponse } from "./interfaces/candidate-create-response.interface";
-import { ICandidate } from "./interfaces/candidate.interface";
+import { ICandidate, ICandidateImport } from "./interfaces/candidate.interface";
 import { CandidatesService } from "./candidates.service";
 import { MessagePattern } from '@nestjs/microservices';
 import { ICandidatesSearchByUserResponse } from "./interfaces/candidates-search-by-user-response.interface";
 import { ICandidateUpdateByIdResponse } from "./interfaces/candidate-update-by-id-response.interface";
-import { ICandidateUpdateParams } from "./interfaces/candidate-update-params.interface";
 import { ICandidateDeleteResponse } from "./interfaces/candidate-delete-response.interface";
+import { TokenService } from "../token/token.service";
 
 @Controller()
 export class CandidatesController {
-  constructor(private readonly candidateService: CandidatesService) { }
+  constructor(private readonly candidateService: CandidatesService, private readonly tokenService: TokenService) { }
 
   @MessagePattern('candidates_search_by_user')
   public async candidatesSearchByUser(user: string): Promise<ICandidatesSearchByUserResponse> {
@@ -63,6 +63,55 @@ export class CandidatesController {
       result = {
         status: HttpStatus.BAD_REQUEST,
         message: 'candidate_create_bad_request',
+        candidate: null,
+        errors: null
+      };
+    }
+
+    return result;
+  }
+
+  @MessagePattern('candidate_import')
+  public async candidateImport(candidate: ICandidateImport): Promise<ICandidateCreateResponse> {
+    let result: ICandidateCreateResponse;
+
+    if (candidate && candidate.contacts && candidate.contacts.linkedin) {
+      const token = await this.tokenService.getUserByToken(candidate.token);
+      if (token) {
+        try {
+          delete candidate.token;
+          const createdCandidate = await this.candidateService.createCandidate(
+            Object.assign(candidate, {
+              created_by: token.user,
+              created_at: +new Date()
+            })
+          );
+          result = {
+            status: HttpStatus.CREATED,
+            message: 'candidate_import_success',
+            candidate: createdCandidate,
+            errors: null
+          };
+        } catch (e) {
+          result = {
+            status: HttpStatus.PRECONDITION_FAILED,
+            message: 'candidate_import_precondition_failed',
+            candidate: null,
+            errors: e.errors
+          };
+        }
+      } else {
+        result = {
+          status: HttpStatus.UNAUTHORIZED,
+          message: 'candidate_import_unauthorized',
+          candidate: null,
+          errors: null
+        };
+      }
+    } else {
+      result = {
+        status: HttpStatus.BAD_REQUEST,
+        message: 'candidate_import_bad_request',
         candidate: null,
         errors: null
       };

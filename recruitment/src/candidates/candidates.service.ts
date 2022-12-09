@@ -9,11 +9,11 @@ export class CandidatesService {
   constructor(@InjectModel('Candidate') private readonly candidateModel: Model<CandidateDocument>) { }
 
   public async createCandidate(candidate: ICandidate): Promise<ICandidate> {
-    const candidateModel = new this.candidateModel(candidate);
-    return await candidateModel.save();
+    return await this.candidateModel.findOneAndUpdate({ "contacts.linkedin": candidate.contacts.linkedin }, candidate, { new: true, upsert: true });
   }
 
   public async getCandidatesByUser(user: string): Promise<ICandidate[]> {
+    this.candidateModel.findOne()
     return this.candidateModel.find({ created_by: user }).exec();
   }
 
