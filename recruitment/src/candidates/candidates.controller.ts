@@ -12,6 +12,21 @@ import { TokenService } from "../token/token.service";
 export class CandidatesController {
   constructor(private readonly candidateService: CandidatesService, private readonly tokenService: TokenService) { }
 
+  @MessagePattern('candidates_list')
+  public async candidatesList(): Promise<ICandidatesSearchByUserResponse> {
+    let result: ICandidatesSearchByUserResponse;
+
+
+    const candidates = await this.candidateService.getCandidates();
+    result = {
+      status: HttpStatus.OK,
+      message: 'candidates_list_success',
+      candidates: candidates
+    };
+
+    return result;
+  }
+
   @MessagePattern('candidates_search_by_user')
   public async candidatesSearchByUser(user: string): Promise<ICandidatesSearchByUserResponse> {
     let result: ICandidatesSearchByUserResponse;

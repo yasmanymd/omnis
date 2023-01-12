@@ -73,7 +73,7 @@ export class CandidatesController {
     @Req() req: { user: IUser }
   ): Promise<GetCandidatesResponseDto> {
     const candidatesResponse: IServiceGetCandidatesResponse = await firstValueFrom(
-      this.candidateService.send('candidates_search_by_user', req.user.email),
+      this.candidateService.send('candidates_list', {}),
     );
 
     return {

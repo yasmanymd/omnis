@@ -12,6 +12,11 @@ export class CandidatesService {
     return await this.candidateModel.findOneAndUpdate({ "contacts.linkedin": candidate.contacts.linkedin }, candidate, { new: true, upsert: true });
   }
 
+  public async getCandidates(): Promise<ICandidate[]> {
+    this.candidateModel.findOne()
+    return this.candidateModel.find().exec();
+  }
+
   public async getCandidatesByUser(user: string): Promise<ICandidate[]> {
     this.candidateModel.findOne()
     return this.candidateModel.find({ created_by: user }).exec();

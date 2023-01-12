@@ -55,7 +55,7 @@ export const appCandidatesSlice = createSlice({
   reducers: {},
   extraReducers: builder => {
     builder.addCase(fetchCandidates.fulfilled, (state, action) => {
-      state.data = action.payload.candidates
+      state.data = action.payload?.candidates || []
     })
   }
 })
