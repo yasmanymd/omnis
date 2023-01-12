@@ -41,7 +41,7 @@ import CustomAvatar from 'src/@core/components/mui/avatar'
 import { getInitials } from 'src/@core/utils/get-initials'
 
 // ** Actions Imports
-import { fetchData, deleteUser } from 'src/store/apps/candidate'
+import { fetchCandidates, deleteUser } from 'src/store/apps/candidate'
 
 // ** Custom Components Imports
 import TableHeader from 'src/views/apps/candidate/list/TableHeader'
@@ -75,25 +75,17 @@ const AvatarWithoutImageLink = styled(Link)(({ theme }) => ({
 
 // ** renders client column
 const renderClient = row => {
-  if (row.avatar.length) {
-    return (
-      <AvatarWithImageLink href={`/apps/candidate/view/${row.id}`}>
-        <CustomAvatar src={row.avatar} sx={{ mr: 3, width: 30, height: 30 }} />
-      </AvatarWithImageLink>
-    )
-  } else {
-    return (
-      <AvatarWithoutImageLink href={`/apps/candidate/view/${row.id}`}>
-        <CustomAvatar
-          skin='light'
-          color={row.avatarColor || 'primary'}
-          sx={{ mr: 3, width: 30, height: 30, fontSize: '.875rem' }}
-        >
-          {getInitials(row.fullName ? row.fullName : 'John Doe')}
-        </CustomAvatar>
-      </AvatarWithoutImageLink>
-    )
-  }
+  return (
+    <AvatarWithoutImageLink href={`/apps/candidate/view/${row.id}`}>
+      <CustomAvatar
+        skin='light'
+        color={'primary'}
+        sx={{ mr: 3, width: 30, height: 30, fontSize: '.875rem' }}
+      >
+        {getInitials(row.name ? row.name : 'John Doe')}
+      </CustomAvatar>
+    </AvatarWithoutImageLink>
+  )
 }
 
 // ** Styled component for the link inside menu
@@ -172,10 +164,10 @@ const columns = [
   {
     flex: 0.2,
     minWidth: 230,
-    field: 'fullName',
-    headerName: 'User',
+    field: 'name',
+    headerName: 'Candidate',
     renderCell: ({ row }) => {
-      const { id, fullName, username } = row
+      const { id, name } = row
 
       return (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
@@ -188,12 +180,7 @@ const columns = [
                 variant='body2'
                 sx={{ fontWeight: 600, color: 'text.primary', textDecoration: 'none' }}
               >
-                {fullName}
-              </Typography>
-            </Link>
-            <Link href={`/apps/candidate/view/${id}`} passHref>
-              <Typography noWrap component='a' variant='caption' sx={{ textDecoration: 'none' }}>
-                @{username}
+                {name}
               </Typography>
             </Link>
           </Box>
@@ -204,69 +191,34 @@ const columns = [
   {
     flex: 0.2,
     minWidth: 250,
-    field: 'email',
-    headerName: 'Email',
+    field: 'title',
+    headerName: 'Title',
     renderCell: ({ row }) => {
       return (
         <Typography noWrap variant='body2'>
-          {row.email}
+          {row.title}
         </Typography>
       )
     }
   },
   {
     flex: 0.15,
-    field: 'role',
-    minWidth: 150,
-    headerName: 'Role',
+    field: 'linkedin',
+    //minWidth: 150,
+    headerName: 'LinkedIn',
     renderCell: ({ row }) => {
       return (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          {userRoleObj[row.role]}
-          <Typography noWrap sx={{ color: 'text.secondary', textTransform: 'capitalize' }}>
-            {row.role}
-          </Typography>
+          <Link href={row.linkedin} passHref>
+            <a target="_blank">
+              <Typography noWrap component='a' variant='caption' sx={{ textDecoration: 'none' }}>
+                Go to LinkedIn
+              </Typography>
+            </a>
+          </Link>
         </Box>
       )
     }
-  },
-  {
-    flex: 0.15,
-    minWidth: 120,
-    headerName: 'Plan',
-    field: 'currentPlan',
-    renderCell: ({ row }) => {
-      return (
-        <Typography noWrap sx={{ textTransform: 'capitalize' }}>
-          {row.currentPlan}
-        </Typography>
-      )
-    }
-  },
-  {
-    flex: 0.1,
-    minWidth: 110,
-    field: 'status',
-    headerName: 'Status',
-    renderCell: ({ row }) => {
-      return (
-        <CustomChip
-          skin='light'
-          size='small'
-          label={row.status}
-          color={userStatusObj[row.status]}
-          sx={{ textTransform: 'capitalize' }}
-        />
-      )
-    }
-  },
-  {
-    flex: 0.1,
-    minWidth: 90,
-    sortable: false,
-    field: 'actions',
-    headerName: 'Actions',
-    renderCell: ({ row }) => <RowOptions id={row.id} />
   }
 ]
 
@@ -281,17 +233,12 @@ const UserList = () => {
 
   // ** Hooks
   const dispatch = useDispatch()
-  const store = useSelector(state => state.user)
+  const store = useSelector(state => state.candidate)
   useEffect(() => {
     dispatch(
-      fetchData({
-        role,
-        status,
-        q: value,
-        currentPlan: plan
-      })
+      fetchCandidates()
     )
-  }, [dispatch, plan, role, status, value])
+  }, [dispatch, null])
 
   const handleFilter = useCallback(val => {
     setValue(val)
@@ -386,7 +333,16 @@ const UserList = () => {
           <TableHeader value={value} handleFilter={handleFilter} toggle={toggleAddUserDrawer} />
           <DataGrid
             autoHeight
-            rows={store.data}
+            rows={store.data.length ?
+              store.data.map(item => {
+                return {
+                  id: item._id,
+                  name: item.name,
+                  title: item.title,
+                  linkedin: item.contacts.linkedin
+                }
+              }
+              ) : []}
             columns={columns}
             checkboxSelection
             pageSize={pageSize}

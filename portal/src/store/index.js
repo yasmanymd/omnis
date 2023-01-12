@@ -4,11 +4,11 @@ import { configureStore } from '@reduxjs/toolkit'
 // ** Reducers
 import call from 'src/store/apps/call'
 import calendar from 'src/store/apps/calendar'
-import user from 'src/store/apps/candidate'
+import candidate from 'src/store/apps/candidate'
 
 export const store = configureStore({
   reducer: {
-    user,
+    candidate,
     call,
     calendar
   },

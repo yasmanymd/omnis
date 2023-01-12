@@ -3,6 +3,20 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 // ** Axios Imports
 import axios from 'axios'
 
+// ** Fetch Candidates
+export const fetchCandidates = createAsyncThunk('appCandidates/fetchCandidatess', async () => {
+  const response = await fetch(encodeURI('/api/candidates'), {
+    method: 'GET',
+    headers: {
+      'accept': 'application/json',
+      'Content-Type': 'application/json'
+    }
+  });
+  const result = await response.json();
+  return result.data;
+})
+
+// TO REMOVE
 // ** Fetch Users
 export const fetchData = createAsyncThunk('appUsers/fetchData', async params => {
   const response = await axios.get('/apps/candidates/list', {
@@ -32,23 +46,18 @@ export const deleteUser = createAsyncThunk('appUsers/deleteUser', async (id, { g
   return response.data
 })
 
-export const appUsersSlice = createSlice({
-  name: 'appUsers',
+export const appCandidatesSlice = createSlice({
+  name: 'appCandidates',
   initialState: {
-    data: [],
-    total: 1,
-    params: {},
-    allData: []
+    data: []
+
   },
   reducers: {},
   extraReducers: builder => {
-    builder.addCase(fetchData.fulfilled, (state, action) => {
-      state.data = action.payload.users
-      state.total = action.payload.total
-      state.params = action.payload.params
-      state.allData = action.payload.allData
+    builder.addCase(fetchCandidates.fulfilled, (state, action) => {
+      state.data = action.payload.candidates
     })
   }
 })
 
-export default appUsersSlice.reducer
+export default appCandidatesSlice.reducer
