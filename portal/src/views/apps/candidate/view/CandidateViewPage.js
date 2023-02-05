@@ -11,34 +11,34 @@ import Alert from '@mui/material/Alert'
 // ** Third Party Components
 import axios from 'axios'
 
-// ** Demo Components Imports
-import UserViewLeft from 'src/views/apps/candidate/view/UserViewLeft'
-import UserViewRight from 'src/views/apps/candidate/view/UserViewRight'
+// ** Store Imports
+import { useDispatch, useSelector } from 'react-redux'
 
-const UserView = ({ id, invoiceData }) => {
+// ** Demo Components Imports
+import CandidateViewLeft from 'src/views/apps/candidate/view/CandidateViewLeft'
+import CandidateViewRight from 'src/views/apps/candidate/view/CandidateViewRight'
+
+// ** Actions Imports
+import { fetchCandidate } from 'src/store/apps/candidate'
+
+const CandidateView = ({ id }) => {
   // ** State
+  const dispatch = useDispatch()
   const [error, setError] = useState(false)
-  const [data, setData] = useState(null)
+  const store = useSelector(state => state.candidate)
   useEffect(() => {
-    axios
-      .get('/apps/candidate', { params: { id } })
-      .then(response => {
-        setData(response.data)
-        setError(false)
-      })
-      .catch(() => {
-        setData(null)
-        setError(true)
-      })
+    dispatch(
+      fetchCandidate(id)
+    )
   }, [id])
-  if (data) {
+  if (store.candidate) {
     return (
       <Grid container spacing={6}>
         <Grid item xs={12} md={5} lg={4}>
-          <UserViewLeft data={data} />
+          <CandidateViewLeft data={store.candidate} />
         </Grid>
         <Grid item xs={12} md={7} lg={8}>
-          <UserViewRight invoiceData={invoiceData} />
+          <CandidateViewRight candidate={store.candidate} />
         </Grid>
       </Grid>
     )
@@ -58,4 +58,4 @@ const UserView = ({ id, invoiceData }) => {
   }
 }
 
-export default UserView
+export default CandidateView

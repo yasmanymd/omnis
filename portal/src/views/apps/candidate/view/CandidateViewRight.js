@@ -18,7 +18,7 @@ import BookmarkOutline from 'mdi-material-ui/BookmarkOutline'
 
 // ** Demo Components Imports
 import UserViewBilling from 'src/views/apps/candidate/view/UserViewBilling'
-import UserViewOverview from 'src/views/apps/candidate/view/UserViewOverview'
+import CandidateViewContacts from 'src/views/apps/candidate/view/CandidateViewContacts'
 import UserViewSecurity from 'src/views/apps/candidate/view/UserViewSecurity'
 import UserViewConnection from 'src/views/apps/candidate/view/UserViewConnection'
 import UserViewNotification from 'src/views/apps/candidate/view/UserViewNotification'
@@ -33,9 +33,9 @@ const Tab = styled(MuiTab)(({ theme }) => ({
   }
 }))
 
-const UserViewRight = ({ invoiceData }) => {
+const CandidateViewRight = ({ candidate }) => {
   // ** State
-  const [value, setValue] = useState('overview')
+  const [value, setValue] = useState('contacts')
 
   const handleChange = (event, newValue) => {
     setValue(newValue)
@@ -50,31 +50,15 @@ const UserViewRight = ({ invoiceData }) => {
         aria-label='forced scroll tabs example'
         sx={{ borderBottom: theme => `1px solid ${theme.palette.divider}` }}
       >
-        <Tab value='overview' label='Overview' icon={<AccountOutline />} />
-        <Tab value='security' label='Security' icon={<LockOutline />} />
-        <Tab value='billing-plan' label='Billing & Plan' icon={<BookmarkOutline />} />
-        <Tab value='notification' label='Notification' icon={<BellOutline />} />
-        <Tab value='connection' label='Connection' icon={<LinkVariant />} />
+        <Tab value='contacts' label='Contacts' icon={<AccountOutline />} />
       </TabList>
       <Box sx={{ mt: 6 }}>
-        <TabPanel sx={{ p: 0 }} value='overview'>
-          <UserViewOverview invoiceData={invoiceData} />
-        </TabPanel>
-        <TabPanel sx={{ p: 0 }} value='security'>
-          <UserViewSecurity />
-        </TabPanel>
-        <TabPanel sx={{ p: 0 }} value='billing-plan'>
-          <UserViewBilling />
-        </TabPanel>
-        <TabPanel sx={{ p: 0 }} value='notification'>
-          <UserViewNotification />
-        </TabPanel>
-        <TabPanel sx={{ p: 0 }} value='connection'>
-          <UserViewConnection />
+        <TabPanel sx={{ p: 0 }} value='contacts'>
+          <CandidateViewContacts contacts={candidate.contacts} />
         </TabPanel>
       </Box>
     </TabContext>
   )
 }
 
-export default UserViewRight
+export default CandidateViewRight

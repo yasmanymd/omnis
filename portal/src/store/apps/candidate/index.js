@@ -4,7 +4,7 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import axios from 'axios'
 
 // ** Fetch Candidates
-export const fetchCandidates = createAsyncThunk('appCandidates/fetchCandidatess', async () => {
+export const fetchCandidates = createAsyncThunk('appCandidates/fetchCandidates', async () => {
   const response = await fetch(encodeURI('/api/candidates'), {
     method: 'GET',
     headers: {
@@ -16,14 +16,16 @@ export const fetchCandidates = createAsyncThunk('appCandidates/fetchCandidatess'
   return result.data;
 })
 
-// TO REMOVE
-// ** Fetch Users
-export const fetchData = createAsyncThunk('appUsers/fetchData', async params => {
-  const response = await axios.get('/apps/candidates/list', {
-    params
-  })
-
-  return response.data
+export const fetchCandidate = createAsyncThunk('appCandidates/fetchCandidate', async (id) => {
+  const response = await fetch(encodeURI('/api/candidates/' + id), {
+    method: 'GET',
+    headers: {
+      'accept': 'application/json',
+      'Content-Type': 'application/json'
+    }
+  });
+  const result = await response.json();
+  return result.data;
 })
 
 // ** Add User
@@ -49,13 +51,16 @@ export const deleteUser = createAsyncThunk('appUsers/deleteUser', async (id, { g
 export const appCandidatesSlice = createSlice({
   name: 'appCandidates',
   initialState: {
-    data: []
-
+    candidates: [],
+    candidate: null
   },
   reducers: {},
   extraReducers: builder => {
     builder.addCase(fetchCandidates.fulfilled, (state, action) => {
-      state.data = action.payload?.candidates || []
+      state.candidates = action.payload?.candidates || []
+    })
+    builder.addCase(fetchCandidate.fulfilled, (state, action) => {
+      state.candidate = action.payload?.candidate || null
     })
   }
 })

@@ -3,18 +3,19 @@ import { ICandidateCreateResponse } from "./interfaces/candidate-create-response
 import { ICandidate, ICandidateImport } from "./interfaces/candidate.interface";
 import { CandidatesService } from "./candidates.service";
 import { MessagePattern } from '@nestjs/microservices';
-import { ICandidatesSearchByUserResponse } from "./interfaces/candidates-search-by-user-response.interface";
+import { ICandidatesSearchByResponse } from "./interfaces/candidates-search-by-response.interface";
 import { ICandidateUpdateByIdResponse } from "./interfaces/candidate-update-by-id-response.interface";
 import { ICandidateDeleteResponse } from "./interfaces/candidate-delete-response.interface";
 import { TokenService } from "../token/token.service";
+import { ICandidateSearchByResponse } from "./interfaces/candidate-search-by-response.interface";
 
 @Controller()
 export class CandidatesController {
   constructor(private readonly candidateService: CandidatesService, private readonly tokenService: TokenService) { }
 
   @MessagePattern('candidates_list')
-  public async candidatesList(): Promise<ICandidatesSearchByUserResponse> {
-    let result: ICandidatesSearchByUserResponse;
+  public async candidatesList(): Promise<ICandidatesSearchByResponse> {
+    let result: ICandidatesSearchByResponse;
 
 
     const candidates = await this.candidateService.getCandidates();
@@ -27,9 +28,23 @@ export class CandidatesController {
     return result;
   }
 
+  @MessagePattern('candidate_search_by_id')
+  public async candidateSearchById(id: string): Promise<ICandidateSearchByResponse> {
+    let result: ICandidateSearchByResponse;
+
+    const candidate = await this.candidateService.getCandidateById(id);
+    result = {
+      status: HttpStatus.OK,
+      message: 'candidate_search_by_id_success',
+      candidate: candidate
+    };
+
+    return result;
+  }
+
   @MessagePattern('candidates_search_by_user')
-  public async candidatesSearchByUser(user: string): Promise<ICandidatesSearchByUserResponse> {
-    let result: ICandidatesSearchByUserResponse;
+  public async candidatesSearchByUser(user: string): Promise<ICandidatesSearchByResponse> {
+    let result: ICandidatesSearchByResponse;
 
     if (user) {
       const candidates = await this.candidateService.getCandidatesByUser(user);
@@ -97,6 +112,7 @@ export class CandidatesController {
           delete candidate.token;
           const createdCandidate = await this.candidateService.createCandidate(
             Object.assign(candidate, {
+              status: 'None',
               created_by: token.user,
               created_at: +new Date()
             })

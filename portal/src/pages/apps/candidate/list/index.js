@@ -222,7 +222,7 @@ const columns = [
   }
 ]
 
-const UserList = () => {
+const CandidateList = () => {
   // ** State
   const [role, setRole] = useState('')
   const [plan, setPlan] = useState('')
@@ -333,13 +333,13 @@ const UserList = () => {
           <TableHeader value={value} handleFilter={handleFilter} toggle={toggleAddUserDrawer} />
           <DataGrid
             autoHeight
-            rows={store.data.length ?
-              store.data.map(item => {
+            rows={store.candidates.length ?
+              store.candidates.map(candidate => {
                 return {
-                  id: item._id,
-                  name: item.name,
-                  title: item.title,
-                  linkedin: item.contacts.linkedin
+                  id: candidate._id,
+                  name: candidate.name,
+                  title: candidate.title,
+                  linkedin: candidate.contacts.linkedin
                 }
               }
               ) : []}
@@ -358,4 +358,4 @@ const UserList = () => {
   )
 }
 
-export default UserList
+export default CandidateList

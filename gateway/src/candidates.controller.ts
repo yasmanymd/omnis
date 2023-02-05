@@ -18,6 +18,8 @@ import { UpdateCandidateRequestDto } from './interfaces/candidates/dto/update-ca
 import { IServiceCandidateUpdateByIdResponse } from './interfaces/candidates/service-candidate-update-by-id-response.interface';
 import { ImportCandidateRequestDto } from './interfaces/candidates/dto/import-candidate-request.dto';
 import { ImportCandidateResponseDto } from './interfaces/candidates/dto/import-candidate-response.dto';
+import { GetCandidateResponseDto } from './interfaces/candidates/dto/get-candidate-response.dto';
+import { IServiceGetCandidateResponse } from './interfaces/candidates/service-get-candidate-response.interface';
 
 @Controller('candidates')
 export class CandidatesController {
@@ -80,6 +82,31 @@ export class CandidatesController {
       message: candidatesResponse.message,
       data: {
         candidates: candidatesResponse.candidates
+      },
+      errors: null,
+    };
+  }
+
+  @Get(':id')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'), PermissionsGuard)
+  @Permissions('read:candidate')
+  @ApiOkResponse({
+    type: GetCandidateResponseDto,
+    description: 'Candidate'
+  })
+  public async getCandidate(
+    @Req() req: { user: IUser },
+    @Param('id') id: string,
+  ): Promise<GetCandidateResponseDto> {
+    const candidateResponse: IServiceGetCandidateResponse = await firstValueFrom(
+      this.candidateService.send('candidate_search_by_id', id),
+    );
+
+    return {
+      message: candidateResponse.message,
+      data: {
+        candidate: candidateResponse.candidate
       },
       errors: null,
     };

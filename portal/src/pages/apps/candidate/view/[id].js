@@ -2,36 +2,18 @@
 import axios from 'axios'
 
 // ** Demo Components Imports
-import UserViewPage from 'src/views/apps/candidate/view/UserViewPage'
+import CandidateViewPage from 'src/views/apps/candidate/view/CandidateViewPage'
 
-const UserView = ({ id, invoiceData }) => {
-  return <UserViewPage id={id} invoiceData={invoiceData} />
+const CandidateView = ({ id }) => {
+  return <CandidateViewPage id={id} />
 }
 
-export const getStaticPaths = async () => {
-  const res = await axios.get('/apps/candidates/list')
-  const userDate = await res.data.allData
-
-  const paths = userDate.map(item => ({
-    params: { id: `${item.id}` }
-  }))
-
-  return {
-    paths,
-    fallback: false
-  }
-}
-
-export const getStaticProps = async ({ params }) => {
-  const res = await axios.get('/apps/invoice/invoices')
-  const invoiceData = res.data.allData
-
+export async function getServerSideProps({ params }) {
   return {
     props: {
-      invoiceData,
       id: params?.id
     }
   }
 }
 
-export default UserView
+export default CandidateView

@@ -13,12 +13,10 @@ export class CandidatesService {
   }
 
   public async getCandidates(): Promise<ICandidate[]> {
-    this.candidateModel.findOne()
     return this.candidateModel.find().exec();
   }
 
   public async getCandidatesByUser(user: string): Promise<ICandidate[]> {
-    this.candidateModel.findOne()
     return this.candidateModel.find({ created_by: user }).exec();
   }
 
