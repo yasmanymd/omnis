@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 
 // ** MUI Imports
 import Box from '@mui/material/Box'
@@ -8,6 +8,7 @@ import Card from '@mui/material/Card'
 import Button from '@mui/material/Button'
 import Dialog from '@mui/material/Dialog'
 import Select from '@mui/material/Select'
+import OutlinedInput from '@mui/material/OutlinedInput'
 import Switch from '@mui/material/Switch'
 import Divider from '@mui/material/Divider'
 import MenuItem from '@mui/material/MenuItem'
@@ -19,6 +20,7 @@ import CardContent from '@mui/material/CardContent'
 import CardActions from '@mui/material/CardActions'
 import DialogTitle from '@mui/material/DialogTitle'
 import FormControl from '@mui/material/FormControl'
+import FormHelperText from '@mui/material/FormHelperText';
 import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
 import InputAdornment from '@mui/material/InputAdornment'
@@ -37,6 +39,17 @@ import CustomAvatar from 'src/@core/components/mui/avatar'
 
 // ** Utils Import
 import { getInitials } from 'src/@core/utils/get-initials'
+
+// ** Third Parties
+import * as yup from 'yup';
+import { yupResolver } from '@hookform/resolvers/yup';
+import { useForm, Controller } from 'react-hook-form';
+
+// ** Store Imports
+import { useDispatch } from 'react-redux'
+
+// ** Actions Imports
+import { updateCandidate } from 'src/store/apps/candidate'
 
 // ** Styled <sup> component
 const Sup = styled('sup')(({ theme }) => ({
@@ -59,10 +72,51 @@ const statusColors = {
   none: 'secondary'
 }
 
-const CandidateViewLeft = ({ data: candidate }) => {
+const CandidateViewLeft = props => {
+  const { candidate } = props;
+  const dispatch = useDispatch()
+
+  const schema = yup.object().shape({
+    name: yup.string().required('Name is a required field.'),
+    title: yup.string().required('Title is a required field.'),
+    status: yup.string().required('Status is a required field.')
+  }).required();
+
+  const {
+    control,
+    setValue,
+    clearErrors,
+    handleSubmit,
+    formState: { errors }
+  } = useForm({ defaultValues: { ...candidate }, resolver: yupResolver(schema) });
+
+  const resetToStoredValues = useCallback(() => {
+    if (candidate) {
+      setValue('name', candidate.name);
+      setValue('title', candidate.title);
+      setValue('status', candidate.status);
+    }
+  }, [setValue, candidate]);
+
+  const onSubmit = data => {
+    const modifiedCandidate = {
+      _id: candidate._id,
+      name: data.name,
+      title: data.title,
+      status: data.status
+    };
+
+    dispatch(updateCandidate(modifiedCandidate));
+    setOpenEdit(false);
+  }
+
   // ** States
   const [openEdit, setOpenEdit] = useState(false)
   const [openPlans, setOpenPlans] = useState(false)
+
+  useEffect(() => {
+    resetToStoredValues();
+  }, [openEdit, candidate]);
 
   // Handle Edit dialog
   const handleEditClickOpen = () => setOpenEdit(true)
@@ -144,6 +198,12 @@ const CandidateViewLeft = ({ data: candidate }) => {
                     }}
                   />
                 </Box>
+                <Box sx={{ display: 'flex', mb: 2.7 }}>
+                  <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>Created by:</Typography>
+                  <Typography variant='body2'>
+                    {candidate.created_by}
+                  </Typography>
+                </Box>
               </Box>
             </CardContent>
 
@@ -160,46 +220,81 @@ const CandidateViewLeft = ({ data: candidate }) => {
               sx={{ '& .MuiPaper-root': { width: '100%', maxWidth: 650, p: [2, 10] } }}
               aria-describedby='user-view-edit-description'
             >
-              <DialogTitle id='user-view-edit' sx={{ textAlign: 'center', fontSize: '1.5rem !important' }}>
-                Edit Candidate Information
-              </DialogTitle>
-              <DialogContent>
-                <DialogContentText variant='body2' id='user-view-edit-description' sx={{ textAlign: 'center', mb: 7 }}>
-                </DialogContentText>
-                <form>
+              <form onSubmit={handleSubmit(onSubmit)} noValidate autoComplete='off'>
+                <DialogTitle id='user-view-edit' sx={{ textAlign: 'center', fontSize: '1.5rem !important' }}>
+                  Edit Candidate Information
+                </DialogTitle>
+                <DialogContent>
+                  <DialogContentText variant='body2' id='user-view-edit-description' sx={{ textAlign: 'center', mb: 7 }}>
+                  </DialogContentText>
                   <Grid container spacing={6}>
                     <Grid item xs={12} sm={6}>
-                      <TextField fullWidth label='Name' defaultValue={candidate.name} />
+                      <FormControl fullWidth sx={{ mb: 6 }}>
+                        <Controller
+                          name='name'
+                          control={control}
+                          rules={{ required: true }}
+                          render={({ field: { value, onChange } }) => (
+                            <TextField label='Name' value={value} onChange={onChange} error={Boolean(errors.name)} />
+                          )}
+                        />
+                        {errors.name && (
+                          <FormHelperText sx={{ color: 'error.main' }} id='event-name-error'>
+                            {errors.name.message}
+                          </FormHelperText>
+                        )}
+                      </FormControl>
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                      <TextField fullWidth label='Title' defaultValue={candidate.title} />
+                      <FormControl fullWidth sx={{ mb: 6 }}>
+                        <Controller
+                          name='title'
+                          control={control}
+                          rules={{ required: true }}
+                          render={({ field: { value, onChange } }) => (
+                            <TextField label='Title' value={value} onChange={onChange} error={Boolean(errors.title)} />
+                          )}
+                        />
+                        {errors.title && (
+                          <FormHelperText sx={{ color: 'error.main' }} id='event-title-error'>
+                            {errors.title.message}
+                          </FormHelperText>
+                        )}
+                      </FormControl>
                     </Grid>
                     <Grid item xs={12} sm={6}>
-                      <FormControl fullWidth>
-                        <InputLabel id='user-view-status-label'>Status</InputLabel>
-                        <Select
-                          label='Status'
-                          defaultValue={candidate.status}
-                          id='user-view-status'
-                          labelId='user-view-status-label'
-                        >
-                          <MenuItem value='Pending'>Pending</MenuItem>
-                          <MenuItem value='Active'>Active</MenuItem>
-                          <MenuItem value='None'>None</MenuItem>
-                        </Select>
+                      <FormControl>
+                        <InputLabel id="status-label">Status</InputLabel>
+                        <Controller
+                          name="status"
+                          control={control}
+                          render={({ field }) => (
+                            <Select labelId="status-label" input={<OutlinedInput label="Status" />} {...field}>
+                              <MenuItem value='Pending'>Pending</MenuItem>
+                              <MenuItem value='Active'>Active</MenuItem>
+                              <MenuItem value='None'>None</MenuItem>
+                            </Select>
+                          )}
+                        />
+                        {errors.status && (
+                          <FormHelperText sx={{ color: 'error.main' }} id='event-status-error'>
+                            {errors.status.message}
+                          </FormHelperText>
+                        )}
                       </FormControl>
                     </Grid>
                   </Grid>
-                </form>
-              </DialogContent>
-              <DialogActions sx={{ justifyContent: 'center' }}>
-                <Button variant='contained' sx={{ mr: 1 }} onClick={handleEditClose}>
-                  Submit
-                </Button>
-                <Button variant='outlined' color='secondary' onClick={handleEditClose}>
-                  Cancel
-                </Button>
-              </DialogActions>
+
+                </DialogContent>
+                <DialogActions sx={{ justifyContent: 'center' }}>
+                  <Button type='submit' variant='contained' sx={{ mr: 1 }}>
+                    Submit
+                  </Button>
+                  <Button variant='outlined' color='secondary' onClick={handleEditClose}>
+                    Cancel
+                  </Button>
+                </DialogActions>
+              </form>
             </Dialog>
           </Card>
         </Grid>

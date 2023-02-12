@@ -9,7 +9,6 @@ export default withApiAuthRequired(async function handler(req, res) {
 
   switch (method) {
     case 'GET':
-
       response = await fetch(encodeURI(baseUrl + '/candidates/' + req.query.id), {
         headers: {
           'accept': 'application/json',
@@ -21,8 +20,22 @@ export default withApiAuthRequired(async function handler(req, res) {
       result = await response.json();
       res.status(200).json(result);
       break;
+
+    case 'PUT':
+      response = await fetch(encodeURI(baseUrl + '/candidates/' + req.query.id), {
+        headers: {
+          'accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
+        },
+        method: 'PUT',
+        body: JSON.stringify(req.body)
+      });
+      result = await response.json();
+      res.status(200).json(result);
+      break;
     default:
-      res.setHeader('Allow', ['GET']);
+      res.setHeader('Allow', ['PUT', 'GET']);
       res.status(405).json({
         status: 405,
         message: 'Method not allowed'

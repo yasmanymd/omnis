@@ -1,9 +1,6 @@
 // ** Redux Imports
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit';
 
-// ** Axios Imports
-import axios from 'axios';
-
 import toast from 'react-hot-toast';
 import ErrorDetails from 'src/layouts/components/ErrorDetails';
 
@@ -44,7 +41,7 @@ export const addMeeting = createAsyncThunk('appCalendar/addMeeting', async (meet
   } else {
     toast.success('Meeting created.');
   }
-  
+
   return result.data.meeting;
 })
 
@@ -65,7 +62,7 @@ export const updateMeeting = createAsyncThunk('appCalendar/updateMeeting', async
       "start_time": +new Date(meeting.startTime)
     })
   });
-  
+
   const result = await response.json();
   dispatch(fetchMeetings());
   if (result?.errors) {
@@ -73,20 +70,20 @@ export const updateMeeting = createAsyncThunk('appCalendar/updateMeeting', async
   } else {
     toast.success('Meeting updated.');
   }
-  
+
   return result.data.meeting;
 })
 
 // ** Delete Meeting
 export const deleteMeeting = createAsyncThunk('appCalendar/deleteMeeting', async (id, { dispatch }) => {
-  const response = await fetch(encodeURI('/api/meetings/'+id), {
+  const response = await fetch(encodeURI('/api/meetings/' + id), {
     method: 'DELETE',
     headers: {
       'accept': 'application/json',
       'Content-Type': 'application/json'
     }
   });
-  
+
   const result = await response.json();
   dispatch(fetchMeetings());
   if (result?.errors) {
@@ -94,7 +91,7 @@ export const deleteMeeting = createAsyncThunk('appCalendar/deleteMeeting', async
   } else {
     toast.success('Meeting removed.');
   }
-  
+
   return result.data.meeting;
 })
 

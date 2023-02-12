@@ -1,7 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
-// ** Axios Imports
-import axios from 'axios'
+import toast from 'react-hot-toast';
+import ErrorDetails from 'src/layouts/components/ErrorDetails';
 
 // ** Fetch Candidates
 export const fetchCandidates = createAsyncThunk('appCandidates/fetchCandidates', async () => {
@@ -16,6 +16,7 @@ export const fetchCandidates = createAsyncThunk('appCandidates/fetchCandidates',
   return result.data;
 })
 
+// ** Fetch Candidate
 export const fetchCandidate = createAsyncThunk('appCandidates/fetchCandidate', async (id) => {
   const response = await fetch(encodeURI('/api/candidates/' + id), {
     method: 'GET',
@@ -28,24 +29,30 @@ export const fetchCandidate = createAsyncThunk('appCandidates/fetchCandidate', a
   return result.data;
 })
 
-// ** Add User
-export const addUser = createAsyncThunk('appUsers/addUser', async (data, { getState, dispatch }) => {
-  const response = await axios.post('/apps/candidates/add-user', {
-    data
-  })
-  dispatch(fetchData(getState().user.params))
+// ** Update Candidate
+export const updateCandidate = createAsyncThunk('appCandidates/updateCandidate', async (candidate, { dispatch }) => {
+  const response = await fetch(encodeURI('/api/candidates/' + candidate._id), {
+    method: 'PUT',
+    headers: {
+      'accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      "name": candidate.name,
+      "title": candidate.title,
+      "status": candidate.status
+    })
+  });
 
-  return response.data
-})
+  dispatch(fetchCandidate(candidate._id));
 
-// ** Delete User
-export const deleteUser = createAsyncThunk('appUsers/deleteUser', async (id, { getState, dispatch }) => {
-  const response = await axios.delete('/apps/candidates/delete', {
-    data: id
-  })
-  dispatch(fetchData(getState().user.params))
-
-  return response.data
+  const result = await response.json();
+  if (result?.errors) {
+    toast.error(<ErrorDetails message='Error updating candidate.' errors={result.errors} />);
+  } else {
+    toast.success('Candidate updated.');
+  }
+  return result.data;
 })
 
 export const appCandidatesSlice = createSlice({

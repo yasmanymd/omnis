@@ -31,7 +31,7 @@ const defaultValues = {
   name: '',
   participants: [],
   description: '',
-  startTime: new Date(+new Date() - (+new Date()%(3600000)) + 3600000),
+  startTime: new Date(+new Date() - (+new Date() % (3600000)) + 3600000),
   duration: 30,
   maxPerson: 4
 };
@@ -53,7 +53,7 @@ const AddMeetingSidebar = props => {
   // ** States
   const [values, setValues] = useState(defaultValues);
   const { user } = useUser();
-  
+
   const schema = yup.object().shape({
     name: yup.string().required('Name is a required field.'),
     participants: yup.array().of(yup.string().email()).min(1, 'Participants must have at least 1 items and valid emails.').required('Participants is a required field.'),
@@ -101,7 +101,7 @@ const AddMeetingSidebar = props => {
       await dispatch(deleteMeeting(store.selectedMeeting._id));
       dispatch(fetchMeetings());
     }
-    
+
     handleSidebarClose();
   }
 
@@ -115,7 +115,7 @@ const AddMeetingSidebar = props => {
     if (store.selectedMeeting) {
       const meeting = store.selectedMeeting;
       setValue('name', meeting.name || defaultValues.name);
-      setValue('description', meeting.description || defaultValues.name);
+      setValue('description', meeting.description || defaultValues.description);
       setValue('participants', meeting.participants || defaultValues.participants);
       setValue('startTime', new Date(meeting.start_time || defaultValues.startTime));
       setValue('duration', meeting.duration || defaultValues.duration);
@@ -123,7 +123,7 @@ const AddMeetingSidebar = props => {
       setValues({
         id: meeting._id || '',
         name: meeting.name || defaultValues.name,
-        description: meeting.description || defaultValues.name,
+        description: meeting.description || defaultValues.description,
         participants: meeting.participants || defaultValues.participants,
         startTime: new Date(meeting.start_time || defaultValues.startTime),
         duration: meeting.duration || defaultValues.duration,
@@ -187,7 +187,7 @@ const AddMeetingSidebar = props => {
       )
     }
   }
-  
+
   return (
     <Drawer
       anchor='right'
@@ -243,14 +243,14 @@ const AddMeetingSidebar = props => {
                 control={control}
                 rules={{ required: true }}
                 render={({ field: { value, onChange } }) => (
-                  <TextField 
+                  <TextField
                     id='meeting-description'
                     rows={4}
                     multiline
                     label='Description'
-                    value={value} 
-                    onChange={onChange} 
-                    error={Boolean(errors.description)} 
+                    value={value}
+                    onChange={onChange}
+                    error={Boolean(errors.description)}
                   />
                 )}
               />
@@ -288,7 +288,7 @@ const AddMeetingSidebar = props => {
                         error={Boolean(errors.participants)}
                       />
                     )}
-                  />                  
+                  />
                 )}
               />
               {errors.participants && (

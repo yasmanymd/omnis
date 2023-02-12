@@ -32,6 +32,6 @@ export class CandidatesService {
     id: string,
     params: ICandidate,
   ): Promise<ICandidate> {
-    return await this.candidateModel.findByIdAndUpdate({ _id: id }, params);
+    return await this.candidateModel.findByIdAndUpdate({ _id: id }, params, { new: true, upsert: true });
   }
 }
