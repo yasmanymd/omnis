@@ -9,6 +9,10 @@ export class CandidatesService {
   constructor(@InjectModel('Candidate') private readonly candidateModel: Model<CandidateDocument>) { }
 
   public async createCandidate(candidate: ICandidate): Promise<ICandidate> {
+    let data = await this.candidateModel.exists({ "contacts.linkedin": candidate.contacts.linkedin }).exec();
+    if (data) {
+      return;
+    }
     return await this.candidateModel.findOneAndUpdate({ "contacts.linkedin": candidate.contacts.linkedin }, candidate, { new: true, upsert: true });
   }
 
