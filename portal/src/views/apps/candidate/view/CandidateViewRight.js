@@ -14,6 +14,7 @@ import LockOutline from 'mdi-material-ui/LockOutline'
 import BellOutline from 'mdi-material-ui/BellOutline'
 import LinkVariant from 'mdi-material-ui/LinkVariant'
 import AccountOutline from 'mdi-material-ui/AccountOutline'
+import NoteMultiple from 'mdi-material-ui/NoteMultiple'
 import BookmarkOutline from 'mdi-material-ui/BookmarkOutline'
 
 // ** Demo Components Imports
@@ -22,6 +23,7 @@ import CandidateViewContacts from 'src/views/apps/candidate/view/CandidateViewCo
 import UserViewSecurity from 'src/views/apps/candidate/view/UserViewSecurity'
 import UserViewConnection from 'src/views/apps/candidate/view/UserViewConnection'
 import UserViewNotification from 'src/views/apps/candidate/view/UserViewNotification'
+import CandidateViewNotes from './CandidateViewNotes'
 
 // ** Styled Tab component
 const Tab = styled(MuiTab)(({ theme }) => ({
@@ -33,7 +35,7 @@ const Tab = styled(MuiTab)(({ theme }) => ({
   }
 }))
 
-const CandidateViewRight = ({ candidate }) => {
+const CandidateViewRight = ({ candidate, notes }) => {
   // ** State
   const [value, setValue] = useState('contacts')
 
@@ -51,10 +53,14 @@ const CandidateViewRight = ({ candidate }) => {
         sx={{ borderBottom: theme => `1px solid ${theme.palette.divider}` }}
       >
         <Tab value='contacts' label='Contacts' icon={<AccountOutline />} />
+        <Tab value='notes' label='Notes' icon={<NoteMultiple />} />
       </TabList>
       <Box sx={{ mt: 6 }}>
         <TabPanel sx={{ p: 0 }} value='contacts'>
           <CandidateViewContacts contacts={candidate.contacts} />
+        </TabPanel>
+        <TabPanel sx={{ p: 0 }} value='notes'>
+          <CandidateViewNotes notes={notes} candidate_id={candidate._id} />
         </TabPanel>
       </Box>
     </TabContext>

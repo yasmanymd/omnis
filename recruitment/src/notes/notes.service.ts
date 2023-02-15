@@ -14,7 +14,7 @@ export class NotesService {
   }
 
   public async getNotesByCandidate(candidate_id: string): Promise<INote[]> {
-    return this.noteModel.find({ candidate_id: candidate_id }).exec();
+    return this.noteModel.find({ candidate_id: candidate_id }, [], { sort: { 'created_at': -1 } }).exec();
   }
 
   public async getNoteById(id: string): Promise<INote> {

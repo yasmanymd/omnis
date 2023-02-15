@@ -36,7 +36,7 @@ const CandidateView = ({ id }) => {
           <CandidateViewLeft candidate={store.candidate} />
         </Grid>
         <Grid item xs={12} md={7} lg={8}>
-          <CandidateViewRight candidate={store.candidate} />
+          <CandidateViewRight candidate={store.candidate} notes={store.notes} />
         </Grid>
       </Grid>
     )

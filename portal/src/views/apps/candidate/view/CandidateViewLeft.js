@@ -9,7 +9,6 @@ import Button from '@mui/material/Button'
 import Dialog from '@mui/material/Dialog'
 import Select from '@mui/material/Select'
 import OutlinedInput from '@mui/material/OutlinedInput'
-import Switch from '@mui/material/Switch'
 import Divider from '@mui/material/Divider'
 import MenuItem from '@mui/material/MenuItem'
 import { styled } from '@mui/material/styles'
@@ -23,15 +22,7 @@ import FormControl from '@mui/material/FormControl'
 import FormHelperText from '@mui/material/FormHelperText';
 import DialogContent from '@mui/material/DialogContent'
 import DialogActions from '@mui/material/DialogActions'
-import InputAdornment from '@mui/material/InputAdornment'
-import LinearProgress from '@mui/material/LinearProgress'
-import FormControlLabel from '@mui/material/FormControlLabel'
 import DialogContentText from '@mui/material/DialogContentText'
-
-// ** Icons Imports
-import Check from 'mdi-material-ui/Check'
-import Circle from 'mdi-material-ui/Circle'
-import BriefcaseVariantOutline from 'mdi-material-ui/BriefcaseVariantOutline'
 
 // ** Custom Components
 import CustomChip from 'src/@core/components/mui/chip'
@@ -50,21 +41,6 @@ import { useDispatch } from 'react-redux'
 
 // ** Actions Imports
 import { updateCandidate } from 'src/store/apps/candidate'
-
-// ** Styled <sup> component
-const Sup = styled('sup')(({ theme }) => ({
-  top: '0.2rem',
-  left: '-0.6rem',
-  position: 'absolute',
-  color: theme.palette.primary.main
-}))
-
-// ** Styled <sub> component
-const Sub = styled('sub')({
-  fontWeight: 300,
-  fontSize: '1rem',
-  alignSelf: 'flex-end'
-})
 
 const statusColors = {
   active: 'success',
@@ -85,7 +61,6 @@ const CandidateViewLeft = props => {
   const {
     control,
     setValue,
-    clearErrors,
     handleSubmit,
     formState: { errors }
   } = useForm({ defaultValues: { ...candidate }, resolver: yupResolver(schema) });
@@ -112,7 +87,6 @@ const CandidateViewLeft = props => {
 
   // ** States
   const [openEdit, setOpenEdit] = useState(false)
-  const [openPlans, setOpenPlans] = useState(false)
 
   useEffect(() => {
     resetToStoredValues();
@@ -123,8 +97,6 @@ const CandidateViewLeft = props => {
   const handleEditClose = () => setOpenEdit(false)
 
   // Handle Upgrade Plan dialog
-  const handlePlansClickOpen = () => setOpenPlans(true)
-  const handlePlansClose = () => setOpenPlans(false)
 
   const renderUserAvatar = () => {
     if (candidate) {
