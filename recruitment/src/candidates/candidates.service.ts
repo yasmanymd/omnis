@@ -17,7 +17,7 @@ export class CandidatesService {
   }
 
   public async getCandidates(): Promise<ICandidate[]> {
-    return this.candidateModel.find().exec();
+    return this.candidateModel.find({}, [], { sort: { created_at: -1 } }).exec();
   }
 
   public async getCandidatesByUser(user: string): Promise<ICandidate[]> {
