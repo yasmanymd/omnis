@@ -1,25 +1,17 @@
 import { Body, Controller, Delete, Get, HttpException, HttpStatus, Inject, Param, Post, Put, Query, Req, UseGuards } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { ApiOkResponse, ApiCreatedResponse, ApiBearerAuth } from '@nestjs/swagger';
-import { CreateCandidateResponseDto } from './interfaces/candidates/dto/create-candidate-response.dto';
+import { ResponseDto } from './interfaces/common/response.dto';
 import { CreateCandidateRequestDto } from './interfaces/candidates/dto/create-candidate-request.dto';
 import { firstValueFrom } from 'rxjs';
-import { IServiceCreateCandidateResponse } from './interfaces/candidates/service-create-candidate-response.interface';
+import { IServiceResponse } from './interfaces/common/service-response.interface';
 import { AuthGuard } from '@nestjs/passport';
 import { Permissions } from './authz/permissions.decorator';
 import { PermissionsGuard } from './authz/permissions.guard';
-import { GetCandidatesResponseDto } from './interfaces/candidates/dto/get-candidates-response.dto';
-import { IServiceGetCandidatesResponse } from './interfaces/candidates/service-get-candidates-response.interface';
-import { DeleteCandidateResponseDto } from './interfaces/candidates/dto/delete-candidate-response.dto';
 import { IUser } from './interfaces/user/user.interface';
-import { IServiceCandidateDeleteResponse } from './interfaces/candidates/service-candidate-delete-response.interface';
-import { UpdateCandidateResponseDto } from './interfaces/candidates/dto/update-candidate-response.dto';
 import { UpdateCandidateRequestDto } from './interfaces/candidates/dto/update-candidate-request.dto';
-import { IServiceCandidateUpdateByIdResponse } from './interfaces/candidates/service-candidate-update-by-id-response.interface';
 import { ImportCandidateRequestDto } from './interfaces/candidates/dto/import-candidate-request.dto';
-import { ImportCandidateResponseDto } from './interfaces/candidates/dto/import-candidate-response.dto';
-import { GetCandidateResponseDto } from './interfaces/candidates/dto/get-candidate-response.dto';
-import { IServiceGetCandidateResponse } from './interfaces/candidates/service-get-candidate-response.interface';
+import { ICandidate } from './interfaces/candidates/candidate.interface';
 
 @Controller('candidates')
 export class CandidatesController {
@@ -27,7 +19,7 @@ export class CandidatesController {
 
   @Post()
   @ApiCreatedResponse({
-    type: CreateCandidateResponseDto
+    type: ResponseDto<ICandidate>
   })
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
@@ -35,10 +27,9 @@ export class CandidatesController {
   async createCandidate(
     @Req() req: { user: IUser },
     @Body() candidateRequest: CreateCandidateRequestDto
-  ): Promise<CreateCandidateResponseDto> {
-    const createCandidateResponse: IServiceCreateCandidateResponse = await firstValueFrom(
-      this.candidateService.send(
-        'candidate_create',
+  ): Promise<ResponseDto<ICandidate>> {
+    const createCandidateResponse: IServiceResponse<ICandidate> = await firstValueFrom(
+      this.candidateService.send({ cmd: 'candidate_create' },
         {
           ...candidateRequest,
           created_by: req.user.email
@@ -56,9 +47,7 @@ export class CandidatesController {
     }
     return {
       message: createCandidateResponse.message,
-      data: {
-        candidate: createCandidateResponse.candidate
-      },
+      data: createCandidateResponse.data,
       errors: null
     };
   }
@@ -68,21 +57,19 @@ export class CandidatesController {
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
   @Permissions('read:candidate')
   @ApiOkResponse({
-    type: GetCandidatesResponseDto,
+    type: ResponseDto<ICandidate[]>,
     description: 'List of candidates of user'
   })
   public async getCandidates(
     @Req() req: { user: IUser }
-  ): Promise<GetCandidatesResponseDto> {
-    const candidatesResponse: IServiceGetCandidatesResponse = await firstValueFrom(
-      this.candidateService.send('candidates_list', {}),
+  ): Promise<ResponseDto<ICandidate[]>> {
+    const candidatesResponse: IServiceResponse<ICandidate[]> = await firstValueFrom(
+      this.candidateService.send({ cmd: 'candidates_list' }, {}),
     );
 
     return {
       message: candidatesResponse.message,
-      data: {
-        candidates: candidatesResponse.candidates
-      },
+      data: candidatesResponse.data,
       errors: null,
     };
   }
@@ -92,22 +79,20 @@ export class CandidatesController {
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
   @Permissions('read:candidate')
   @ApiOkResponse({
-    type: GetCandidateResponseDto,
+    type: ResponseDto<ICandidate>,
     description: 'Candidate'
   })
   public async getCandidate(
     @Req() req: { user: IUser },
     @Param('id') id: string,
-  ): Promise<GetCandidateResponseDto> {
-    const candidateResponse: IServiceGetCandidateResponse = await firstValueFrom(
-      this.candidateService.send('candidate_search_by_id', id),
+  ): Promise<ResponseDto<ICandidate>> {
+    const candidateResponse: IServiceResponse<ICandidate> = await firstValueFrom(
+      this.candidateService.send({ cmd: 'candidate_search_by_id' }, id),
     );
 
     return {
       message: candidateResponse.message,
-      data: {
-        candidate: candidateResponse.candidate
-      },
+      data: candidateResponse.data,
       errors: null,
     };
   }
@@ -117,15 +102,15 @@ export class CandidatesController {
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
   @Permissions('delete:candidate')
   @ApiOkResponse({
-    type: DeleteCandidateResponseDto,
+    type: ResponseDto<null>,
     description: 'Delete candidate'
   })
   public async deleteCandidate(
     @Req() req: { user: IUser },
     @Param('id') id: string,
-  ): Promise<DeleteCandidateResponseDto> {
-    const deleteCandidateResponse: IServiceCandidateDeleteResponse = await firstValueFrom(
-      this.candidateService.send('candidate_delete_by_id', {
+  ): Promise<ResponseDto<null>> {
+    const deleteCandidateResponse: IServiceResponse<null> = await firstValueFrom(
+      this.candidateService.send({ cmd: 'candidate_delete_by_id' }, {
         id: id,
         user: req.user.email
       }),
@@ -154,16 +139,16 @@ export class CandidatesController {
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
   @Permissions('edit:candidate')
   @ApiOkResponse({
-    type: UpdateCandidateResponseDto,
+    type: ResponseDto<ICandidate>,
     description: 'Update candidate'
   })
   public async updateCandidate(
     @Req() req: { user: IUser },
     @Param('id') id: string,
     @Body() candidateRequest: UpdateCandidateRequestDto,
-  ): Promise<UpdateCandidateResponseDto> {
-    const updateCandidateResponse: IServiceCandidateUpdateByIdResponse = await firstValueFrom(
-      this.candidateService.send('candidate_update_by_id', {
+  ): Promise<ResponseDto<ICandidate>> {
+    const updateCandidateResponse: IServiceResponse<ICandidate> = await firstValueFrom(
+      this.candidateService.send({ cmd: 'candidate_update_by_id' }, {
         id: id,
         user: req.user.email,
         candidate: candidateRequest,
@@ -183,22 +168,20 @@ export class CandidatesController {
 
     return {
       message: updateCandidateResponse.message,
-      data: {
-        candidate: updateCandidateResponse.candidate,
-      },
+      data: updateCandidateResponse.data,
       errors: null,
     };
   }
 
   @Post('import')
   @ApiCreatedResponse({
-    type: CreateCandidateResponseDto
+    type: ResponseDto<null>
   })
   async importCandidate(
     @Body() candidateRequest: ImportCandidateRequestDto
-  ): Promise<ImportCandidateResponseDto> {
-    const createCandidateResponse: IServiceCreateCandidateResponse = await firstValueFrom(
-      this.candidateService.send('candidate_import', candidateRequest)
+  ): Promise<ResponseDto<null>> {
+    const createCandidateResponse: IServiceResponse<ICandidate> = await firstValueFrom(
+      this.candidateService.send({ cmd: 'candidate_import' }, candidateRequest)
     );
 
     if (createCandidateResponse.status != HttpStatus.CREATED) {
@@ -210,6 +193,7 @@ export class CandidatesController {
     }
     return {
       message: createCandidateResponse.message,
+      data: null,
       errors: null
     };
   }

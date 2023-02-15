@@ -15,7 +15,7 @@ const blankMeeting = {
   name: '',
   participants: [],
   description: '',
-  startTime: new Date(+new Date() - (+new Date()%(3600000)) + 3600000),
+  startTime: new Date(+new Date() - (+new Date() % (3600000)) + 3600000),
   duration: 30,
   maxPerson: 4
 };
@@ -45,18 +45,17 @@ const Calendar = props => {
   if (store) {
     // ** calendarOptions(Props)
     const calendarOptions = {
-      events: store.meetings.length ? 
-        store.meetings.map(item => 
-          { 
-            return {
-              id: item._id, 
-              title: item.name, 
-              start: new Date(item.start_time), 
-              extendedProps: {
-                ref: item
-              }
+      events: store.meetings?.length ?
+        store.meetings.map(item => {
+          return {
+            id: item._id,
+            title: item.name,
+            start: new Date(item.start_time),
+            extendedProps: {
+              ref: item
             }
           }
+        }
         ) : [],
       plugins: [interactionPlugin, dayGridPlugin, timeGridPlugin, listPlugin],
       initialView: 'dayGridMonth',

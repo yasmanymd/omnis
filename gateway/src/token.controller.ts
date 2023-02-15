@@ -24,7 +24,7 @@ export class TokenController {
     @Req() req: { user: IUser }
   ): Promise<TokenDto> {
     const tokenResponse: TokenDto = await firstValueFrom(
-      this.tokenService.send('token_search_by_user', req.user.email)
+      this.tokenService.send({ cmd: 'token_search_by_user' }, req.user.email)
     );
 
     return tokenResponse;
@@ -42,7 +42,7 @@ export class TokenController {
     @Req() req: { user: IUser }
   ): Promise<TokenDto> {
     const tokenResponse: TokenDto = await firstValueFrom(
-      this.tokenService.send('token_regenerate', req.user.email)
+      this.tokenService.send({ cmd: 'token_regenerate' }, req.user.email)
     );
 
     return tokenResponse;

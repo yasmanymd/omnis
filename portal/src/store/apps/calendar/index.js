@@ -14,7 +14,7 @@ export const fetchMeetings = createAsyncThunk('appCalendar/fetchMeetings', async
     }
   });
   const result = await response.json();
-  return result.data.meetings;
+  return result.data;
 })
 
 // ** Add Meetings
@@ -42,7 +42,7 @@ export const addMeeting = createAsyncThunk('appCalendar/addMeeting', async (meet
     toast.success('Meeting created.');
   }
 
-  return result.data.meeting;
+  return result.data;
 })
 
 // ** Update Meeting
@@ -71,7 +71,7 @@ export const updateMeeting = createAsyncThunk('appCalendar/updateMeeting', async
     toast.success('Meeting updated.');
   }
 
-  return result.data.meeting;
+  return result.data;
 })
 
 // ** Delete Meeting
@@ -92,7 +92,7 @@ export const deleteMeeting = createAsyncThunk('appCalendar/deleteMeeting', async
     toast.success('Meeting removed.');
   }
 
-  return result.data.meeting;
+  return result.data;
 })
 
 export const appCalendarSlice = createSlice({

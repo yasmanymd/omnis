@@ -64,10 +64,10 @@ export const appCandidatesSlice = createSlice({
   reducers: {},
   extraReducers: builder => {
     builder.addCase(fetchCandidates.fulfilled, (state, action) => {
-      state.candidates = action.payload?.candidates || []
+      state.candidates = action.payload || []
     })
     builder.addCase(fetchCandidate.fulfilled, (state, action) => {
-      state.candidate = action.payload?.candidate || null
+      state.candidate = action.payload || null
     })
   }
 })

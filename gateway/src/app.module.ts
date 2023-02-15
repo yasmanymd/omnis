@@ -7,6 +7,7 @@ import { ConfigModule } from './config/config.module';
 import { AuthzModule } from './authz/authz.module';
 import { CandidatesController } from './candidates.controller';
 import { TokenController } from './token.controller';
+import { NotesController } from './notes.controller';
 
 @Module({
   imports: [
@@ -51,6 +52,25 @@ import { TokenController } from './token.controller';
     ]),
     ClientsModule.registerAsync([
       {
+        name: 'NOTE_SERVICE',
+        imports: [ConfigModule],
+        useFactory: async (configService: ConfigService) => {
+          return ({
+            transport: Transport.RMQ,
+            options: {
+              urls: [configService.get('rabbitmq_dsn')],
+              queue: 'recruitment_queue',
+              queueOptions: {
+                durable: false
+              },
+            }
+          });
+        },
+        inject: [ConfigService]
+      }
+    ]),
+    ClientsModule.registerAsync([
+      {
         name: 'TOKEN_SERVICE',
         imports: [ConfigModule],
         useFactory: async (configService: ConfigService) => {
@@ -70,7 +90,7 @@ import { TokenController } from './token.controller';
     ]),
     AuthzModule
   ],
-  controllers: [MeetingsController, CandidatesController, TokenController],
+  controllers: [MeetingsController, CandidatesController, NotesController, TokenController],
   providers: [],
 })
 export class AppModule { }

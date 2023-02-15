@@ -8,7 +8,7 @@ import { v4 as uuidv4 } from 'uuid';
 export class TokenController {
   constructor(private readonly tokenService: TokenService) { }
 
-  @MessagePattern('token_search_by_user')
+  @MessagePattern({ cmd: 'token_search_by_user' })
   public async tokenSearchByUser(user: string): Promise<IToken> {
     if (user) {
       let token = await this.tokenService.getTokenByUser(user);
@@ -21,7 +21,7 @@ export class TokenController {
     return null;
   }
 
-  @MessagePattern('token_regenerate')
+  @MessagePattern({ cmd: 'token_regenerate' })
   public async tokenRegenerate(user: string): Promise<IToken> {
     if (user) {
       let token = await this.tokenService.getTokenByUser(user);

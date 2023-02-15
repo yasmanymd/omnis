@@ -1,72 +1,68 @@
 import { Controller, HttpStatus } from "@nestjs/common";
-import { ICandidateCreateResponse } from "./interfaces/candidate-create-response.interface";
+import { IResponse } from "../common/response.interface";
 import { ICandidate, ICandidateImport } from "./interfaces/candidate.interface";
 import { CandidatesService } from "./candidates.service";
 import { MessagePattern } from '@nestjs/microservices';
-import { ICandidatesSearchByResponse } from "./interfaces/candidates-search-by-response.interface";
-import { ICandidateUpdateByIdResponse } from "./interfaces/candidate-update-by-id-response.interface";
-import { ICandidateDeleteResponse } from "./interfaces/candidate-delete-response.interface";
 import { TokenService } from "../token/token.service";
-import { ICandidateSearchByResponse } from "./interfaces/candidate-search-by-response.interface";
 
 @Controller()
 export class CandidatesController {
   constructor(private readonly candidateService: CandidatesService, private readonly tokenService: TokenService) { }
 
-  @MessagePattern('candidates_list')
-  public async candidatesList(): Promise<ICandidatesSearchByResponse> {
-    let result: ICandidatesSearchByResponse;
+  @MessagePattern({ cmd: 'candidates_list' })
+  public async candidatesList(): Promise<IResponse<ICandidate[]>> {
+    let result: IResponse<ICandidate[]>;
 
 
     const candidates = await this.candidateService.getCandidates();
     result = {
       status: HttpStatus.OK,
       message: 'candidates_list_success',
-      candidates: candidates
+      data: candidates
     };
 
     return result;
   }
 
-  @MessagePattern('candidate_search_by_id')
-  public async candidateSearchById(id: string): Promise<ICandidateSearchByResponse> {
-    let result: ICandidateSearchByResponse;
+  @MessagePattern({ cmd: 'candidate_search_by_id' })
+  public async candidateSearchById(id: string): Promise<IResponse<ICandidate>> {
+    let result: IResponse<ICandidate>;
 
     const candidate = await this.candidateService.getCandidateById(id);
     result = {
       status: HttpStatus.OK,
       message: 'candidate_search_by_id_success',
-      candidate: candidate
+      data: candidate
     };
 
     return result;
   }
 
-  @MessagePattern('candidates_search_by_user')
-  public async candidatesSearchByUser(user: string): Promise<ICandidatesSearchByResponse> {
-    let result: ICandidatesSearchByResponse;
+  @MessagePattern({ cmd: 'candidates_search_by_user' })
+  public async candidatesSearchByUser(user: string): Promise<IResponse<ICandidate[]>> {
+    let result: IResponse<ICandidate[]>;
 
     if (user) {
       const candidates = await this.candidateService.getCandidatesByUser(user);
       result = {
         status: HttpStatus.OK,
         message: 'candidates_search_by_user_success',
-        candidates: candidates
+        data: candidates
       };
     } else {
       result = {
         status: HttpStatus.BAD_REQUEST,
         message: 'candidates_search_by_user_bad_request',
-        candidates: null
+        data: null
       };
     }
 
     return result;
   }
 
-  @MessagePattern('candidate_create')
-  public async candidateCreate(candidate: ICandidate): Promise<ICandidateCreateResponse> {
-    let result: ICandidateCreateResponse;
+  @MessagePattern({ cmd: 'candidate_create' })
+  public async candidateCreate(candidate: ICandidate): Promise<IResponse<ICandidate>> {
+    let result: IResponse<ICandidate>;
 
     if (candidate) {
       try {
@@ -78,14 +74,14 @@ export class CandidatesController {
         result = {
           status: HttpStatus.CREATED,
           message: 'candidate_create_success',
-          candidate: createdCandidate,
+          data: createdCandidate,
           errors: null
         };
       } catch (e) {
         result = {
           status: HttpStatus.PRECONDITION_FAILED,
           message: 'candidate_create_precondition_failed',
-          candidate: null,
+          data: null,
           errors: e.errors
         };
       }
@@ -93,7 +89,7 @@ export class CandidatesController {
       result = {
         status: HttpStatus.BAD_REQUEST,
         message: 'candidate_create_bad_request',
-        candidate: null,
+        data: null,
         errors: null
       };
     }
@@ -101,9 +97,9 @@ export class CandidatesController {
     return result;
   }
 
-  @MessagePattern('candidate_import')
-  public async candidateImport(candidate: ICandidateImport): Promise<ICandidateCreateResponse> {
-    let result: ICandidateCreateResponse;
+  @MessagePattern({ cmd: 'candidate_import' })
+  public async candidateImport(candidate: ICandidateImport): Promise<IResponse<ICandidate>> {
+    let result: IResponse<ICandidate>;
 
     if (candidate && candidate.contacts && candidate.contacts.linkedin) {
       const token = await this.tokenService.getUserByToken(candidate.token);
@@ -120,14 +116,14 @@ export class CandidatesController {
           result = {
             status: HttpStatus.CREATED,
             message: 'candidate_import_success',
-            candidate: createdCandidate,
+            data: createdCandidate,
             errors: null
           };
         } catch (e) {
           result = {
             status: HttpStatus.PRECONDITION_FAILED,
             message: 'candidate_import_precondition_failed',
-            candidate: null,
+            data: null,
             errors: e.errors
           };
         }
@@ -135,7 +131,7 @@ export class CandidatesController {
         result = {
           status: HttpStatus.UNAUTHORIZED,
           message: 'candidate_import_unauthorized',
-          candidate: null,
+          data: null,
           errors: null
         };
       }
@@ -143,7 +139,7 @@ export class CandidatesController {
       result = {
         status: HttpStatus.BAD_REQUEST,
         message: 'candidate_import_bad_request',
-        candidate: null,
+        data: null,
         errors: null
       };
     }
@@ -151,13 +147,13 @@ export class CandidatesController {
     return result;
   }
 
-  @MessagePattern('candidate_update_by_id')
+  @MessagePattern({ cmd: 'candidate_update_by_id' })
   public async candidateUpdateById(params: {
     candidate: ICandidate;
     id: string;
     user: string;
-  }): Promise<ICandidateUpdateByIdResponse> {
-    let result: ICandidateUpdateByIdResponse;
+  }): Promise<IResponse<ICandidate>> {
+    let result: IResponse<ICandidate>;
     if (params.id) {
       try {
         const candidate = await this.candidateService.getCandidateById(params.id);
@@ -167,14 +163,14 @@ export class CandidatesController {
             result = {
               status: HttpStatus.OK,
               message: 'candidate_update_by_id_success',
-              candidate: updatedCandidate,
+              data: updatedCandidate,
               errors: null,
             };
           } else {
             result = {
               status: HttpStatus.FORBIDDEN,
               message: 'candidate_update_by_id_forbidden',
-              candidate: null,
+              data: null,
               errors: null,
             };
           }
@@ -182,7 +178,7 @@ export class CandidatesController {
           result = {
             status: HttpStatus.NOT_FOUND,
             message: 'candidate_update_by_id_not_found',
-            candidate: null,
+            data: null,
             errors: null,
           };
         }
@@ -190,7 +186,7 @@ export class CandidatesController {
         result = {
           status: HttpStatus.PRECONDITION_FAILED,
           message: 'candidate_update_by_id_precondition_failed',
-          candidate: null,
+          data: null,
           errors: e.errors,
         };
       }
@@ -198,7 +194,7 @@ export class CandidatesController {
       result = {
         status: HttpStatus.BAD_REQUEST,
         message: 'candidate_update_by_id_bad_request',
-        candidate: null,
+        data: null,
         errors: null,
       };
     }
@@ -206,12 +202,12 @@ export class CandidatesController {
     return result;
   }
 
-  @MessagePattern('candidate_delete_by_id')
+  @MessagePattern({ cmd: 'candidate_delete_by_id' })
   public async candidateDeleteForUser(params: {
     user: string;
     id: string;
-  }): Promise<ICandidateDeleteResponse> {
-    let result: ICandidateDeleteResponse;
+  }): Promise<IResponse<null>> {
+    let result: IResponse<null>;
 
     if (params && params.user && params.id) {
       try {
