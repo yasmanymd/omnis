@@ -7,6 +7,9 @@ export class UpdateCandidateRequestDto {
   @ApiProperty({ example: 'Senior Software Developer' })
   title: string;
 
+  @ApiProperty({ example: ['NodeJs', 'React', 'Designer'] })
+  tags: string[];
+
   @ApiProperty({
     example: {
       email: 'alan@gmail.com',

@@ -158,22 +158,13 @@ export class CandidatesController {
       try {
         const candidate = await this.candidateService.getCandidateById(params.id);
         if (candidate) {
-          if (candidate.created_by === params.user) {
-            const updatedCandidate = await this.candidateService.updateCandidateById(candidate._id, Object.assign(candidate, params.candidate));
-            result = {
-              status: HttpStatus.OK,
-              message: 'candidate_update_by_id_success',
-              data: updatedCandidate,
-              errors: null,
-            };
-          } else {
-            result = {
-              status: HttpStatus.FORBIDDEN,
-              message: 'candidate_update_by_id_forbidden',
-              data: null,
-              errors: null,
-            };
-          }
+          const updatedCandidate = await this.candidateService.updateCandidateById(candidate._id, Object.assign(candidate, params.candidate));
+          result = {
+            status: HttpStatus.OK,
+            message: 'candidate_update_by_id_success',
+            data: updatedCandidate,
+            errors: null,
+          };
         } else {
           result = {
             status: HttpStatus.NOT_FOUND,
@@ -214,20 +205,12 @@ export class CandidatesController {
         const candidate = await this.candidateService.getCandidateById(params.id);
 
         if (candidate) {
-          if (candidate.created_by === params.user) {
-            await this.candidateService.removeCandidateById(params.id);
-            result = {
-              status: HttpStatus.OK,
-              message: 'candidate_delete_by_id_success',
-              errors: null,
-            };
-          } else {
-            result = {
-              status: HttpStatus.FORBIDDEN,
-              message: 'candidate_delete_by_id_forbidden',
-              errors: null,
-            };
-          }
+          await this.candidateService.removeCandidateById(params.id);
+          result = {
+            status: HttpStatus.OK,
+            message: 'candidate_delete_by_id_success',
+            errors: null,
+          };
         } else {
           result = {
             status: HttpStatus.NOT_FOUND,

@@ -203,6 +203,23 @@ const columns = [
   },
   {
     flex: 0.15,
+    field: 'tags',
+    //minWidth: 150,
+    headerName: 'Tags',
+    renderCell: ({ row }) => {
+      return row.tags.map((tag, index) => (
+        <CustomChip
+          size='small'
+          key={index}
+          skin='light'
+          label={tag}
+          sx={{ '& .MuiChip-label': { textTransform: 'capitalize' }, '&:not(:last-of-type)': { mr: 3 } }}
+        />
+      ))
+    }
+  },
+  {
+    flex: 0.15,
     field: 'linkedin',
     //minWidth: 150,
     headerName: 'LinkedIn',
@@ -339,6 +356,7 @@ const CandidateList = () => {
                   id: candidate._id,
                   name: candidate.name,
                   title: candidate.title,
+                  tags: candidate.tags || [],
                   linkedin: candidate.contacts.linkedin
                 }
               }

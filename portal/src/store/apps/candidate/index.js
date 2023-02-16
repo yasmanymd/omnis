@@ -43,6 +43,7 @@ export const updateCandidate = createAsyncThunk('appCandidates/updateCandidate',
     body: JSON.stringify({
       "name": candidate.name,
       "title": candidate.title,
+      "tags": candidate.tags || [],
       "status": candidate.status
     })
   });

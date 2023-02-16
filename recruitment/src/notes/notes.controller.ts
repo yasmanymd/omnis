@@ -92,22 +92,13 @@ export class NotesController {
       try {
         const note = await this.notesService.getNoteById(params.id);
         if (note) {
-          if (note.created_by === params.user) {
-            const updatedNote = await this.notesService.updateNoteById(note._id, Object.assign(note, params.note));
-            result = {
-              status: HttpStatus.OK,
-              message: 'note_update_by_id_success',
-              data: updatedNote,
-              errors: null,
-            };
-          } else {
-            result = {
-              status: HttpStatus.FORBIDDEN,
-              message: 'note_update_by_id_forbidden',
-              data: null,
-              errors: null,
-            };
-          }
+          const updatedNote = await this.notesService.updateNoteById(note._id, Object.assign(note, params.note));
+          result = {
+            status: HttpStatus.OK,
+            message: 'note_update_by_id_success',
+            data: updatedNote,
+            errors: null,
+          };
         } else {
           result = {
             status: HttpStatus.NOT_FOUND,
@@ -148,20 +139,12 @@ export class NotesController {
         const note = await this.notesService.getNoteById(params.id);
 
         if (note) {
-          if (note.created_by === params.user) {
-            await this.notesService.removeNoteById(params.id);
-            result = {
-              status: HttpStatus.OK,
-              message: 'note_delete_by_id_success',
-              errors: null,
-            };
-          } else {
-            result = {
-              status: HttpStatus.FORBIDDEN,
-              message: 'note_delete_by_id_forbidden',
-              errors: null,
-            };
-          }
+          await this.notesService.removeNoteById(params.id);
+          result = {
+            status: HttpStatus.OK,
+            message: 'note_delete_by_id_success',
+            errors: null,
+          };
         } else {
           result = {
             status: HttpStatus.NOT_FOUND,

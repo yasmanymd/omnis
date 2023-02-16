@@ -4,6 +4,7 @@ export interface ICandidate {
   _id: string;
   name: string;
   title: string;
+  tags: string[];
   contacts: { [key: string]: any };
   status: string;
   salary: string;

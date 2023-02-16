@@ -41,6 +41,7 @@ import { useDispatch } from 'react-redux'
 
 // ** Actions Imports
 import { updateCandidate } from 'src/store/apps/candidate'
+import { Autocomplete, Chip } from '@mui/material'
 
 const statusColors = {
   active: 'success',
@@ -69,6 +70,7 @@ const CandidateViewLeft = props => {
     if (candidate) {
       setValue('name', candidate.name);
       setValue('title', candidate.title);
+      setValue('tags', candidate.tags || []);
       setValue('status', candidate.status);
     }
   }, [setValue, candidate]);
@@ -78,6 +80,7 @@ const CandidateViewLeft = props => {
       _id: candidate._id,
       name: data.name,
       title: data.title,
+      tags: data.tags,
       status: data.status
     };
 
@@ -139,7 +142,6 @@ const CandidateViewLeft = props => {
                 }}
               />
             </CardContent>
-
             <CardContent>
               <Typography variant='h6'>Details</Typography>
               <Divider />
@@ -170,6 +172,27 @@ const CandidateViewLeft = props => {
                     }}
                   />
                 </Box>
+                {candidate.tags.length > 0 && (
+                  <Box sx={{ display: 'flex', mb: 2.7 }}>
+                    <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>Tags:</Typography>
+                    <Typography variant='body2'>
+                      {candidate.tags.map(tag => (
+                        <CustomChip
+                          skin='light'
+                          size='small'
+                          label={tag}
+                          sx={{
+                            height: 20,
+                            fontSize: '0.75rem',
+                            fontWeight: 500,
+                            borderRadius: '5px',
+                            marginLeft: '5px'
+                          }}
+                        />
+                      ))}
+                    </Typography>
+                  </Box>
+                )}
                 <Box sx={{ display: 'flex', mb: 2.7 }}>
                   <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>Created by:</Typography>
                   <Typography variant='body2'>
@@ -232,6 +255,39 @@ const CandidateViewLeft = props => {
                             {errors.title.message}
                           </FormHelperText>
                         )}
+                      </FormControl>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <FormControl fullWidth sx={{ mb: 6 }}>
+                        <Controller
+                          name='tags'
+                          control={control}
+                          rules={{ required: false }}
+                          render={({ field: { ref, ...field }, fieldState: { error } }) => (
+                            <Autocomplete
+                              {...field}
+                              multiple
+                              id="tags-filled"
+                              options={[]}
+                              freeSolo
+                              onChange={(event, value) => field.onChange(value)}
+                              renderTags={(v, getTagProps) =>
+                                v.map((option, index) => (
+                                  <Chip variant="outlined" label={option} color={Boolean(errors.tags) ? "error" : "default"} {...getTagProps({ index })} />
+                                ))
+                              }
+                              renderInput={(params) => (
+                                <TextField
+                                  {...params}
+                                  variant="outlined"
+                                  label="Tags"
+                                  inputRef={ref}
+                                  error={Boolean(errors.tags)}
+                                />
+                              )}
+                            />
+                          )}
+                        />
                       </FormControl>
                     </Grid>
                     <Grid item xs={12} sm={6}>

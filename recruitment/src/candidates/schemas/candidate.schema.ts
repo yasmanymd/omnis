@@ -14,6 +14,9 @@ export class Candidate implements ICandidate {
   @Prop({ required: false })
   title: string;
 
+  @Prop({ required: false })
+  tags: string[];
+
   contacts: { [key: string]: any };
 
   @Prop({ required: false })
