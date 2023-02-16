@@ -1,5 +1,4 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
-
 import toast from 'react-hot-toast';
 import ErrorDetails from 'src/layouts/components/ErrorDetails';
 
@@ -28,6 +27,7 @@ export const fetchCandidate = createAsyncThunk('appCandidates/fetchCandidate', a
   const result = await response.json();
   if (result.data) {
     dispatch(fetchNotes(result.data._id));
+    dispatch(fetchDocuments(result.data._id));
   }
   return result.data;
 })
@@ -72,6 +72,40 @@ export const fetchNotes = createAsyncThunk('appCandidates/fetchNotes', async (ca
   return result.data;
 })
 
+// ** Fetch Documents
+export const fetchDocuments = createAsyncThunk('appCandidates/fetchDocuments', async (candidate_id) => {
+  const response = await fetch(encodeURI('/api/docs/filter?candidate_id=' + candidate_id), {
+    method: 'GET',
+    headers: {
+      'accept': 'application/json',
+      'Content-Type': 'application/json'
+    }
+  });
+  const result = await response.json();
+  return result;
+})
+
+// ** Delete Document
+export const deleteDocument = createAsyncThunk('appCandidates/deleteDocument', async ({ candidate_id, doc }, { dispatch }) => {
+  const response = await fetch(encodeURI('/api/docs/' + candidate_id + '/' + doc), {
+    method: 'DELETE',
+    headers: {
+      'accept': 'application/json',
+      'Content-Type': 'application/json'
+    }
+  });
+
+  const result = await response.json();
+  dispatch(fetchDocuments(candidate_id));
+  if (result?.errors) {
+    toast.error(<ErrorDetails message='Error removing document.' errors={result.errors} />);
+  } else {
+    toast.success('Document removed.');
+  }
+
+  return result.data;
+})
+
 // ** Fetch Notes
 export const createNote = createAsyncThunk('appCandidates/createNote', async (note, { dispatch }) => {
   const response = await fetch(encodeURI('/api/notes'), {
@@ -100,7 +134,8 @@ export const appCandidatesSlice = createSlice({
   initialState: {
     candidates: [],
     candidate: null,
-    notes: []
+    notes: [],
+    documents: []
   },
   reducers: {},
   extraReducers: builder => {
@@ -112,6 +147,9 @@ export const appCandidatesSlice = createSlice({
     })
     builder.addCase(fetchNotes.fulfilled, (state, action) => {
       state.notes = action.payload || []
+    })
+    builder.addCase(fetchDocuments.fulfilled, (state, action) => {
+      state.documents = action.payload || []
     })
   }
 })

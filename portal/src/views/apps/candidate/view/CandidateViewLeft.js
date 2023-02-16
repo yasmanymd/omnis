@@ -268,7 +268,7 @@ const CandidateViewLeft = props => {
                               {...field}
                               multiple
                               id="tags-filled"
-                              options={[]}
+                              options={['Java', '.Net', 'Python', 'Golang', 'PHP', 'VB.Net', 'Ruby on Rails', 'Solidity', 'AEM', 'Elixir', 'Node', 'React Native', 'AWS', 'Azure', 'GCP', 'DevOps', 'SRE', 'QA Automation', 'QA Manual', 'Business Analyst', 'Functional Analyst', 'SysAdmin', 'Angular', 'React.js', 'Vue.js', 'Scrum Master', 'Project Manager', 'Consultant', 'Data Engineer', 'BI Architect', 'Cryptographer', 'Comunity Manager', 'Technical Support', 'iOS', 'Android', 'Flutter', 'CiberSecurity Analyst', 'BI Developer', 'BI Analyst', 'Architect']}
                               freeSolo
                               onChange={(event, value) => field.onChange(value)}
                               renderTags={(v, getTagProps) =>
@@ -298,9 +298,23 @@ const CandidateViewLeft = props => {
                           control={control}
                           render={({ field }) => (
                             <Select labelId="status-label" input={<OutlinedInput label="Status" />} {...field}>
-                              <MenuItem value='Pending'>Pending</MenuItem>
-                              <MenuItem value='Active'>Active</MenuItem>
                               <MenuItem value='None'>None</MenuItem>
+                              <MenuItem value='Connection Request'>Connection Request</MenuItem>
+                              <MenuItem value='Aproched'>Aproched</MenuItem>
+                              <MenuItem value='Relance 1'>Relance 1</MenuItem>
+                              <MenuItem value='Relance 1'>Relance 2</MenuItem>
+                              <MenuItem value='No Go Aproach'>No Go Aproach</MenuItem>
+                              <MenuItem value='No Go Relance'>No Go Relance</MenuItem>
+                              <MenuItem value='Evaluation'>Evaluation</MenuItem>
+                              <MenuItem value='Screening'>Screening</MenuItem>
+                              <MenuItem value='No fit'>No fit</MenuItem>
+                              <MenuItem value='Dépôt'>Dépôt</MenuItem>
+                              <MenuItem value='Culture Fit Interview'>Culture Fit Interview</MenuItem>
+                              <MenuItem value='Technical Interview'>Technical Interview</MenuItem>
+                              <MenuItem value='Interview no concluante'>Interview no concluante</MenuItem>
+                              <MenuItem value='Offer'>Offer</MenuItem>
+                              <MenuItem value='Hired'>Hired</MenuItem>
+                              <MenuItem value='Refus'>Refus</MenuItem>
                             </Select>
                           )}
                         />

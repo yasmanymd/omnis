@@ -62,7 +62,7 @@ const CandidateViewNotes = ({ notes, candidate_id }) => {
               <Typography>Created by {note.created_by} on {new Date(note.created_at).toLocaleDateString("en-US")} at {new Date(note.created_at).toLocaleTimeString("en-US")}.</Typography>
             </AccordionSummary>
             <AccordionDetails>
-              <Typography>
+              <Typography style={{ whiteSpace: 'pre-wrap' }}>
                 {note.note}
               </Typography>
             </AccordionDetails>
