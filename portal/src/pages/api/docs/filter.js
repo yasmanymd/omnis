@@ -4,13 +4,13 @@ import path from 'path';
 
 export default withApiAuthRequired(async function documents(req, res) {
   const { method } = req;
-  const { candidate_id } = req.query;
+  const { entity_id } = req.query;
   let files;
 
   switch (method) {
     case 'GET':
       try {
-        files = await fs.readdir(path.join(process.cwd(), '/public/docs/' + candidate_id + '/'));
+        files = await fs.readdir(path.join(process.cwd(), '/public/docs/' + entity_id + '/'));
       } catch (error) {
         files = [];
       }

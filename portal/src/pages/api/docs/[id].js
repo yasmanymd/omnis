@@ -9,10 +9,10 @@ export const config = {
   }
 };
 
-const readFile = (req, saveLocally, candidate_id) => {
+const readFile = (req, saveLocally, entity_id) => {
   const options = {};
   if (saveLocally) {
-    options.uploadDir = path.join(process.cwd(), '/public/docs/' + candidate_id);
+    options.uploadDir = path.join(process.cwd(), '/public/docs/' + entity_id);
     options.filename = (name, ext, path) => {
       return path.originalFilename;
     }

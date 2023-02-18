@@ -74,7 +74,7 @@ export const fetchNotes = createAsyncThunk('appCandidates/fetchNotes', async (ca
 
 // ** Fetch Documents
 export const fetchDocuments = createAsyncThunk('appCandidates/fetchDocuments', async (candidate_id) => {
-  const response = await fetch(encodeURI('/api/docs/filter?candidate_id=' + candidate_id), {
+  const response = await fetch(encodeURI('/api/docs/filter?entity_id=' + candidate_id), {
     method: 'GET',
     headers: {
       'accept': 'application/json',
