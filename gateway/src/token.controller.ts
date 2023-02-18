@@ -10,7 +10,7 @@ import { TokenDto } from './interfaces/token/dto/token.dto';
 
 @Controller('token')
 export class TokenController {
-  constructor(@Inject('TOKEN_SERVICE') private readonly tokenService: ClientProxy) { }
+  constructor(@Inject('RECRUITMENT_SERVICE') private readonly recruitmentService: ClientProxy) { }
 
   @Get()
   @ApiBearerAuth()
@@ -24,7 +24,7 @@ export class TokenController {
     @Req() req: { user: IUser }
   ): Promise<TokenDto> {
     const tokenResponse: TokenDto = await firstValueFrom(
-      this.tokenService.send({ cmd: 'token_search_by_user' }, req.user.email)
+      this.recruitmentService.send({ cmd: 'token_search_by_user' }, req.user.email)
     );
 
     return tokenResponse;
@@ -42,7 +42,7 @@ export class TokenController {
     @Req() req: { user: IUser }
   ): Promise<TokenDto> {
     const tokenResponse: TokenDto = await firstValueFrom(
-      this.tokenService.send({ cmd: 'token_regenerate' }, req.user.email)
+      this.recruitmentService.send({ cmd: 'token_regenerate' }, req.user.email)
     );
 
     return tokenResponse;

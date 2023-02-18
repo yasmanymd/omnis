@@ -15,7 +15,7 @@ import { ICandidate } from './interfaces/candidates/candidate.interface';
 
 @Controller('candidates')
 export class CandidatesController {
-  constructor(@Inject('CANDIDATE_SERVICE') private readonly candidateService: ClientProxy) { }
+  constructor(@Inject('RECRUITMENT_SERVICE') private readonly recruitmentService: ClientProxy) { }
 
   @Post()
   @ApiCreatedResponse({
@@ -29,7 +29,7 @@ export class CandidatesController {
     @Body() candidateRequest: CreateCandidateRequestDto
   ): Promise<ResponseDto<ICandidate>> {
     const createCandidateResponse: IServiceResponse<ICandidate> = await firstValueFrom(
-      this.candidateService.send({ cmd: 'candidate_create' },
+      this.recruitmentService.send({ cmd: 'candidate_create' },
         {
           ...candidateRequest,
           created_by: req.user.email
@@ -64,7 +64,7 @@ export class CandidatesController {
     @Req() req: { user: IUser }
   ): Promise<ResponseDto<ICandidate[]>> {
     const candidatesResponse: IServiceResponse<ICandidate[]> = await firstValueFrom(
-      this.candidateService.send({ cmd: 'candidates_list' }, {}),
+      this.recruitmentService.send({ cmd: 'candidates_list' }, {}),
     );
 
     return {
@@ -87,7 +87,7 @@ export class CandidatesController {
     @Param('id') id: string,
   ): Promise<ResponseDto<ICandidate>> {
     const candidateResponse: IServiceResponse<ICandidate> = await firstValueFrom(
-      this.candidateService.send({ cmd: 'candidate_search_by_id' }, id),
+      this.recruitmentService.send({ cmd: 'candidate_search_by_id' }, id),
     );
 
     return {
@@ -110,7 +110,7 @@ export class CandidatesController {
     @Param('id') id: string,
   ): Promise<ResponseDto<null>> {
     const deleteCandidateResponse: IServiceResponse<null> = await firstValueFrom(
-      this.candidateService.send({ cmd: 'candidate_delete_by_id' }, {
+      this.recruitmentService.send({ cmd: 'candidate_delete_by_id' }, {
         id: id,
         user: req.user.email
       }),
@@ -148,7 +148,7 @@ export class CandidatesController {
     @Body() candidateRequest: UpdateCandidateRequestDto,
   ): Promise<ResponseDto<ICandidate>> {
     const updateCandidateResponse: IServiceResponse<ICandidate> = await firstValueFrom(
-      this.candidateService.send({ cmd: 'candidate_update_by_id' }, {
+      this.recruitmentService.send({ cmd: 'candidate_update_by_id' }, {
         id: id,
         user: req.user.email,
         candidate: candidateRequest,
@@ -181,7 +181,7 @@ export class CandidatesController {
     @Body() candidateRequest: ImportCandidateRequestDto
   ): Promise<ResponseDto<null>> {
     const createCandidateResponse: IServiceResponse<ICandidate> = await firstValueFrom(
-      this.candidateService.send({ cmd: 'candidate_import' }, candidateRequest)
+      this.recruitmentService.send({ cmd: 'candidate_import' }, candidateRequest)
     );
 
     if (createCandidateResponse.status != HttpStatus.CREATED) {

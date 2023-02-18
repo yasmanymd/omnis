@@ -14,7 +14,7 @@ import { INote } from './interfaces/notes/note.interface';
 
 @Controller('notes')
 export class NotesController {
-  constructor(@Inject('NOTE_SERVICE') private readonly noteService: ClientProxy) { }
+  constructor(@Inject('RECRUITMENT_SERVICE') private readonly recruitmentService: ClientProxy) { }
 
   @Post()
   @ApiCreatedResponse({
@@ -28,7 +28,7 @@ export class NotesController {
     @Body() noteRequest: CreateNoteRequestDto
   ): Promise<ResponseDto<INote>> {
     const createNoteResponse: IServiceResponse<INote> = await firstValueFrom(
-      this.noteService.send({ cmd: 'note_create' },
+      this.recruitmentService.send({ cmd: 'note_create' },
         {
           ...noteRequest,
           created_by: req.user.email
@@ -63,7 +63,7 @@ export class NotesController {
     @Query('candidate_id') candidate_id: string
   ): Promise<ResponseDto<INote[]>> {
     const notesResponse: IServiceResponse<INote[]> = await firstValueFrom(
-      this.noteService.send({ cmd: 'notes_search_by_candidate' }, candidate_id),
+      this.recruitmentService.send({ cmd: 'notes_search_by_candidate' }, candidate_id),
     );
 
     return {
@@ -85,7 +85,7 @@ export class NotesController {
     @Param('id') id: string,
   ): Promise<ResponseDto<INote>> {
     const noteResponse: IServiceResponse<INote> = await firstValueFrom(
-      this.noteService.send({ cmd: 'note_search_by_id' }, id),
+      this.recruitmentService.send({ cmd: 'note_search_by_id' }, id),
     );
 
     return {
@@ -108,7 +108,7 @@ export class NotesController {
     @Param('id') id: string,
   ): Promise<ResponseDto<null>> {
     const deleteNoteResponse: IServiceResponse<null> = await firstValueFrom(
-      this.noteService.send({ cmd: 'note_delete_by_id' }, {
+      this.recruitmentService.send({ cmd: 'note_delete_by_id' }, {
         id: id,
         user: req.user.email
       }),
@@ -146,7 +146,7 @@ export class NotesController {
     @Body() noteRequest: UpdateNoteRequestDto,
   ): Promise<ResponseDto<INote>> {
     const updateNoteResponse: IServiceResponse<INote> = await firstValueFrom(
-      this.noteService.send({ cmd: 'note_update_by_id' }, {
+      this.recruitmentService.send({ cmd: 'note_update_by_id' }, {
         id: id,
         user: req.user.email,
         note: { ...noteRequest, modified_by: req.user.email },

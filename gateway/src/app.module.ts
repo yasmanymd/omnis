@@ -8,6 +8,8 @@ import { AuthzModule } from './authz/authz.module';
 import { CandidatesController } from './candidates.controller';
 import { TokenController } from './token.controller';
 import { NotesController } from './notes.controller';
+import { JobsController } from './jobs.controller';
+import { ClientsController } from './clients.controller';
 
 @Module({
   imports: [
@@ -33,45 +35,7 @@ import { NotesController } from './notes.controller';
     ]),
     ClientsModule.registerAsync([
       {
-        name: 'CANDIDATE_SERVICE',
-        imports: [ConfigModule],
-        useFactory: async (configService: ConfigService) => {
-          return ({
-            transport: Transport.RMQ,
-            options: {
-              urls: [configService.get('rabbitmq_dsn')],
-              queue: 'recruitment_queue',
-              queueOptions: {
-                durable: false
-              },
-            }
-          });
-        },
-        inject: [ConfigService]
-      }
-    ]),
-    ClientsModule.registerAsync([
-      {
-        name: 'NOTE_SERVICE',
-        imports: [ConfigModule],
-        useFactory: async (configService: ConfigService) => {
-          return ({
-            transport: Transport.RMQ,
-            options: {
-              urls: [configService.get('rabbitmq_dsn')],
-              queue: 'recruitment_queue',
-              queueOptions: {
-                durable: false
-              },
-            }
-          });
-        },
-        inject: [ConfigService]
-      }
-    ]),
-    ClientsModule.registerAsync([
-      {
-        name: 'TOKEN_SERVICE',
+        name: 'RECRUITMENT_SERVICE',
         imports: [ConfigModule],
         useFactory: async (configService: ConfigService) => {
           return ({
@@ -90,7 +54,7 @@ import { NotesController } from './notes.controller';
     ]),
     AuthzModule
   ],
-  controllers: [MeetingsController, CandidatesController, NotesController, TokenController],
+  controllers: [MeetingsController, CandidatesController, NotesController, TokenController, JobsController, ClientsController],
   providers: [],
 })
 export class AppModule { }
