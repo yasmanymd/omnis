@@ -79,7 +79,7 @@ export class JobsController {
       try {
         const job = await this.jobService.getJobById(params.id);
         if (job) {
-          const updatedJob = await this.jobService.updateJobById(job._id, Object.assign(job, params.job));
+          const updatedJob = await this.jobService.updateJobById(job._id, params.job);
           result = {
             status: HttpStatus.OK,
             message: 'job_update_by_id_success',

@@ -83,8 +83,8 @@ export const updateClient = createAsyncThunk('appClients/updateClient', async (c
 })
 
 // ** Fetch Documents
-export const fetchDocuments = createAsyncThunk('appClients/fetchDocuments', async (client_id) => {
-  const response = await fetch(encodeURI('/api/docs/filter?entity_id=' + client_id), {
+export const fetchDocuments = createAsyncThunk('appClients/fetchDocuments', async (entity_id) => {
+  const response = await fetch(encodeURI('/api/docs/filter?entity_id=' + entity_id), {
     method: 'GET',
     headers: {
       'accept': 'application/json',
@@ -96,8 +96,8 @@ export const fetchDocuments = createAsyncThunk('appClients/fetchDocuments', asyn
 })
 
 // ** Delete Document
-export const deleteDocument = createAsyncThunk('appClients/deleteDocument', async ({ client_id, doc }, { dispatch }) => {
-  const response = await fetch(encodeURI('/api/docs/' + client_id + '/' + doc), {
+export const deleteDocument = createAsyncThunk('appClients/deleteDocument', async ({ entity_id, doc }, { dispatch }) => {
+  const response = await fetch(encodeURI('/api/docs/' + entity_id + '/' + doc), {
     method: 'DELETE',
     headers: {
       'accept': 'application/json',
@@ -106,7 +106,7 @@ export const deleteDocument = createAsyncThunk('appClients/deleteDocument', asyn
   });
 
   const result = await response.json();
-  dispatch(fetchDocuments(client_id));
+  dispatch(fetchDocuments(entity_id));
   if (result?.errors) {
     toast.error(<ErrorDetails message='Error removing document.' errors={result.errors} />);
   } else {

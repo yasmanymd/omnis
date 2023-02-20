@@ -20,8 +20,21 @@ export default withApiAuthRequired(async function jobs(req, res) {
       result = await response.json();
       res.status(200).json(result);
       break;
+    case 'POST':
+      response = await fetch(encodeURI(baseUrl + '/jobs'), {
+        headers: {
+          'accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
+        },
+        method: 'POST',
+        body: JSON.stringify(req.body)
+      });
+      result = await response.json();
+      res.status(200).json(result);
+      break;
     default:
-      res.setHeader('Allow', ['GET']);
+      res.setHeader('Allow', ['GET', 'POST']);
       res.status(405).json({
         status: 405,
         message: 'Method not allowed'

@@ -12,30 +12,31 @@ import Alert from '@mui/material/Alert'
 import { useDispatch, useSelector } from 'react-redux'
 
 // ** Actions Imports
-import { fetchClient, updateClient } from 'src/store/apps/client'
+import { fetchJob, updateJob } from 'src/store/apps/job'
+
 
 // ** Demo Components Imports
-import ClientViewLeft from 'src/views/apps/client/view/ClientViewLeft'
-import ClientViewRight from 'src/views/apps/client/view/ClientViewRight'
+import JobViewLeft from 'src/views/apps/job/view/JobViewLeft'
+import JobViewRight from 'src/views/apps/job/view/JobViewRight'
 
-const ClientViewPage = ({ id }) => {
+const JobViewPage = ({ id }) => {
   // ** State
   const dispatch = useDispatch()
   const [error, setError] = useState(false)
-  const store = useSelector(state => state.client)
+  const store = useSelector(state => state.job)
   useEffect(() => {
     dispatch(
-      fetchClient(id)
+      fetchJob(id)
     )
   }, [id])
-  if (store.client) {
+  if (store.job) {
     return (
       <Grid container spacing={6}>
         <Grid item xs={12} md={5} lg={4}>
-          <ClientViewLeft client={store.client} updateClient={updateClient} />
+          <JobViewLeft job={store.job} updateJob={updateJob} />
         </Grid>
         <Grid item xs={12} md={7} lg={8}>
-          <ClientViewRight client={store.client} documents={store.documents} updateClient={updateClient} />
+          <JobViewRight job={store.job} documents={store.documents} updateJob={updateJob} />
         </Grid>
       </Grid>
     )
@@ -44,8 +45,8 @@ const ClientViewPage = ({ id }) => {
       <Grid container spacing={6}>
         <Grid item xs={12}>
           <Alert severity='error'>
-            Client with the id: {id} does not exist. Please check the list of clients:{' '}
-            <Link href='/apps/client/list'>Client List</Link>
+            Job with the id: {id} does not exist. Please check the list of jobs:{' '}
+            <Link href='/apps/job/list'>Job List</Link>
           </Alert>
         </Grid>
       </Grid>
@@ -55,4 +56,4 @@ const ClientViewPage = ({ id }) => {
   }
 }
 
-export default ClientViewPage
+export default JobViewPage

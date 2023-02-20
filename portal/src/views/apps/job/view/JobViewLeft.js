@@ -20,6 +20,9 @@ import CardActions from '@mui/material/CardActions'
 import DialogTitle from '@mui/material/DialogTitle'
 import FormControl from '@mui/material/FormControl'
 import FormHelperText from '@mui/material/FormHelperText';
+import DialogContent from '@mui/material/DialogContent'
+import DialogActions from '@mui/material/DialogActions'
+import DialogContentText from '@mui/material/DialogContentText'
 
 // ** Custom Components
 import CustomChip from 'src/@core/components/mui/chip'
@@ -37,7 +40,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { useDispatch } from 'react-redux'
 
 // ** Actions Imports
-import { Autocomplete, Chip, DialogActions, DialogContent, DialogContentText } from '@mui/material'
+import { Autocomplete, Chip } from '@mui/material'
 
 const statusColors = {
   active: 'success',
@@ -45,11 +48,11 @@ const statusColors = {
   none: 'secondary'
 }
 
-const ClientViewLeft = ({ client, updateClient }) => {
+const JobViewLeft = ({ job, updateJob }) => {
   const dispatch = useDispatch()
 
   const schema = yup.object().shape({
-    name: yup.string().required('Name is a required field.'),
+    title: yup.string().required('Title is a required field.'),
     description: yup.string().required('Description is a required field.')
   }).required();
 
@@ -58,23 +61,24 @@ const ClientViewLeft = ({ client, updateClient }) => {
     setValue,
     handleSubmit,
     formState: { errors }
-  } = useForm({ defaultValues: { ...client }, resolver: yupResolver(schema) });
+  } = useForm({ defaultValues: { ...job }, resolver: yupResolver(schema) });
 
   const resetToStoredValues = useCallback(() => {
-    if (client) {
-      setValue('name', client.name);
-      setValue('description', client.description);
+    if (job) {
+      setValue('title', job.title);
+      setValue('description', job.description);
     }
-  }, [setValue, client]);
+  }, [setValue, job]);
 
   const onSubmit = data => {
-    const modifiedClient = {
-      ...client,
-      name: data.name,
-      description: data.description
+    const modifiedJob = {
+      ...job,
+      title: data.title,
+      description: data.description,
+      tags: data.tags
     };
 
-    dispatch(updateClient(modifiedClient));
+    dispatch(updateJob(modifiedJob));
     setOpenEdit(false);
   }
 
@@ -83,7 +87,7 @@ const ClientViewLeft = ({ client, updateClient }) => {
 
   useEffect(() => {
     resetToStoredValues();
-  }, [openEdit, client]);
+  }, [openEdit, job]);
 
   // Handle Edit dialog
   const handleEditClickOpen = () => setOpenEdit(true)
@@ -91,31 +95,14 @@ const ClientViewLeft = ({ client, updateClient }) => {
 
   // Handle Upgrade Plan dialog
 
-  const renderUserAvatar = () => {
-    if (client) {
-      return (
-        <CustomAvatar
-          skin='light'
-          variant='rounded'
-          color='primary'
-          sx={{ width: 120, height: 120, fontWeight: 600, mb: 4, fontSize: '3rem' }}
-        >
-          {getInitials(client.name)}
-        </CustomAvatar>
-      )
-    } else {
-      return null
-    }
-  }
-  if (client) {
+  if (job) {
     return (
       <Grid container spacing={6}>
         <Grid item xs={12}>
           <Card>
             <CardContent sx={{ pt: 15, display: 'flex', alignItems: 'center', flexDirection: 'column' }}>
-              {renderUserAvatar()}
               <Typography variant='h6' sx={{ mb: 2 }}>
-                {client.name}
+                {job.title}
               </Typography>
             </CardContent>
             <CardContent>
@@ -123,19 +110,40 @@ const ClientViewLeft = ({ client, updateClient }) => {
               <Divider />
               <Box sx={{ pt: 2, pb: 2 }}>
                 <Box sx={{ display: 'flex', mb: 2.7 }}>
-                  <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>Name:</Typography>
-                  <Typography variant='body2'>{client.name}</Typography>
+                  <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>Title:</Typography>
+                  <Typography variant='body2'>{job.title}</Typography>
                 </Box>
                 <Box sx={{ display: 'flex', mb: 2.7 }}>
                   <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>Role:</Typography>
                   <Typography variant='body2' sx={{ textTransform: 'capitalize' }}>
-                    Client
+                    Job
                   </Typography>
                 </Box>
                 <Box sx={{ display: 'flex', mb: 2.7 }}>
                   <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>Description:</Typography>
-                  <Typography variant='body2' style={{ whiteSpace: 'pre-wrap' }}>{client.description}</Typography>
+                  <Typography variant='body2' style={{ 'white-space': 'pre-wrap' }}>{job.description}</Typography>
                 </Box>
+                {job.tags.length > 0 && (
+                  <Box sx={{ display: 'flex', mb: 2.7 }}>
+                    <Typography sx={{ mr: 2, fontWeight: 500, fontSize: '0.875rem' }}>Tags:</Typography>
+                    <Typography variant='body2'>
+                      {job.tags.map(tag => (
+                        <CustomChip
+                          skin='light'
+                          size='small'
+                          label={tag}
+                          sx={{
+                            height: 20,
+                            fontSize: '0.75rem',
+                            fontWeight: 500,
+                            borderRadius: '5px',
+                            marginLeft: '5px'
+                          }}
+                        />
+                      ))}
+                    </Typography>
+                  </Box>
+                )}
               </Box>
             </CardContent>
 
@@ -154,7 +162,7 @@ const ClientViewLeft = ({ client, updateClient }) => {
             >
               <form onSubmit={handleSubmit(onSubmit)} noValidate autoComplete='off'>
                 <DialogTitle id='user-view-edit' sx={{ textAlign: 'center', fontSize: '1.5rem !important' }}>
-                  Edit Client Information
+                  Edit Job Information
                 </DialogTitle>
                 <DialogContent>
                   <DialogContentText variant='body2' id='user-view-edit-description' sx={{ textAlign: 'center', mb: 7 }}>
@@ -163,16 +171,16 @@ const ClientViewLeft = ({ client, updateClient }) => {
                     <Grid item xs={12} sm={12}>
                       <FormControl fullWidth sx={{ mb: 6 }}>
                         <Controller
-                          name='name'
+                          name='title'
                           control={control}
                           rules={{ required: true }}
                           render={({ field: { value, onChange } }) => (
-                            <TextField label='Name' value={value} onChange={onChange} error={Boolean(errors.name)} />
+                            <TextField label='Title' value={value} onChange={onChange} error={Boolean(errors.title)} />
                           )}
                         />
-                        {errors.name && (
-                          <FormHelperText sx={{ color: 'error.main' }} id='event-name-error'>
-                            {errors.name.message}
+                        {errors.title && (
+                          <FormHelperText sx={{ color: 'error.main' }} id='event-title-error'>
+                            {errors.title.message}
                           </FormHelperText>
                         )}
                       </FormControl>
@@ -192,6 +200,39 @@ const ClientViewLeft = ({ client, updateClient }) => {
                             {errors.description.message}
                           </FormHelperText>
                         )}
+                      </FormControl>
+                    </Grid>
+                    <Grid item xs={12}>
+                      <FormControl fullWidth sx={{ mb: 6 }}>
+                        <Controller
+                          name='tags'
+                          control={control}
+                          rules={{ required: false }}
+                          render={({ field: { ref, ...field }, fieldState: { error } }) => (
+                            <Autocomplete
+                              {...field}
+                              multiple
+                              id="tags-filled"
+                              options={['Java', '.Net', 'Python', 'Golang', 'PHP', 'VB.Net', 'Ruby on Rails', 'Solidity', 'AEM', 'Elixir', 'Node', 'React Native', 'AWS', 'Azure', 'GCP', 'DevOps', 'SRE', 'QA Automation', 'QA Manual', 'Business Analyst', 'Functional Analyst', 'SysAdmin', 'Angular', 'React.js', 'Vue.js', 'Scrum Master', 'Project Manager', 'Consultant', 'Data Engineer', 'BI Architect', 'Cryptographer', 'Comunity Manager', 'Technical Support', 'iOS', 'Android', 'Flutter', 'CiberSecurity Analyst', 'BI Developer', 'BI Analyst', 'Architect']}
+                              freeSolo
+                              onChange={(event, value) => field.onChange(value)}
+                              renderTags={(v, getTagProps) =>
+                                v.map((option, index) => (
+                                  <Chip variant="outlined" label={option} color={Boolean(errors.tags) ? "error" : "default"} {...getTagProps({ index })} />
+                                ))
+                              }
+                              renderInput={(params) => (
+                                <TextField
+                                  {...params}
+                                  variant="outlined"
+                                  label="Tags"
+                                  inputRef={ref}
+                                  error={Boolean(errors.tags)}
+                                />
+                              )}
+                            />
+                          )}
+                        />
                       </FormControl>
                     </Grid>
                   </Grid>
@@ -216,4 +257,4 @@ const ClientViewLeft = ({ client, updateClient }) => {
   }
 }
 
-export default ClientViewLeft
+export default JobViewLeft

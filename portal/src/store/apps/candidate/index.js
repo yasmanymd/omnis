@@ -44,6 +44,7 @@ export const updateCandidate = createAsyncThunk('appCandidates/updateCandidate',
       "name": candidate.name,
       "title": candidate.title,
       "tags": candidate.tags || [],
+      "contacts": candidate.contacts || [],
       "status": candidate.status
     })
   });
@@ -73,8 +74,8 @@ export const fetchNotes = createAsyncThunk('appCandidates/fetchNotes', async (ca
 })
 
 // ** Fetch Documents
-export const fetchDocuments = createAsyncThunk('appCandidates/fetchDocuments', async (candidate_id) => {
-  const response = await fetch(encodeURI('/api/docs/filter?entity_id=' + candidate_id), {
+export const fetchDocuments = createAsyncThunk('appCandidates/fetchDocuments', async (entity_id) => {
+  const response = await fetch(encodeURI('/api/docs/filter?entity_id=' + entity_id), {
     method: 'GET',
     headers: {
       'accept': 'application/json',
@@ -86,8 +87,8 @@ export const fetchDocuments = createAsyncThunk('appCandidates/fetchDocuments', a
 })
 
 // ** Delete Document
-export const deleteDocument = createAsyncThunk('appCandidates/deleteDocument', async ({ candidate_id, doc }, { dispatch }) => {
-  const response = await fetch(encodeURI('/api/docs/' + candidate_id + '/' + doc), {
+export const deleteDocument = createAsyncThunk('appCandidates/deleteDocument', async ({ entity_id, doc }, { dispatch }) => {
+  const response = await fetch(encodeURI('/api/docs/' + entity_id + '/' + doc), {
     method: 'DELETE',
     headers: {
       'accept': 'application/json',
@@ -96,7 +97,7 @@ export const deleteDocument = createAsyncThunk('appCandidates/deleteDocument', a
   });
 
   const result = await response.json();
-  dispatch(fetchDocuments(candidate_id));
+  dispatch(fetchDocuments(entity_id));
   if (result?.errors) {
     toast.error(<ErrorDetails message='Error removing document.' errors={result.errors} />);
   } else {

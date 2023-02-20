@@ -14,13 +14,14 @@ import MuiTab from '@mui/material/Tab'
 
 // ** Icons Imports
 import AccountOutline from 'mdi-material-ui/AccountOutline'
+import NoteMultiple from 'mdi-material-ui/NoteMultiple'
 import FileDocument from 'mdi-material-ui/FileDocument'
 
 // ** Demo Components Imports
 import ViewContacts from '../../common/ViewContacts'
 import ViewDocuments from '../../common/ViewDocuments'
 
-import { fetchDocuments, deleteDocument } from '../../../../store/apps/client'
+import { fetchDocuments, deleteDocument } from '../../../../store/apps/job'
 
 // ** Styled Tab component
 const Tab = styled(MuiTab)(({ theme }) => ({
@@ -32,9 +33,8 @@ const Tab = styled(MuiTab)(({ theme }) => ({
   }
 }))
 
-const ClientViewRight = ({ client, documents, updateClient }) => {
-  const dispatch = useDispatch();
-
+const JobViewRight = ({ job, documents, updateJob }) => {
+  const dispatch = useDispatch()
   // ** State
   const [value, setValue] = useState('contacts')
 
@@ -43,18 +43,21 @@ const ClientViewRight = ({ client, documents, updateClient }) => {
   }
 
   const addContacts = ({ key, value }) => {
-    let modifiedClient = {
-      ...client,
-      contacts: { ...client.contacts }
+    let modifiedJob = {
+      ...job,
+      contacts: { ...job.contacts }
     };
-    modifiedClient.contacts[key] = value;
-    dispatch(updateClient(modifiedClient))
+    modifiedJob.contacts[key] = value;
+    dispatch(updateJob(modifiedJob))
   }
 
   const deleteContacts = (key) => {
-    let modifiedClient = { ...client, contacts: { ...client.contacts } }
-    delete modifiedClient.contacts[key];
-    dispatch(updateClient(modifiedClient))
+    let modifiedJob = {
+      ...job,
+      contacts: { ...job.contacts }
+    }
+    delete modifiedJob.contacts[key];
+    dispatch(updateJob(modifiedJob))
   }
 
   return (
@@ -72,14 +75,14 @@ const ClientViewRight = ({ client, documents, updateClient }) => {
       <Box sx={{ mt: 6 }}>
         <TabPanel sx={{ p: 0 }} value='contacts'>
           <ViewContacts
-            contacts={client.contacts}
+            contacts={job.contacts}
             addContacts={addContacts}
             deleteContacts={deleteContacts} />
         </TabPanel>
         <TabPanel sx={{ p: 0 }} value='documents'>
           <ViewDocuments
             documents={documents}
-            entity_id={client._id}
+            entity_id={job._id}
             fetchDocuments={fetchDocuments}
             deleteDocument={deleteDocument} />
         </TabPanel>
@@ -88,4 +91,4 @@ const ClientViewRight = ({ client, documents, updateClient }) => {
   )
 }
 
-export default ClientViewRight
+export default JobViewRight

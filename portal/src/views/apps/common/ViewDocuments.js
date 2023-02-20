@@ -3,29 +3,27 @@ import { Card, List, ListItem, ListItemIcon, ListItemText, ListItemSecondaryActi
 import { FileDocumentOutline, Close, DeleteOutline } from 'mdi-material-ui';
 import { Fragment, useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
-import { fetchDocuments, deleteDocument } from 'src/store/apps/candidate';
 import toast from 'react-hot-toast';
-import ErrorDetails from '../../../../layouts/components/ErrorDetails';
-import { IconAdd } from '@aws-amplify/ui-react';
 import { PostAdd } from '@mui/icons-material';
+import ErrorDetails from '../../../layouts/components/ErrorDetails';
 
-const CandidateViewDocuments = ({ documents, candidate_id }) => {
+const ViewDocuments = ({ documents, entity_id, fetchDocuments, deleteDocument }) => {
   const dispatch = useDispatch();
   const [selectedFile, setSelectedFile] = useState('');
 
   const handleDeleteDocument = async (doc) => {
-    dispatch(deleteDocument({ candidate_id, doc }));
+    dispatch(deleteDocument({ entity_id, doc }));
   }
 
   const handleUpload = async () => {
     try {
       const formData = new FormData();
       formData.append("myDoc", selectedFile);
-      const response = await fetch('/api/docs/' + candidate_id, {
+      const response = await fetch('/api/docs/' + entity_id, {
         method: 'POST',
         body: formData
       });
-      dispatch(fetchDocuments(candidate_id));
+      dispatch(fetchDocuments(entity_id));
       toast.success('Document uploaded.');
     } catch (error) {
       toast.error(<ErrorDetails message='Error uploading document.' errors={error} />);
@@ -44,7 +42,7 @@ const CandidateViewDocuments = ({ documents, candidate_id }) => {
         <FileDocumentOutline fontSize='small' />
       </ListItemIcon>
       <ListItemText>
-        <Link href={'/docs/' + candidate_id + '/' + doc} target="_blank" passHref>
+        <Link href={'/docs/' + entity_id + '/' + doc} target="_blank" passHref>
           <Typography
             noWrap
             component='a'
@@ -96,4 +94,4 @@ const CandidateViewDocuments = ({ documents, candidate_id }) => {
   )
 }
 
-export default CandidateViewDocuments
+export default ViewDocuments

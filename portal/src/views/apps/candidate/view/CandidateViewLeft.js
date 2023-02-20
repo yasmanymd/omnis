@@ -77,7 +77,7 @@ const CandidateViewLeft = props => {
 
   const onSubmit = data => {
     const modifiedCandidate = {
-      _id: candidate._id,
+      ...candidate,
       name: data.name,
       title: data.title,
       tags: data.tags,

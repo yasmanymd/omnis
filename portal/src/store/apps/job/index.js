@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 import toast from 'react-hot-toast';
 import ErrorDetails from 'src/layouts/components/ErrorDetails';
+import { fetchClients as fc } from '../client';
 
 // ** Fetch Jobs
 export const fetchJobs = createAsyncThunk('appJobs/fetchJobs', async () => {
@@ -14,6 +15,8 @@ export const fetchJobs = createAsyncThunk('appJobs/fetchJobs', async () => {
   const result = await response.json();
   return result.data;
 })
+
+export const fetchClients = fc;
 
 // ** Fetch Job
 export const fetchJob = createAsyncThunk('appJobs/fetchJob', async (id) => {
@@ -39,6 +42,7 @@ export const updateJob = createAsyncThunk('appJobs/updateJob', async (job, { dis
     body: JSON.stringify({
       "name": job.name,
       "description": job.description,
+      "tags": job.tags || [],
       "contacts": job.contacts || []
     })
   });
@@ -54,9 +58,36 @@ export const updateJob = createAsyncThunk('appJobs/updateJob', async (job, { dis
   return result.data;
 })
 
+// ** Create Job
+export const createJob = createAsyncThunk('appJobs/createJob', async (job, { dispatch }) => {
+  const response = await fetch(encodeURI('/api/jobs'), {
+    method: 'POST',
+    headers: {
+      'accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      "title": job.title,
+      "description": job.description,
+      "tags": job.tags || [],
+      "contacts": job.contacts || [],
+      "client_id": job.client_id
+    })
+  });
+
+  const result = await response.json();
+  if (result?.errors) {
+    toast.error(<ErrorDetails message='Error creating job.' errors={result.errors} />);
+  } else {
+    dispatch(fetchJobs());
+    toast.success('Job created.');
+  }
+  return result.data;
+})
+
 // ** Fetch Documents
-export const fetchDocuments = createAsyncThunk('appJobs/fetchDocuments', async (job_id) => {
-  const response = await fetch(encodeURI('/api/docs/filter?entity_id=' + job_id), {
+export const fetchDocuments = createAsyncThunk('appJobs/fetchDocuments', async (entity_id) => {
+  const response = await fetch(encodeURI('/api/docs/filter?entity_id=' + entity_id), {
     method: 'GET',
     headers: {
       'accept': 'application/json',
@@ -68,8 +99,8 @@ export const fetchDocuments = createAsyncThunk('appJobs/fetchDocuments', async (
 })
 
 // ** Delete Document
-export const deleteDocument = createAsyncThunk('appJobs/deleteDocument', async ({ job_id, doc }, { dispatch }) => {
-  const response = await fetch(encodeURI('/api/docs/' + job_id + '/' + doc), {
+export const deleteDocument = createAsyncThunk('appJobs/deleteDocument', async ({ entity_id, doc }, { dispatch }) => {
+  const response = await fetch(encodeURI('/api/docs/' + entity_id + '/' + doc), {
     method: 'DELETE',
     headers: {
       'accept': 'application/json',
@@ -78,7 +109,7 @@ export const deleteDocument = createAsyncThunk('appJobs/deleteDocument', async (
   });
 
   const result = await response.json();
-  dispatch(fetchDocuments(job_id));
+  dispatch(fetchDocuments(entity_id));
   if (result?.errors) {
     toast.error(<ErrorDetails message='Error removing document.' errors={result.errors} />);
   } else {
@@ -93,7 +124,8 @@ export const appJobsSlice = createSlice({
   initialState: {
     jobs: [],
     job: null,
-    documents: []
+    documents: [],
+    clients: []
   },
   reducers: {},
   extraReducers: builder => {
@@ -105,6 +137,9 @@ export const appJobsSlice = createSlice({
     })
     builder.addCase(fetchDocuments.fulfilled, (state, action) => {
       state.documents = action.payload || []
+    })
+    builder.addCase(fetchClients.fulfilled, (state, action) => {
+      state.clients = action.payload || []
     })
   }
 })

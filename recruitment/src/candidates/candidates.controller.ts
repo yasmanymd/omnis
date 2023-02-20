@@ -158,7 +158,7 @@ export class CandidatesController {
       try {
         const candidate = await this.candidateService.getCandidateById(params.id);
         if (candidate) {
-          const updatedCandidate = await this.candidateService.updateCandidateById(candidate._id, Object.assign(candidate, params.candidate));
+          const updatedCandidate = await this.candidateService.updateCandidateById(candidate._id, params.candidate);
           result = {
             status: HttpStatus.OK,
             message: 'candidate_update_by_id_success',

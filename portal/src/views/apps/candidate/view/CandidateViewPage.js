@@ -12,7 +12,7 @@ import Alert from '@mui/material/Alert'
 import { useDispatch, useSelector } from 'react-redux'
 
 // ** Actions Imports
-import { fetchCandidate } from 'src/store/apps/candidate'
+import { fetchCandidate, updateCandidate } from 'src/store/apps/candidate'
 
 
 // ** Demo Components Imports
@@ -33,10 +33,16 @@ const CandidateView = ({ id }) => {
     return (
       <Grid container spacing={6}>
         <Grid item xs={12} md={5} lg={4}>
-          <CandidateViewLeft candidate={store.candidate} />
+          <CandidateViewLeft
+            candidate={store.candidate}
+            updateCandidate={updateCandidate} />
         </Grid>
         <Grid item xs={12} md={7} lg={8}>
-          <CandidateViewRight candidate={store.candidate} notes={store.notes} documents={store.documents} />
+          <CandidateViewRight
+            candidate={store.candidate}
+            notes={store.notes}
+            documents={store.documents}
+            updateCandidate={updateCandidate} />
         </Grid>
       </Grid>
     )

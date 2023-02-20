@@ -80,7 +80,7 @@ export class ClientsController {
       try {
         const client = await this.clientService.getClientById(params.id);
         if (client) {
-          const updatedClient = await this.clientService.updateClientById(client._id, Object.assign(client, params.client));
+          const updatedClient = await this.clientService.updateClientById(client._id, params.client);
           result = {
             status: HttpStatus.OK,
             message: 'client_update_by_id_success',
