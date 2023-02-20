@@ -123,6 +123,9 @@ const JobList = () => {
             disableSelectionOnClick
             rowsPerPageOptions={[10, 25, 50]}
             onPageSizeChange={newPageSize => setPageSize(newPageSize)}
+            filterModel={{
+              items: [{ columnField: 'title', operatorValue: 'contains', value: value }]
+            }}
           />
         </Card>
       </Grid>

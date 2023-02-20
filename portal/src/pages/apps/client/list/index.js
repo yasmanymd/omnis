@@ -260,6 +260,9 @@ const ClientList = () => {
             disableSelectionOnClick
             rowsPerPageOptions={[10, 25, 50]}
             onPageSizeChange={newPageSize => setPageSize(newPageSize)}
+            filterModel={{
+              items: [{ columnField: 'name', operatorValue: 'contains', value: value }]
+            }}
           />
         </Card>
       </Grid>

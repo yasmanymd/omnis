@@ -13,6 +13,13 @@ const TableHeader = props => {
   return (
     <Box sx={{ p: 5, pb: 3, display: 'flex', flexWrap: 'wrap', alignItems: 'right', justifyContent: 'right' }}>
       <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center' }}>
+        <TextField
+          size='small'
+          value={value}
+          sx={{ mr: 4, mb: 2 }}
+          placeholder='Search Client'
+          onChange={e => handleFilter(e.target.value)}
+        />
         <Button sx={{ mb: 2 }} onClick={toggle} variant='contained'>
           Add Client
         </Button>
