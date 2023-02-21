@@ -44,7 +44,7 @@ export const updateCandidate = createAsyncThunk('appCandidates/updateCandidate',
       "name": candidate.name,
       "title": candidate.title,
       "tags": candidate.tags || [],
-      "contacts": candidate.contacts || [],
+      "contacts": candidate.contacts || {},
       "status": candidate.status
     })
   });
@@ -56,6 +56,32 @@ export const updateCandidate = createAsyncThunk('appCandidates/updateCandidate',
     toast.error(<ErrorDetails message='Error updating candidate.' errors={result.errors} />);
   } else {
     toast.success('Candidate updated.');
+  }
+  return result.data;
+})
+
+// ** Create Candidate
+export const createCandidate = createAsyncThunk('appCandidates/createCandidate', async (candidate, { dispatch }) => {
+  const response = await fetch(encodeURI('/api/candidates'), {
+    method: 'POST',
+    headers: {
+      'accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      "name": candidate.name,
+      "title": candidate.title,
+      "status": "None",
+      "contacts": {}
+    })
+  });
+
+  const result = await response.json();
+  if (result?.errors) {
+    toast.error(<ErrorDetails message='Error creating candidate.' errors={result.errors} />);
+  } else {
+    dispatch(fetchCandidates());
+    toast.success('Candidate created.');
   }
   return result.data;
 })

@@ -42,7 +42,7 @@ export const createClient = createAsyncThunk('appClients/createClient', async (c
     body: JSON.stringify({
       "name": client.name,
       "description": client.description,
-      "contacts": client.contacts || []
+      "contacts": client.contacts || {}
     })
   });
 
@@ -67,7 +67,7 @@ export const updateClient = createAsyncThunk('appClients/updateClient', async (c
     body: JSON.stringify({
       "name": client.name,
       "description": client.description,
-      "contacts": client.contacts || []
+      "contacts": client.contacts || {}
     })
   });
 

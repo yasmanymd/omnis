@@ -130,13 +130,13 @@ const columns = [
     renderCell: ({ row }) => {
       return (
         <Box sx={{ display: 'flex', alignItems: 'center' }}>
-          <Link href={row.linkedin} passHref>
+          {row.linkedin && <Link href={row.linkedin} passHref>
             <a target="_blank">
               <Typography noWrap component='a' variant='caption' sx={{ textDecoration: 'none' }}>
                 Go to LinkedIn
               </Typography>
             </a>
-          </Link>
+          </Link>}
         </Box>
       )
     }
@@ -182,7 +182,7 @@ const CandidateList = () => {
                   title: candidate.title,
                   status: candidate.status,
                   tags: candidate.tags || [],
-                  linkedin: candidate.contacts.linkedin
+                  linkedin: candidate?.contacts?.linkedin || ''
                 }
               }
               ) : []}

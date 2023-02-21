@@ -43,7 +43,7 @@ export const updateJob = createAsyncThunk('appJobs/updateJob', async (job, { dis
       "name": job.name,
       "description": job.description,
       "tags": job.tags || [],
-      "contacts": job.contacts || []
+      "contacts": job.contacts || {}
     })
   });
 
@@ -70,7 +70,7 @@ export const createJob = createAsyncThunk('appJobs/createJob', async (job, { dis
       "title": job.title,
       "description": job.description,
       "tags": job.tags || [],
-      "contacts": job.contacts || [],
+      "contacts": job.contacts || {},
       "client_id": job.client_id
     })
   });

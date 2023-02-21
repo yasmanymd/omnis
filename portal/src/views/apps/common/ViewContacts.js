@@ -71,7 +71,7 @@ const ViewContacts = ({ contacts, addContacts, deleteContacts }) => {
             </TableHead>
 
             <TableBody>
-              {Object.entries(contacts).map(([key, value], index) => (
+              {Object.entries(contacts || {}).map(([key, value], index) => (
                 <TableRow hover key={index} sx={{ '&:last-of-type td': { border: 0 } }}>
                   <TableCell>
                     <Typography variant='body2' sx={{ textTransform: 'capitalize' }}>
