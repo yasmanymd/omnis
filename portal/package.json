@@ -37,6 +37,7 @@
     "@mui/x-data-grid": "5.10.0",
     "@popperjs/core": "2.11.2",
     "@reduxjs/toolkit": "1.8.1",
+    "@yasmanymd/elementa": "1.0.2",
     "apexcharts-clevision": "3.28.5",
     "aws-amplify": "4.3.22",
     "axios": "0.27.2",

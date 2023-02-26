@@ -1,9 +1,12 @@
 FROM node:18.9.1-alpine
 
-WORKDIR /usr/src/app
+ARG NPM_TOKEN
 
-COPY package*.json ./
+WORKDIR /usr/src/app
+COPY /deployment/.npmrc .npmrc
+COPY package.json ./
 RUN yarn install
+RUN rm -f .npmrc
 
 EXPOSE 3000
 
