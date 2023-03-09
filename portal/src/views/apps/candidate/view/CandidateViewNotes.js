@@ -1,5 +1,5 @@
 // ** React Imports
-import { useState, Fragment } from 'react'
+import { useState, useCallback, useEffect, Fragment } from 'react'
 
 // ** MUI Imports
 import Card from '@mui/material/Card'
@@ -8,7 +8,8 @@ import FormControl from '@mui/material/FormControl'
 import FormHelperText from '@mui/material/FormHelperText';
 
 // ** Demo Component Imports
-import { Accordion, AccordionSummary, AccordionDetails, Grid, Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, TextField } from '@mui/material'
+import { Accordion, AccordionSummary, AccordionDetails, Grid, Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, TextField, AccordionActions, IconButton } from '@mui/material'
+import EditIcon from '@mui/icons-material/Edit'
 
 // ** Third Parties
 import * as yup from 'yup';
@@ -19,28 +20,40 @@ import { useForm, Controller } from 'react-hook-form';
 import { useDispatch } from 'react-redux'
 
 // ** Actions Imports
-import { createNote } from 'src/store/apps/candidate'
+import { createNote, updateNote } from 'src/store/apps/candidate'
 
 const CandidateViewNotes = ({ notes, candidate_id }) => {
   const dispatch = useDispatch();
-  const [openCreate, setOpenCreate] = useState(false);
+  const [openDialog, setOpenDialog] = useState(false);
+  const [noteToEdit, setNoteToEdit] = useState(-1);
 
   // Handle Edit dialog
-  const handleCreateClickOpen = () => setOpenCreate(true)
-  const handleCreateClose = () => setOpenCreate(false)
+  const handleCreateClickOpen = () => setOpenDialog(true)
+  const handleClose = () => {
+    setNoteToEdit(-1)
+    setOpenDialog(false)
+  }
+  const handleEditClickOpen = (index) => {
+    setNoteToEdit(index)
+    setOpenDialog(true)
+  }
 
   const schema = yup.object().shape({
     note: yup.string().required('Note is a required field.')
   }).required();
 
   const onSubmit = data => {
-    const noteToCreate = {
+    const note = {
       note: data.note,
       candidate_id: candidate_id
     };
-
-    dispatch(createNote(noteToCreate));
-    setOpenCreate(false);
+    if (noteToEdit == -1) {
+      dispatch(createNote(note));
+    } else {
+      note._id = notes[noteToEdit]._id;
+      dispatch(updateNote(note));
+    }
+    handleClose();
   }
 
   const {
@@ -49,6 +62,18 @@ const CandidateViewNotes = ({ notes, candidate_id }) => {
     handleSubmit,
     formState: { errors }
   } = useForm({ defaultValues: { note: '' }, resolver: yupResolver(schema) });
+
+  const resetToStoredValues = useCallback(() => {
+    if (noteToEdit == -1) {
+      setValue('note', '');
+    } else {
+      setValue('note', notes[noteToEdit].note);
+    }
+  }, [setValue, noteToEdit]);
+
+  useEffect(() => {
+    resetToStoredValues();
+  }, [openDialog, noteToEdit]);
 
   return (
     <Fragment>
@@ -59,7 +84,15 @@ const CandidateViewNotes = ({ notes, candidate_id }) => {
               aria-controls="panel1a-content"
               id={index}
             >
-              <Typography>Created by {note.created_by} on {new Date(note.created_at).toLocaleDateString("en-US")} at {new Date(note.created_at).toLocaleTimeString("en-US")}.</Typography>
+              <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between' }}>
+                <Typography style={{ display: 'flex', alignItems: 'center' }} >Modified by {note.modified_by} on {new Date(note.modified_at).toLocaleDateString("en-US")} at {new Date(note.modified_at).toLocaleTimeString("en-US")}.</Typography>
+                <IconButton aria-label="edit" onClick={(event) => {
+                  handleEditClickOpen(index)
+                  event.stopPropagation();
+                }}>
+                  <EditIcon />
+                </IconButton>
+              </div>
             </AccordionSummary>
             <AccordionDetails>
               <Typography style={{ whiteSpace: 'pre-wrap' }}>
@@ -78,15 +111,15 @@ const CandidateViewNotes = ({ notes, candidate_id }) => {
           Add Note
         </Button>
         <Dialog
-          open={openCreate}
-          onClose={handleCreateClose}
+          open={openDialog}
+          onClose={handleClose}
           aria-labelledby='user-view-edit'
           sx={{ '& .MuiPaper-root': { width: '100%', maxWidth: 650, p: [2, 10] } }}
           aria-describedby='user-view-edit-description'
         >
           <form onSubmit={handleSubmit(onSubmit)} noValidate autoComplete='off'>
             <DialogTitle id='user-view-edit' sx={{ textAlign: 'center', fontSize: '1.5rem !important' }}>
-              Create Note
+              {noteToEdit > -1 ? 'Edit Note' : 'Create Note'}
             </DialogTitle>
             <DialogContent>
               <DialogContentText variant='body2' id='user-view-edit-description' sx={{ textAlign: 'center', mb: 7 }}>
@@ -110,13 +143,12 @@ const CandidateViewNotes = ({ notes, candidate_id }) => {
                   </FormControl>
                 </Grid>
               </Grid>
-
             </DialogContent>
             <DialogActions sx={{ justifyContent: 'center' }}>
               <Button type='submit' variant='contained' sx={{ mr: 1 }}>
                 Submit
               </Button>
-              <Button variant='outlined' color='secondary' onClick={handleCreateClose}>
+              <Button variant='outlined' color='secondary' onClick={handleClose}>
                 Cancel
               </Button>
             </DialogActions>

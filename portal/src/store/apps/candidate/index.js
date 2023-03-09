@@ -156,6 +156,28 @@ export const createNote = createAsyncThunk('appCandidates/createNote', async (no
   return result.data;
 })
 
+export const updateNote = createAsyncThunk('appCandidates/updateNote', async (note, { dispatch }) => {
+  const response = await fetch(encodeURI('/api/notes/' + note._id), {
+    method: 'PUT',
+    headers: {
+      'accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      "note": note.note,
+      "candidate_id": note.candidate_id
+    })
+  });
+  const result = await response.json();
+  if (result?.errors) {
+    toast.error(<ErrorDetails message='Error updating note.' errors={result.errors} />);
+  } else {
+    dispatch(fetchNotes(note.candidate_id));
+    toast.success('Note updated.');
+  }
+  return result.data;
+})
+
 export const appCandidatesSlice = createSlice({
   name: 'appCandidates',
   initialState: {

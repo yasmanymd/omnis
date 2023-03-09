@@ -20,8 +20,11 @@ export class Note implements INote {
   @Prop({ required: true })
   created_by: string;
 
-  @Prop({ required: false })
+  @Prop({ required: true })
   modified_by: string;
+
+  @Prop({ required: true })
+  modified_at: number;
 }
 
 export const NoteSchema = SchemaFactory.createForClass(Note);

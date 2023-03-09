@@ -1,11 +1,12 @@
 // ** React Imports
-import { Card, List, ListItem, ListItemIcon, ListItemText, ListItemSecondaryAction, Link, Typography, Grid, Button } from '@mui/material';
+import { Card, List, ListItem, ListItemIcon, ListItemText, ListItemSecondaryAction, Link, Typography, Grid, Button, IconButton } from '@mui/material';
 import { FileDocumentOutline, Close, DeleteOutline } from 'mdi-material-ui';
 import { Fragment, useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import toast from 'react-hot-toast';
 import { PostAdd } from '@mui/icons-material';
 import ErrorDetails from '../../../layouts/components/ErrorDetails';
+import DeleteIcon from '@mui/icons-material/Delete';
 
 const ViewDocuments = ({ documents, entity_id, fetchDocuments, deleteDocument }) => {
   const dispatch = useDispatch();
@@ -54,11 +55,9 @@ const ViewDocuments = ({ documents, entity_id, fetchDocuments, deleteDocument })
         </Link>
       </ListItemText>
       <ListItemSecondaryAction>
-        <DeleteOutline
-          fontSize='small'
-          sx={{ cursor: 'pointer', mr: 2 }}
-          onClick={() => handleDeleteDocument(doc)}
-        />
+        <IconButton aria-label="delete" onClick={() => handleDeleteDocument(doc)}>
+          <DeleteIcon />
+        </IconButton>
       </ListItemSecondaryAction>
     </ListItem>
   ));

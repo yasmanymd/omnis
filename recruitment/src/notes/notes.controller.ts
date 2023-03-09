@@ -52,7 +52,8 @@ export class NotesController {
       try {
         const createdNote = await this.notesService.createNote(
           Object.assign(note, {
-            created_at: +new Date()
+            created_at: +new Date(),
+            modified_at: +new Date()
           })
         );
         result = {

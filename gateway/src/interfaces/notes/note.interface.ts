@@ -4,4 +4,5 @@ export interface INote {
   created_at: number;
   created_by: string;
   modified_by: string;
+  modified_at: number;
 }

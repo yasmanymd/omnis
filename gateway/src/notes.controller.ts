@@ -31,7 +31,8 @@ export class NotesController {
       this.recruitmentService.send({ cmd: 'note_create' },
         {
           ...noteRequest,
-          created_by: req.user.email
+          created_by: req.user.email,
+          modified_by: req.user.email
         }
       )
     );
@@ -149,7 +150,11 @@ export class NotesController {
       this.recruitmentService.send({ cmd: 'note_update_by_id' }, {
         id: id,
         user: req.user.email,
-        note: { ...noteRequest, modified_by: req.user.email },
+        note: {
+          ...noteRequest,
+          modified_by: req.user.email,
+          modified_at: +new Date()
+        },
       }),
     );
 
