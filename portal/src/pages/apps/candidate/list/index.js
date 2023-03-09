@@ -92,17 +92,29 @@ const columns = [
     }
   },
   {
-    flex: 0.15,
-    field: 'status',
-    //minWidth: 150,
-    headerName: 'Status',
+    flex: 0.2,
+    minWidth: 250,
+    field: 'phone',
+    headerName: 'Phone',
     renderCell: ({ row }) => {
-      return (<CustomChip
-        size='small'
-        skin='light'
-        label={row.status}
-        sx={{ '& .MuiChip-label': { textTransform: 'capitalize' }, '&:not(:last-of-type)': { mr: 3 } }}
-      />)
+      return (
+        <Typography noWrap variant='body2'>
+          {row.contacts?.phone}
+        </Typography>
+      )
+    }
+  },
+  {
+    flex: 0.2,
+    minWidth: 250,
+    field: 'email',
+    headerName: 'Email',
+    renderCell: ({ row }) => {
+      return (
+        <Typography noWrap variant='body2'>
+          {row.contacts?.email}
+        </Typography>
+      )
     }
   },
   {
@@ -180,7 +192,7 @@ const CandidateList = () => {
                   id: candidate._id,
                   name: candidate.name,
                   title: candidate.title,
-                  status: candidate.status,
+                  contacts: candidate.contacts,
                   tags: candidate.tags || [],
                   linkedin: candidate?.contacts?.linkedin || ''
                 }
