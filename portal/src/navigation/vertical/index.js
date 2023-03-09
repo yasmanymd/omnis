@@ -3,6 +3,10 @@ import HomeOutline from 'mdi-material-ui/HomeOutline'
 import EmailOutline from 'mdi-material-ui/EmailOutline'
 import ShieldOutline from 'mdi-material-ui/ShieldOutline'
 import CalendarBlankOutline from 'mdi-material-ui/CalendarBlankOutline'
+import AccountGroup from 'mdi-material-ui/AccountGroup'
+import TextBoxMultipleOutline from 'mdi-material-ui/TextBoxMultipleOutline'
+import BulletinBoard from 'mdi-material-ui/BulletinBoard'
+import OfficeBuilding from 'mdi-material-ui/OfficeBuilding'
 
 const navigation = () => {
   return [
@@ -33,18 +37,23 @@ const navigation = () => {
     },
     {
       title: 'Candidates',
-      icon: CalendarBlankOutline,
+      icon: AccountGroup,
       path: '/apps/candidate/list'
     },
     {
       title: 'Clients',
-      icon: CalendarBlankOutline,
+      icon: OfficeBuilding,
       path: '/apps/client/list'
     },
     {
       title: 'Jobs',
-      icon: CalendarBlankOutline,
+      icon: TextBoxMultipleOutline,
       path: '/apps/job/list'
+    },
+    {
+      title: 'Board',
+      icon: BulletinBoard,
+      path: '/apps/board'
     }
   ]
 }
