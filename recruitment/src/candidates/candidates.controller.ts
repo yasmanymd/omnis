@@ -4,6 +4,7 @@ import { ICandidate, ICandidateImport } from "./interfaces/candidate.interface";
 import { CandidatesService } from "./candidates.service";
 import { MessagePattern } from '@nestjs/microservices';
 import { TokenService } from "../token/token.service";
+import { capitalizeTheFirstLetterOfEachWord } from "../common/utils";
 
 @Controller()
 export class CandidatesController {
@@ -108,6 +109,7 @@ export class CandidatesController {
           delete candidate.token;
           const createdCandidate = await this.candidateService.createCandidate(
             Object.assign(candidate, {
+              name: capitalizeTheFirstLetterOfEachWord(candidate.name),
               status: 'None',
               created_by: token.user,
               created_at: +new Date()
