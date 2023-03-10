@@ -14,6 +14,7 @@ import TableContainer from '@mui/material/TableContainer'
 import Link from '@mui/material/Link'
 import { Button, Dialog, DialogContent, DialogContentText, DialogTitle, DialogActions, IconButton, TableFooter, TextField, Box, Grid } from '@mui/material'
 import DeleteIcon from '@mui/icons-material/Delete'
+import EditIcon from '@mui/icons-material/Edit'
 import FormControl from '@mui/material/FormControl'
 import FormHelperText from '@mui/material/FormHelperText';
 
@@ -22,11 +23,15 @@ import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm, Controller } from 'react-hook-form';
 
-const ViewContacts = ({ contacts, addContacts, deleteContacts }) => {
+const ViewContacts = ({ contacts, addEditContacts, deleteContacts }) => {
   const [openEdit, setOpenEdit] = useState(false)
+  const [contact, setContact] = useState(null);
 
-  const handleAddContactClickOpen = () => setOpenEdit(true)
-  const handleAddContactClickClose = () => setOpenEdit(false)
+  const handleAddEditContactClickOpen = () => setOpenEdit(true)
+  const handleAddEditContactClickClose = () => {
+    setContact(null)
+    setOpenEdit(false)
+  }
 
   const schema = yup.object().shape({
     key: yup.string().required('Key is a required field.'),
@@ -40,9 +45,25 @@ const ViewContacts = ({ contacts, addContacts, deleteContacts }) => {
     formState: { errors }
   } = useForm({ defaultValues: { key: '', value: '' }, resolver: yupResolver(schema) });
 
+  const resetToStoredValues = useCallback(() => {
+    if (!contact) {
+      setValue('key', null);
+      setValue('value', null);
+    } else {
+      setValue('key', contact.key.toLowerCase());
+      setValue('value', contact.value);
+    }
+  }, [setValue, contact]);
+
+  useEffect(() => {
+    resetToStoredValues();
+  }, [openEdit, contact]);
+
   const onSubmit = data => {
-    addContacts(data);
+    data.key = data.key.toLowerCase();
+    addEditContacts(data);
     setOpenEdit(false);
+    setContact(null);
   }
 
   return (
@@ -50,7 +71,7 @@ const ViewContacts = ({ contacts, addContacts, deleteContacts }) => {
       <Card sx={{ mb: 6 }}>
         <Box sx={{ p: 5, pb: 3, display: 'flex', flexWrap: 'wrap', alignItems: 'right', justifyContent: 'right' }}>
           <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center' }}>
-            <Button variant='contained' sx={{ mb: 2 }} onClick={handleAddContactClickOpen}>
+            <Button variant='contained' sx={{ mb: 2 }} onClick={handleAddEditContactClickOpen}>
               Add Contact
             </Button>
           </Box>
@@ -71,7 +92,7 @@ const ViewContacts = ({ contacts, addContacts, deleteContacts }) => {
             </TableHead>
 
             <TableBody>
-              {Object.entries(contacts || {}).map(([key, value], index) => (
+              {Object.entries(contacts || {}).sort().map(([key, value], index) => (
                 <TableRow hover key={index} sx={{ '&:last-of-type td': { border: 0 } }}>
                   <TableCell>
                     <Typography variant='body2' sx={{ textTransform: 'capitalize' }}>
@@ -82,6 +103,12 @@ const ViewContacts = ({ contacts, addContacts, deleteContacts }) => {
                     {key != 'linkedin' ? value : (<Link target="_blank" href={value}>{value}</Link>)}
                   </TableCell>
                   <TableCell align='right'>
+                    <IconButton aria-label="edit" onClick={() => {
+                      setContact({ key, value })
+                      handleAddEditContactClickOpen()
+                    }}>
+                      <EditIcon />
+                    </IconButton>
                     <IconButton aria-label="delete" onClick={() => deleteContacts(key)}>
                       <DeleteIcon />
                     </IconButton>
@@ -93,14 +120,14 @@ const ViewContacts = ({ contacts, addContacts, deleteContacts }) => {
         </TableContainer>
         <Dialog
           open={openEdit}
-          onClose={handleAddContactClickClose}
+          onClose={handleAddEditContactClickClose}
           aria-labelledby='user-view-edit'
           sx={{ '& .MuiPaper-root': { width: '100%', maxWidth: 650, p: [2, 10] } }}
           aria-describedby='user-view-edit-description'
         >
           <form onSubmit={handleSubmit(onSubmit)} noValidate autoComplete='off'>
             <DialogTitle id='user-view-edit' sx={{ textAlign: 'center', fontSize: '1.5rem !important' }}>
-              Add Contact Information
+              {contact ? 'Edit Contact Information' : 'Add Contact Information'}
             </DialogTitle>
             <DialogContent>
               <DialogContentText variant='body2' id='user-view-edit-description' sx={{ textAlign: 'center', mb: 7 }}>
@@ -113,7 +140,7 @@ const ViewContacts = ({ contacts, addContacts, deleteContacts }) => {
                       control={control}
                       rules={{ required: true }}
                       render={({ field: { value, onChange } }) => (
-                        <TextField label='Key' value={value} onChange={onChange} error={Boolean(errors.key)} />
+                        <TextField label='Key' disabled={contact} onChange={onChange} value={value} error={Boolean(errors.key)} />
                       )}
                     />
                     {errors.key && (
@@ -146,7 +173,7 @@ const ViewContacts = ({ contacts, addContacts, deleteContacts }) => {
               <Button type='submit' variant='contained' sx={{ mr: 1 }}>
                 Submit
               </Button>
-              <Button variant='outlined' color='secondary' onClick={handleAddContactClickClose}>
+              <Button variant='outlined' color='secondary' onClick={handleAddEditContactClickClose}>
                 Cancel
               </Button>
             </DialogActions>

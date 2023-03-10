@@ -44,7 +44,7 @@ const CandidateViewRight = ({ candidate, notes, documents, updateCandidate }) =>
     setValue(newValue)
   }
 
-  const addContacts = ({ key, value }) => {
+  const addEditContacts = ({ key, value }) => {
     let modifiedCandidate = {
       ...candidate,
       contacts: { ...candidate.contacts }
@@ -79,7 +79,7 @@ const CandidateViewRight = ({ candidate, notes, documents, updateCandidate }) =>
         <TabPanel sx={{ p: 0 }} value='contacts'>
           <ViewContacts
             contacts={candidate.contacts}
-            addContacts={addContacts}
+            addEditContacts={addEditContacts}
             deleteContacts={deleteContacts} />
         </TabPanel>
         <TabPanel sx={{ p: 0 }} value='notes'>
