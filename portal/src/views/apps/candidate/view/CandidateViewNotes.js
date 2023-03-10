@@ -9,6 +9,7 @@ import FormHelperText from '@mui/material/FormHelperText';
 
 // ** Demo Component Imports
 import { Accordion, AccordionSummary, AccordionDetails, Grid, Button, Dialog, DialogTitle, DialogContent, DialogContentText, DialogActions, TextField, AccordionActions, IconButton } from '@mui/material'
+import DeleteIcon from '@mui/icons-material/Delete'
 import EditIcon from '@mui/icons-material/Edit'
 
 // ** Third Parties
@@ -20,7 +21,7 @@ import { useForm, Controller } from 'react-hook-form';
 import { useDispatch } from 'react-redux'
 
 // ** Actions Imports
-import { createNote, updateNote } from 'src/store/apps/candidate'
+import { createNote, updateNote, deleteNote } from 'src/store/apps/candidate'
 
 const CandidateViewNotes = ({ notes, candidate_id }) => {
   const dispatch = useDispatch();
@@ -36,6 +37,14 @@ const CandidateViewNotes = ({ notes, candidate_id }) => {
   const handleEditClickOpen = (index) => {
     setNoteToEdit(index)
     setOpenDialog(true)
+  }
+
+  const handleDelete = (index) => {
+    const note = {
+      _id: notes[index]._id,
+      candidate_id: candidate_id
+    };
+    dispatch(deleteNote(note));
   }
 
   const schema = yup.object().shape({
@@ -86,12 +95,20 @@ const CandidateViewNotes = ({ notes, candidate_id }) => {
             >
               <div style={{ width: '100%', display: 'flex', justifyContent: 'space-between' }}>
                 <Typography style={{ display: 'flex', alignItems: 'center' }} >Modified by {note.modified_by} on {new Date(note.modified_at).toLocaleDateString("en-US")} at {new Date(note.modified_at).toLocaleTimeString("en-US")}.</Typography>
-                <IconButton aria-label="edit" onClick={(event) => {
-                  handleEditClickOpen(index)
-                  event.stopPropagation();
-                }}>
-                  <EditIcon />
-                </IconButton>
+                <div>
+                  <IconButton aria-label="edit" onClick={(event) => {
+                    handleEditClickOpen(index)
+                    event.stopPropagation();
+                  }}>
+                    <EditIcon />
+                  </IconButton>
+                  <IconButton aria-label="delete" onClick={(event) => {
+                    handleDelete(index)
+                    event.stopPropagation();
+                  }}>
+                    <DeleteIcon />
+                  </IconButton>
+                </div>
               </div>
             </AccordionSummary>
             <AccordionDetails>

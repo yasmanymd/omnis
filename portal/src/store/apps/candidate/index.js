@@ -178,6 +178,24 @@ export const updateNote = createAsyncThunk('appCandidates/updateNote', async (no
   return result.data;
 })
 
+export const deleteNote = createAsyncThunk('appCandidates/deleteNote', async (note, { dispatch }) => {
+  const response = await fetch(encodeURI('/api/notes/' + note._id), {
+    method: 'DELETE',
+    headers: {
+      'accept': 'application/json',
+      'Content-Type': 'application/json'
+    }
+  });
+  const result = await response.json();
+  if (result?.errors) {
+    toast.error(<ErrorDetails message='Error deleting note.' errors={result.errors} />);
+  } else {
+    dispatch(fetchNotes(note.candidate_id));
+    toast.success('Note removed.');
+  }
+  return result.data;
+})
+
 export const appCandidatesSlice = createSlice({
   name: 'appCandidates',
   initialState: {

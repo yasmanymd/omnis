@@ -21,8 +21,20 @@ export default withApiAuthRequired(async function handler(req, res) {
       result = await response.json();
       res.status(200).json(result);
       break;
+    case 'DELETE':
+      response = await fetch(encodeURI(baseUrl + '/notes/' + req.query.id), {
+        headers: {
+          'accept': 'application/json',
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${accessToken}`
+        },
+        method: 'DELETE'
+      });
+      result = await response.json();
+      res.status(200).json(result);
+      break;
     default:
-      res.setHeader('Allow', ['PUT']);
+      res.setHeader('Allow', ['PUT', 'DELETE']);
       res.status(405).json({
         status: 405,
         message: 'Method not allowed'
