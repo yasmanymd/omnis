@@ -1,7 +1,4 @@
-import { Board } from "@yasmanymd/elementa";
-
-import { Card, Grid, Box, Stack, Paper, Typography, Divider, CardContent } from "@mui/material";
-import BoardWrapper from "src/@core/styles/libs/board";
+import { Board } from "../../../layouts/components/kanban/Board/Board";
 
 const AppBoard = () => {
   const init = {
@@ -102,41 +99,7 @@ const AppBoard = () => {
   };
 
   return (
-    <Grid container spacing={6}>
-      <Grid item xs={12}>
-        <Card sx={{ padding: 4 }}>
-          <BoardWrapper>
-            <Board {...init} />
-          </BoardWrapper>
-        </Card>
-        <Card sx={{ padding: 4 }}>
-          <Box sx={{ height: init.height }}>
-            <Stack spacing={2} height="100%" direction="row" overflow={"auto"}>
-              <Stack spacing={2} sx={{ minWidth: 275, height: '100%' }}>
-                <Paper elevation={1} sx={{ height: '100%' }}>
-                  <Typography sx={{ fontSize: 16, fontWeight: 'bold', margin: 1 }} color="text.secondary" gutterBottom>
-                    To do
-                  </Typography>
-                  <Divider />
-                  <Box sx={{ height: 'calc(100% - 42px)', maxHeight: '100%', overflow: 'auto' }}>
-                    <Card sx={{ margin: 2 }}>
-                      <CardContent sx={{ '&:last-child': { paddingBottom: '16px' } }}>
-                        <Typography sx={{ fontSize: 16, fontWeight: 'bold' }} color="text.secondary" gutterBottom>
-                          Yasmany Molina Diaz
-                        </Typography>
-                        <Typography sx={{ fontSize: 14, textAlign: 'right' }} color="text.secondary" gutterBottom>
-                          02/12/2023
-                        </Typography>
-                      </CardContent>
-                    </Card>
-                  </Box>
-                </Paper>
-              </Stack>
-            </Stack>
-          </Box>
-        </Card>
-      </Grid>
-    </Grid>
+    <Board {...init} />
   )
 };
 
