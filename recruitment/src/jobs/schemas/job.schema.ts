@@ -21,6 +21,9 @@ export class Job implements IJob {
 
   @Prop({ required: true })
   client_id: string;
+
+  @Prop({ required: true })
+  workflow_id: string;
 }
 
 export const JobSchema = SchemaFactory.createForClass(Job);

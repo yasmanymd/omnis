@@ -105,13 +105,11 @@ export class NotesController {
     description: 'Delete note'
   })
   public async deleteNote(
-    @Req() req: { user: IUser },
     @Param('id') id: string,
   ): Promise<ResponseDto<null>> {
     const deleteNoteResponse: IServiceResponse<null> = await firstValueFrom(
       this.recruitmentService.send({ cmd: 'note_delete_by_id' }, {
-        id: id,
-        user: req.user.email
+        id: id
       }),
     );
 

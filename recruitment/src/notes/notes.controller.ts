@@ -129,13 +129,12 @@ export class NotesController {
   }
 
   @MessagePattern({ cmd: 'note_delete_by_id' })
-  public async noteDeleteForUser(params: {
-    user: string;
+  public async noteDeleteById(params: {
     id: string;
   }): Promise<IResponse<null>> {
     let result: IResponse<null>;
 
-    if (params && params.user && params.id) {
+    if (params && params.id) {
       try {
         const note = await this.notesService.getNoteById(params.id);
 

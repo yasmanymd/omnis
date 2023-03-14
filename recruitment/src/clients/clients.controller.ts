@@ -116,7 +116,7 @@ export class ClientsController {
   }
 
   @MessagePattern({ cmd: 'client_delete_by_id' })
-  public async clientDeleteForUser(params: {
+  public async clientDeleteById(params: {
     id: string;
   }): Promise<IResponse<null>> {
     let result: IResponse<null>;

@@ -4,4 +4,5 @@ export interface IJobUpdateParams {
   contacts: { [key: string]: any };
   tags: string[];
   client_id: string;
+  workflow_id: string;
 }

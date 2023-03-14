@@ -106,13 +106,11 @@ export class CandidatesController {
     description: 'Delete candidate'
   })
   public async deleteCandidate(
-    @Req() req: { user: IUser },
     @Param('id') id: string,
   ): Promise<ResponseDto<null>> {
     const deleteCandidateResponse: IServiceResponse<null> = await firstValueFrom(
       this.recruitmentService.send({ cmd: 'candidate_delete_by_id' }, {
-        id: id,
-        user: req.user.email
+        id: id
       }),
     );
 

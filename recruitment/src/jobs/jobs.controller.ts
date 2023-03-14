@@ -115,7 +115,7 @@ export class JobsController {
   }
 
   @MessagePattern({ cmd: 'job_delete_by_id' })
-  public async jobDeleteForUser(params: {
+  public async jobDeleteById(params: {
     id: string;
   }): Promise<IResponse<null>> {
     let result: IResponse<null>;

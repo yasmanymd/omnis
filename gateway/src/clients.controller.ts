@@ -95,13 +95,11 @@ export class ClientsController {
     description: 'Delete client'
   })
   public async deleteClient(
-    @Req() req: { user: IUser },
     @Param('id') id: string,
   ): Promise<ResponseDto<null>> {
     const deleteClientResponse: IServiceResponse<null> = await firstValueFrom(
       this.recruitmentService.send({ cmd: 'client_delete_by_id' }, {
-        id: id,
-        user: req.user.email
+        id: id
       }),
     );
 

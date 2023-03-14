@@ -5,4 +5,5 @@ export interface IJob {
   contacts: { [key: string]: any };
   tags: string[];
   client_id: string;
+  workflow_id: string;
 }

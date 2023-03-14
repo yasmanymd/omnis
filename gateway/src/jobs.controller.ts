@@ -95,13 +95,11 @@ export class JobsController {
     description: 'Delete job'
   })
   public async deleteJob(
-    @Req() req: { user: IUser },
     @Param('id') id: string,
   ): Promise<ResponseDto<null>> {
     const deleteJobResponse: IServiceResponse<null> = await firstValueFrom(
       this.recruitmentService.send({ cmd: 'job_delete_by_id' }, {
-        id: id,
-        user: req.user.email
+        id: id
       }),
     );
 

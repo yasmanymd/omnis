@@ -196,13 +196,12 @@ export class CandidatesController {
   }
 
   @MessagePattern({ cmd: 'candidate_delete_by_id' })
-  public async candidateDeleteForUser(params: {
-    user: string;
+  public async candidateDeleteById(params: {
     id: string;
   }): Promise<IResponse<null>> {
     let result: IResponse<null>;
 
-    if (params && params.user && params.id) {
+    if (params && params.id) {
       try {
         const candidate = await this.candidateService.getCandidateById(params.id);
 

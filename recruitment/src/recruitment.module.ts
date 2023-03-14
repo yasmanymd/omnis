@@ -16,17 +16,25 @@ import { JobsController } from './jobs/jobs.controller';
 import { ClientsController } from './clients/clients.controller';
 import { JobsService } from './jobs/jobs.service';
 import { ClientsService } from './clients/clients.service';
+import { Workflow, WorkflowSchema } from './workflows/schemas/workflow.schema';
+import { WorkflowsController } from './workflows/workflows.controller';
+import { WorkflowsService } from './workflows/workflows.service';
+import { WorkflowTemplate, WorkflowTemplateSchema } from './workflows/schemas/workflow.template.schema';
+import { WorkflowTemplatesController } from './workflows/templates.controller';
+import { WorkflowTemplatesService } from './workflows/templates.service';
 
 @Module({
   imports: [
     MongooseModule.forRootAsync({ useClass: MongoConfigService }),
     MongooseModule.forFeature([{ name: Candidate.name, schema: CandidateSchema }]),
     MongooseModule.forFeature([{ name: Note.name, schema: NoteSchema }]),
+    MongooseModule.forFeature([{ name: Workflow.name, schema: WorkflowSchema }]),
+    MongooseModule.forFeature([{ name: WorkflowTemplate.name, schema: WorkflowTemplateSchema }]),
     MongooseModule.forFeature([{ name: Client.name, schema: ClientSchema }]),
     MongooseModule.forFeature([{ name: Job.name, schema: JobSchema }]),
     MongooseModule.forFeature([{ name: Token.name, schema: TokenSchema }])
   ],
-  controllers: [CandidatesController, NotesController, TokenController, JobsController, ClientsController],
-  providers: [CandidatesService, NotesService, TokenService, JobsService, ClientsService],
+  controllers: [CandidatesController, NotesController, WorkflowsController, WorkflowTemplatesController, TokenController, JobsController, ClientsController],
+  providers: [CandidatesService, NotesService, WorkflowsService, WorkflowTemplatesService, TokenService, JobsService, ClientsService],
 })
 export class RecruimentModule { }
