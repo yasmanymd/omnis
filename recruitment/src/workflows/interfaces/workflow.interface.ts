@@ -7,6 +7,6 @@ export interface IWfCandidate {
 
 export interface IWorkflow {
   _id: string;
-  template: string;
+  workflow_template_id: string;
   candidates: IWfCandidate[];
 }

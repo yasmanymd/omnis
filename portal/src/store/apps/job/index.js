@@ -71,7 +71,8 @@ export const createJob = createAsyncThunk('appJobs/createJob', async (job, { dis
       "description": job.description,
       "tags": job.tags || [],
       "contacts": job.contacts || {},
-      "client_id": job.client_id
+      "client_id": job.client_id,
+      "workflow_template_id": job.workflow_template_id
     })
   });
 
@@ -119,13 +120,27 @@ export const deleteDocument = createAsyncThunk('appJobs/deleteDocument', async (
   return result.data;
 })
 
+// ** Fetch Workflow Templates
+export const fetchWorkflowsTemplates = createAsyncThunk('appClients/fetchWorkflowTemplates', async () => {
+  const response = await fetch(encodeURI('/api/workflows/templates'), {
+    method: 'GET',
+    headers: {
+      'accept': 'application/json',
+      'Content-Type': 'application/json'
+    }
+  });
+  const result = await response.json();
+  return result.data;
+})
+
 export const appJobsSlice = createSlice({
   name: 'appJobs',
   initialState: {
     jobs: [],
     job: null,
     documents: [],
-    clients: []
+    clients: [],
+    workflowTemplates: []
   },
   reducers: {},
   extraReducers: builder => {
@@ -140,6 +155,9 @@ export const appJobsSlice = createSlice({
     })
     builder.addCase(fetchClients.fulfilled, (state, action) => {
       state.clients = action.payload || []
+    })
+    builder.addCase(fetchWorkflowsTemplates.fulfilled, (state, action) => {
+      state.workflowTemplates = action.payload || []
     })
   }
 })

@@ -13,6 +13,10 @@ export class WorkflowTemplatesService {
     return await this.workflowTemplateModel.create(workflowTemplate);
   }
 
+  public async getTemplates(): Promise<IWorkflowTemplate[]> {
+    return await this.workflowTemplateModel.find({});
+  }
+
   public async getTemplateById(id: string): Promise<IWorkflowTemplate> {
     return await this.workflowTemplateModel.findById(id);
   }

@@ -10,6 +10,7 @@ import { TokenController } from './token.controller';
 import { NotesController } from './notes.controller';
 import { JobsController } from './jobs.controller';
 import { ClientsController } from './clients.controller';
+import { WorkflowsController } from './workflows.controller';
 
 @Module({
   imports: [
@@ -54,7 +55,7 @@ import { ClientsController } from './clients.controller';
     ]),
     AuthzModule
   ],
-  controllers: [MeetingsController, CandidatesController, NotesController, TokenController, JobsController, ClientsController],
+  controllers: [MeetingsController, CandidatesController, NotesController, TokenController, JobsController, ClientsController, WorkflowsController],
   providers: [],
 })
 export class AppModule { }

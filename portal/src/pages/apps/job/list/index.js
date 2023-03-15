@@ -130,7 +130,7 @@ const JobList = () => {
         </Card>
       </Grid>
 
-      <AddJobDrawer open={addJobOpen} toggle={toggleAddJobDrawer} clients={store.clients} />
+      <AddJobDrawer open={addJobOpen} toggle={toggleAddJobDrawer} clients={store.clients} workflowTemplates={store.workflowTemplates} />
     </Grid>
   )
 }

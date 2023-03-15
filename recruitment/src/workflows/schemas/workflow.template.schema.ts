@@ -9,6 +9,9 @@ export class WorkflowTemplate implements IWorkflowTemplate {
   _id: string;
 
   @Prop({ required: true })
+  name: string;
+
+  @Prop({ required: true })
   status: string[];
 
   @Prop({ required: true })

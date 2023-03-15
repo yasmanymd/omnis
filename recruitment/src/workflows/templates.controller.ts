@@ -8,6 +8,20 @@ import { IResponse } from "../common/response.interface";
 export class WorkflowTemplatesController {
   constructor(private readonly workflowTemplatesService: WorkflowTemplatesService) { }
 
+  @MessagePattern({ cmd: 'workflow_templates_get' })
+  public async getTemplates(): Promise<IResponse<IWorkflowTemplate[]>> {
+    let result: IResponse<IWorkflowTemplate[]>;
+
+    const templates = await this.workflowTemplatesService.getTemplates();
+    result = {
+      status: HttpStatus.OK,
+      message: 'workflow_templates_get_success',
+      data: templates
+    };
+
+    return result;
+  }
+
   @MessagePattern({ cmd: 'workflow_template_search_by_id' })
   public async templatesSearchById(id: string): Promise<IResponse<IWorkflowTemplate>> {
     let result: IResponse<IWorkflowTemplate>;

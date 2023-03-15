@@ -9,7 +9,7 @@ export class Workflow implements IWorkflow {
   _id: string;
 
   @Prop({ required: true })
-  template: string;
+  workflow_template_id: string;
 
   @Prop({ required: true })
   candidates: IWfCandidate[];

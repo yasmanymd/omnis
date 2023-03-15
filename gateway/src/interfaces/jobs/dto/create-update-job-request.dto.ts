@@ -22,4 +22,7 @@ export class CreateUpdateJobRequestDto {
 
   @ApiProperty({ example: '63ed16efc451054027a05a21' })
   client_id: string;
+
+  @ApiProperty({ description: 'Used only on creation', example: '63ed16efc451054027a11111' })
+  workflow_template_id: string;
 }

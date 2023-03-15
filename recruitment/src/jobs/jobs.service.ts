@@ -1,14 +1,21 @@
 import { Injectable } from "@nestjs/common";
 import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
+import { WorkflowDocument } from "../workflows/schemas/workflow.schema";
 import { IJob } from "./interfaces/job.interface";
 import { JobDocument } from "./schemas/job.schema";
 
 @Injectable()
 export class JobsService {
-  constructor(@InjectModel('Job') private readonly jobModel: Model<JobDocument>) { }
+  constructor(@InjectModel('Job') private readonly jobModel: Model<JobDocument>,
+    @InjectModel('Workflow') private readonly workflowModel: Model<WorkflowDocument>) { }
 
   public async createJob(job: IJob): Promise<IJob> {
+    const workflow = await this.workflowModel.create({
+      workflow_template_id: job.workflow_template_id,
+      candidates: []
+    });
+    job.workflow_id = workflow._id;
     return await this.jobModel.create(job);
   }
 
