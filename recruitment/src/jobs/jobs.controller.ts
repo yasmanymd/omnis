@@ -3,10 +3,14 @@ import { IResponse } from "../common/response.interface";
 import { IJob } from "./interfaces/job.interface";
 import { JobsService } from "./jobs.service";
 import { MessagePattern } from '@nestjs/microservices';
+import { WorkflowsService } from "../workflows/workflows.service";
+import { SettingsService } from "../settings/settings.service";
 
 @Controller()
 export class JobsController {
-  constructor(private readonly jobService: JobsService) { }
+  constructor(private readonly jobService: JobsService,
+    private readonly workflowsService: WorkflowsService,
+    private readonly settingsService: SettingsService) { }
 
   @MessagePattern({ cmd: 'jobs_list' })
   public async jobsList(): Promise<IResponse<IJob[]>> {
@@ -16,7 +20,8 @@ export class JobsController {
     result = {
       status: HttpStatus.OK,
       message: 'jobs_list_success',
-      data: jobs
+      data: jobs,
+      errors: null
     };
 
     return result;
@@ -42,6 +47,9 @@ export class JobsController {
 
     if (job) {
       try {
+        const settings = await this.settingsService.getSettings();
+        const workflow = await this.workflowsService.createWorkflow(settings.default_workflow_template_id);
+        job.workflow_id = workflow._id;
         const createdJob = await this.jobService.createJob(job);
         result = {
           status: HttpStatus.CREATED,
@@ -49,12 +57,12 @@ export class JobsController {
           data: createdJob,
           errors: null
         };
-      } catch (e) {
+      } catch (err) {
         result = {
           status: HttpStatus.PRECONDITION_FAILED,
           message: 'job_create_precondition_failed',
           data: null,
-          errors: e.errors
+          errors: [{ message: err.message }]
         };
       }
     } else {

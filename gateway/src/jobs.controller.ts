@@ -3,8 +3,7 @@ import { ClientProxy } from '@nestjs/microservices';
 import { ApiOkResponse, ApiCreatedResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { ResponseDto } from './interfaces/common/response.dto';
 import { CreateUpdateJobRequestDto } from './interfaces/jobs/dto/create-update-job-request.dto';
-import { firstValueFrom } from 'rxjs';
-import { IServiceResponse } from './interfaces/common/service-response.interface';
+import { Observable } from 'rxjs';
 import { AuthGuard } from '@nestjs/passport';
 import { Permissions } from './authz/permissions.decorator';
 import { PermissionsGuard } from './authz/permissions.guard';
@@ -24,24 +23,8 @@ export class JobsController {
   @Permissions('create:job')
   async createJob(
     @Body() jobRequest: CreateUpdateJobRequestDto
-  ): Promise<ResponseDto<IJob>> {
-    const createJobResponse: IServiceResponse<IJob> = await firstValueFrom(
-      this.recruitmentService.send({ cmd: 'job_create' }, jobRequest)
-    );
-
-    if (createJobResponse.status != HttpStatus.CREATED) {
-      throw new HttpException({
-        message: createJobResponse.message,
-        data: null,
-        errors: createJobResponse.errors,
-      },
-        createJobResponse.status);
-    }
-    return {
-      message: createJobResponse.message,
-      data: createJobResponse.data,
-      errors: null
-    };
+  ): Promise<Observable<ResponseDto<IJob>>> {
+    return this.recruitmentService.send({ cmd: 'job_create' }, jobRequest);
   }
 
   @Get()
@@ -52,16 +35,8 @@ export class JobsController {
     type: ResponseDto<IJob[]>,
     description: 'List of jobs of user'
   })
-  public async getJobs(): Promise<ResponseDto<IJob[]>> {
-    const jobsResponse: IServiceResponse<IJob[]> = await firstValueFrom(
-      this.recruitmentService.send({ cmd: 'jobs_list' }, {}),
-    );
-
-    return {
-      message: jobsResponse.message,
-      data: jobsResponse.data,
-      errors: null,
-    };
+  public async getJobs(): Promise<Observable<ResponseDto<IJob[]>>> {
+    return this.recruitmentService.send({ cmd: 'jobs_list' }, {});
   }
 
   @Get(':id')
@@ -74,16 +49,8 @@ export class JobsController {
   })
   public async getJob(
     @Param('id') id: string,
-  ): Promise<ResponseDto<IJob>> {
-    const jobResponse: IServiceResponse<IJob> = await firstValueFrom(
-      this.recruitmentService.send({ cmd: 'job_search_by_id' }, id),
-    );
-
-    return {
-      message: jobResponse.message,
-      data: jobResponse.data,
-      errors: null,
-    };
+  ): Promise<Observable<ResponseDto<IJob>>> {
+    return this.recruitmentService.send({ cmd: 'job_search_by_id' }, id)
   }
 
   @Delete(':id')
@@ -96,29 +63,8 @@ export class JobsController {
   })
   public async deleteJob(
     @Param('id') id: string,
-  ): Promise<ResponseDto<null>> {
-    const deleteJobResponse: IServiceResponse<null> = await firstValueFrom(
-      this.recruitmentService.send({ cmd: 'job_delete_by_id' }, {
-        id: id
-      }),
-    );
-
-    if (deleteJobResponse.status !== HttpStatus.OK) {
-      throw new HttpException(
-        {
-          message: deleteJobResponse.message,
-          errors: deleteJobResponse.errors,
-          data: null,
-        },
-        deleteJobResponse.status,
-      );
-    }
-
-    return {
-      message: deleteJobResponse.message,
-      data: null,
-      errors: null,
-    };
+  ): Promise<Observable<ResponseDto<null>>> {
+    return this.recruitmentService.send({ cmd: 'job_delete_by_id' }, { id: id });
   }
 
   @Put(':id')
@@ -133,30 +79,11 @@ export class JobsController {
     @Req() req: { user: IUser },
     @Param('id') id: string,
     @Body() jobRequest: CreateUpdateJobRequestDto,
-  ): Promise<ResponseDto<IJob>> {
-    const updateJobResponse: IServiceResponse<IJob> = await firstValueFrom(
-      this.recruitmentService.send({ cmd: 'job_update_by_id' }, {
-        id: id,
-        user: req.user.email,
-        job: jobRequest,
-      }),
-    );
-
-    if (updateJobResponse.status !== HttpStatus.OK) {
-      throw new HttpException(
-        {
-          message: updateJobResponse.message,
-          errors: updateJobResponse.errors,
-          data: null,
-        },
-        updateJobResponse.status,
-      );
-    }
-
-    return {
-      message: updateJobResponse.message,
-      data: updateJobResponse.data,
-      errors: null,
-    };
+  ): Promise<Observable<ResponseDto<IJob>>> {
+    return this.recruitmentService.send({ cmd: 'job_update_by_id' }, {
+      id: id,
+      user: req.user.email,
+      job: jobRequest,
+    });
   }
 }

@@ -1,5 +1,7 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from "mongoose";
+import { IWorkflow } from '../../workflows/interfaces/workflow.interface';
+import { WorkflowSchema } from '../../workflows/schemas/workflow.schema';
 import { IJob } from '../interfaces/job.interface';
 
 export type JobDocument = Job & Document;

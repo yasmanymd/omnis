@@ -2,8 +2,7 @@ import { Body, Controller, Delete, Get, HttpException, HttpStatus, Inject, Param
 import { ClientProxy } from '@nestjs/microservices';
 import { ApiOkResponse, ApiCreatedResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { CreateMeetingRequestDto } from './interfaces/meetings/dto/create-meeting-request.dto';
-import { firstValueFrom } from 'rxjs';
-import { IServiceResponse } from './interfaces/common/service-response.interface';
+import { Observable } from 'rxjs';
 import { AuthGuard } from '@nestjs/passport';
 import { Permissions } from './authz/permissions.decorator';
 import { PermissionsGuard } from './authz/permissions.guard';
@@ -26,29 +25,13 @@ export class MeetingsController {
   async createMeeting(
     @Req() req: { user: IUser },
     @Body() meetingRequest: CreateMeetingRequestDto
-  ): Promise<ResponseDto<IMeeting>> {
-    const createMeetingResponse: IServiceResponse<IMeeting> = await firstValueFrom(
-      this.meetingService.send({ cmd: 'meeting_create' },
-        {
-          ...meetingRequest,
-          created_by: req.user.email
-        }
-      )
+  ): Promise<Observable<ResponseDto<IMeeting>>> {
+    return this.meetingService.send({ cmd: 'meeting_create' },
+      {
+        ...meetingRequest,
+        created_by: req.user.email
+      }
     );
-
-    if (createMeetingResponse.status != HttpStatus.CREATED) {
-      throw new HttpException({
-        message: createMeetingResponse.message,
-        data: null,
-        errors: createMeetingResponse.errors,
-      },
-        createMeetingResponse.status);
-    }
-    return {
-      message: createMeetingResponse.message,
-      data: createMeetingResponse.data,
-      errors: null
-    };
   }
 
   @Get()
@@ -61,16 +44,8 @@ export class MeetingsController {
   })
   public async getMeetings(
     @Req() req: { user: IUser }
-  ): Promise<ResponseDto<IMeeting[]>> {
-    const meetingsResponse: IServiceResponse<IMeeting[]> = await firstValueFrom(
-      this.meetingService.send({ cmd: 'meetings_search_by_user' }, req.user.email),
-    );
-
-    return {
-      message: meetingsResponse.message,
-      data: meetingsResponse.data,
-      errors: null,
-    };
+  ): Promise<Observable<ResponseDto<IMeeting[]>>> {
+    return this.meetingService.send({ cmd: 'meetings_search_by_user' }, req.user.email);
   }
 
   @Delete(':id')
@@ -84,30 +59,11 @@ export class MeetingsController {
   public async deleteMeeting(
     @Req() req: { user: IUser },
     @Param('id') id: string,
-  ): Promise<ResponseDto<null>> {
-    const deleteMeetingResponse: IServiceResponse<null> = await firstValueFrom(
-      this.meetingService.send({ cmd: 'meeting_delete_by_id' }, {
-        id: id,
-        user: req.user.email
-      }),
-    );
-
-    if (deleteMeetingResponse.status !== HttpStatus.OK) {
-      throw new HttpException(
-        {
-          message: deleteMeetingResponse.message,
-          errors: deleteMeetingResponse.errors,
-          data: null,
-        },
-        deleteMeetingResponse.status,
-      );
-    }
-
-    return {
-      message: deleteMeetingResponse.message,
-      data: null,
-      errors: null,
-    };
+  ): Promise<Observable<ResponseDto<null>>> {
+    return this.meetingService.send({ cmd: 'meeting_delete_by_id' }, {
+      id: id,
+      user: req.user.email
+    });
   }
 
   @Put(':id')
@@ -122,30 +78,11 @@ export class MeetingsController {
     @Req() req: { user: IUser },
     @Param('id') id: string,
     @Body() meetingRequest: UpdateMeetingRequestDto,
-  ): Promise<ResponseDto<IMeeting>> {
-    const updateMeetingResponse: IServiceResponse<IMeeting> = await firstValueFrom(
-      this.meetingService.send({ cmd: 'meeting_update_by_id' }, {
-        id: id,
-        user: req.user.email,
-        meeting: meetingRequest,
-      }),
-    );
-
-    if (updateMeetingResponse.status !== HttpStatus.OK) {
-      throw new HttpException(
-        {
-          message: updateMeetingResponse.message,
-          errors: updateMeetingResponse.errors,
-          data: null,
-        },
-        updateMeetingResponse.status,
-      );
-    }
-
-    return {
-      message: updateMeetingResponse.message,
-      data: updateMeetingResponse.data,
-      errors: null,
-    };
+  ): Promise<Observable<ResponseDto<IMeeting>>> {
+    return this.meetingService.send({ cmd: 'meeting_update_by_id' }, {
+      id: id,
+      user: req.user.email,
+      meeting: meetingRequest,
+    });
   }
 }

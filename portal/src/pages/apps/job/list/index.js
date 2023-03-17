@@ -8,9 +8,12 @@ import Link from 'next/link'
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
 import Grid from '@mui/material/Grid'
+import IconButton from '@mui/material/IconButton'
 import CustomChip from 'src/@core/components/mui/chip'
 import { DataGrid } from '@mui/x-data-grid'
 import Typography from '@mui/material/Typography'
+
+import BulletinBoard from 'mdi-material-ui/BulletinBoard'
 
 // ** Store Imports
 import { useDispatch, useSelector } from 'react-redux'
@@ -79,6 +82,20 @@ const columns = [
       ))
     }
   },
+  {
+    flex: 0.1,
+    minWidth: 100,
+    sortable: false,
+    field: 'actions',
+    headerName: 'Actions',
+    renderCell: ({ row }) => (
+      <Link href={`/apps/board/${row.workflow_id}`} passHref>
+        <IconButton>
+          <BulletinBoard />
+        </IconButton>
+      </Link>
+    )
+  }
 ]
 
 const JobList = () => {
@@ -113,7 +130,8 @@ const JobList = () => {
                   id: job._id,
                   title: job.title,
                   description: job.description,
-                  tags: job.tags
+                  tags: job.tags,
+                  workflow_id: job.workflow_id
                 }
               }
               ) : []}
@@ -130,7 +148,7 @@ const JobList = () => {
         </Card>
       </Grid>
 
-      <AddJobDrawer open={addJobOpen} toggle={toggleAddJobDrawer} clients={store.clients} workflowTemplates={store.workflowTemplates} />
+      <AddJobDrawer open={addJobOpen} toggle={toggleAddJobDrawer} clients={store.clients} />
     </Grid>
   )
 }

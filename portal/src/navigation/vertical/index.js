@@ -5,7 +5,6 @@ import ShieldOutline from 'mdi-material-ui/ShieldOutline'
 import CalendarBlankOutline from 'mdi-material-ui/CalendarBlankOutline'
 import AccountGroup from 'mdi-material-ui/AccountGroup'
 import TextBoxMultipleOutline from 'mdi-material-ui/TextBoxMultipleOutline'
-import BulletinBoard from 'mdi-material-ui/BulletinBoard'
 import OfficeBuilding from 'mdi-material-ui/OfficeBuilding'
 
 const navigation = () => {
@@ -49,11 +48,6 @@ const navigation = () => {
       title: 'Jobs',
       icon: TextBoxMultipleOutline,
       path: '/apps/job/list'
-    },
-    {
-      title: 'Board',
-      icon: BulletinBoard,
-      path: '/apps/board'
     }
   ]
 }

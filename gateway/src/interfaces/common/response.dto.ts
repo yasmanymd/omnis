@@ -1,8 +1,12 @@
 import { ApiProperty } from '@nestjs/swagger';
 
 export class ResponseDto<Type> {
+  @ApiProperty({ example: 200 })
+  status: number;
+
   @ApiProperty({ example: 'candidate_create_success' })
   message: string;
+
   @ApiProperty({
     example: {
       data: {
@@ -16,7 +20,8 @@ export class ResponseDto<Type> {
     },
     nullable: true,
   })
-  data: Type;
+  data?: Type | null;
+
   @ApiProperty({ example: null, nullable: true })
-  errors: { [key: string]: any };
+  errors?: { [key: string]: any } | null;
 }

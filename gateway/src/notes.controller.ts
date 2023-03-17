@@ -2,8 +2,7 @@ import { Body, Controller, Delete, Get, HttpException, HttpStatus, Inject, Param
 import { ClientProxy } from '@nestjs/microservices';
 import { ApiOkResponse, ApiCreatedResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { ResponseDto } from './interfaces/common/response.dto';
-import { firstValueFrom } from 'rxjs';
-import { IServiceResponse } from './interfaces/common/service-response.interface';
+import { Observable } from 'rxjs';
 import { AuthGuard } from '@nestjs/passport';
 import { Permissions } from './authz/permissions.decorator';
 import { PermissionsGuard } from './authz/permissions.guard';
@@ -26,30 +25,14 @@ export class NotesController {
   async createNote(
     @Req() req: { user: IUser },
     @Body() noteRequest: CreateNoteRequestDto
-  ): Promise<ResponseDto<INote>> {
-    const createNoteResponse: IServiceResponse<INote> = await firstValueFrom(
-      this.recruitmentService.send({ cmd: 'note_create' },
-        {
-          ...noteRequest,
-          created_by: req.user.email,
-          modified_by: req.user.email
-        }
-      )
+  ): Promise<Observable<ResponseDto<INote>>> {
+    return this.recruitmentService.send({ cmd: 'note_create' },
+      {
+        ...noteRequest,
+        created_by: req.user.email,
+        modified_by: req.user.email
+      }
     );
-
-    if (createNoteResponse.status != HttpStatus.CREATED) {
-      throw new HttpException({
-        message: createNoteResponse.message,
-        data: null,
-        errors: createNoteResponse.errors,
-      },
-        createNoteResponse.status);
-    }
-    return {
-      message: createNoteResponse.message,
-      data: createNoteResponse.data,
-      errors: null
-    };
   }
 
   @Get('/search?')
@@ -62,16 +45,8 @@ export class NotesController {
   })
   public async getNotes(
     @Query('candidate_id') candidate_id: string
-  ): Promise<ResponseDto<INote[]>> {
-    const notesResponse: IServiceResponse<INote[]> = await firstValueFrom(
-      this.recruitmentService.send({ cmd: 'notes_search_by_candidate' }, candidate_id),
-    );
-
-    return {
-      message: notesResponse.message,
-      data: notesResponse.data,
-      errors: null,
-    };
+  ): Promise<Observable<ResponseDto<INote[]>>> {
+    return this.recruitmentService.send({ cmd: 'notes_search_by_candidate' }, candidate_id);
   }
 
   @Get(':id')
@@ -84,16 +59,8 @@ export class NotesController {
   })
   public async getNote(
     @Param('id') id: string,
-  ): Promise<ResponseDto<INote>> {
-    const noteResponse: IServiceResponse<INote> = await firstValueFrom(
-      this.recruitmentService.send({ cmd: 'note_search_by_id' }, id),
-    );
-
-    return {
-      message: noteResponse.message,
-      data: noteResponse.data,
-      errors: null,
-    };
+  ): Promise<Observable<ResponseDto<INote>>> {
+    return this.recruitmentService.send({ cmd: 'note_search_by_id' }, id);
   }
 
   @Delete(':id')
@@ -106,29 +73,10 @@ export class NotesController {
   })
   public async deleteNote(
     @Param('id') id: string,
-  ): Promise<ResponseDto<null>> {
-    const deleteNoteResponse: IServiceResponse<null> = await firstValueFrom(
-      this.recruitmentService.send({ cmd: 'note_delete_by_id' }, {
-        id: id
-      }),
-    );
-
-    if (deleteNoteResponse.status !== HttpStatus.OK) {
-      throw new HttpException(
-        {
-          message: deleteNoteResponse.message,
-          errors: deleteNoteResponse.errors,
-          data: null,
-        },
-        deleteNoteResponse.status,
-      );
-    }
-
-    return {
-      message: deleteNoteResponse.message,
-      data: null,
-      errors: null,
-    };
+  ): Promise<Observable<ResponseDto<null>>> {
+    return this.recruitmentService.send({ cmd: 'note_delete_by_id' }, {
+      id: id
+    });
   }
 
   @Put(':id')
@@ -143,34 +91,15 @@ export class NotesController {
     @Req() req: { user: IUser },
     @Param('id') id: string,
     @Body() noteRequest: UpdateNoteRequestDto,
-  ): Promise<ResponseDto<INote>> {
-    const updateNoteResponse: IServiceResponse<INote> = await firstValueFrom(
-      this.recruitmentService.send({ cmd: 'note_update_by_id' }, {
-        id: id,
-        user: req.user.email,
-        note: {
-          ...noteRequest,
-          modified_by: req.user.email,
-          modified_at: +new Date()
-        },
-      }),
-    );
-
-    if (updateNoteResponse.status !== HttpStatus.OK) {
-      throw new HttpException(
-        {
-          message: updateNoteResponse.message,
-          errors: updateNoteResponse.errors,
-          data: null,
-        },
-        updateNoteResponse.status,
-      );
-    }
-
-    return {
-      message: updateNoteResponse.message,
-      data: updateNoteResponse.data,
-      errors: null,
-    };
+  ): Promise<Observable<ResponseDto<INote>>> {
+    return this.recruitmentService.send({ cmd: 'note_update_by_id' }, {
+      id: id,
+      user: req.user.email,
+      note: {
+        ...noteRequest,
+        modified_by: req.user.email,
+        modified_at: +new Date()
+      },
+    });
   }
 }

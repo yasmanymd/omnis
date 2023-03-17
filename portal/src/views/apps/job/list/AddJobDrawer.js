@@ -23,7 +23,7 @@ import Close from 'mdi-material-ui/Close'
 import { useDispatch } from 'react-redux'
 
 // ** Actions Imports
-import { createJob, fetchClients, fetchWorkflowsTemplates } from 'src/store/apps/job'
+import { createJob, fetchClients } from 'src/store/apps/job'
 import { InputLabel, Select, OutlinedInput, MenuItem, Autocomplete, Chip } from '@mui/material'
 
 const Header = styled(Box)(({ theme }) => ({
@@ -37,31 +37,26 @@ const Header = styled(Box)(({ theme }) => ({
 const schema = yup.object().shape({
   title: yup.string().required(),
   description: yup.string().required(),
-  client_id: yup.string().required(),
-  workflow_template_id: yup.string().required()
+  client_id: yup.string().required()
 })
 
 const defaultValues = {
   title: '',
   description: '',
   client_id: '',
-  workflow_template_id: '',
   tags: []
 }
 
 const SidebarAddJob = props => {
   // ** Props
-  const { open, toggle, clients, workflowTemplates } = props
+  const { open, toggle, clients } = props
 
-  console.log(clients)
-  console.log(workflowTemplates)
   // ** Hooks
   const dispatch = useDispatch()
 
   useEffect(() => {
     console.log('useffect')
     dispatch(fetchClients())
-    dispatch(fetchWorkflowsTemplates())
   }, []);
 
   const {
@@ -192,34 +187,6 @@ const SidebarAddJob = props => {
             {errors.client_id && (
               <FormHelperText sx={{ color: 'error.main' }} id='event-client_id-error'>
                 {errors.client_id.message}
-              </FormHelperText>
-            )}
-          </FormControl>
-          <FormControl fullWidth sx={{ mb: 6 }}>
-            <InputLabel id="workflow-label" error={Boolean(errors.workflow_template_id)}>Workflow</InputLabel>
-            <Controller
-              name="workflow_template_id"
-              control={control}
-              render={({ field: { value, onChange } }) => (
-                <Select
-                  value={value}
-                  onChange={onChange}
-                  labelId="workflow-label"
-                  error={Boolean(errors.workflow_template_id)}
-                  input={<OutlinedInput label="Workflow"
-                    error={Boolean(errors.workflow_template_id)}
-                  />}>
-                  {workflowTemplates.map((item) => (
-                    <MenuItem key={item._id} value={item._id}>
-                      {item.name}
-                    </MenuItem>
-                  ))}
-                </Select>
-              )}
-            />
-            {errors.workflow_template_id && (
-              <FormHelperText sx={{ color: 'error.main' }} id='event-workflow_template_id-error'>
-                {errors.workflow_template_id.message}
               </FormHelperText>
             )}
           </FormControl>

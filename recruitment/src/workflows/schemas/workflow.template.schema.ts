@@ -1,6 +1,6 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from "mongoose";
-import { IWorkflowTemplate } from '../interfaces/workflow.template.interface';
+import { IStatus, IWorkflowTemplate } from '../interfaces/workflow.template.interface';
 
 export type WorkflowTemplateDocument = WorkflowTemplate & Document;
 
@@ -12,10 +12,7 @@ export class WorkflowTemplate implements IWorkflowTemplate {
   name: string;
 
   @Prop({ required: true })
-  status: string[];
-
-  @Prop({ required: true })
-  initial_status: string;
+  status: IStatus[];
 }
 
 export const WorkflowTemplateSchema = SchemaFactory.createForClass(WorkflowTemplate);

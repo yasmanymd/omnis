@@ -22,39 +22,6 @@ export class WorkflowsController {
     return result;
   }
 
-  @MessagePattern({ cmd: 'workflow_create' })
-  public async workflowCreate(workflow: IWorkflow): Promise<IResponse<IWorkflow>> {
-    let result: IResponse<IWorkflow>;
-
-    if (workflow) {
-      try {
-        const createdWorkflow = await this.workflowsService.createWorkflow(workflow);
-        result = {
-          status: HttpStatus.CREATED,
-          message: 'workflow_create_success',
-          data: createdWorkflow,
-          errors: null
-        };
-      } catch (e) {
-        result = {
-          status: HttpStatus.PRECONDITION_FAILED,
-          message: 'workflow_create_precondition_failed',
-          data: null,
-          errors: e.errors
-        };
-      }
-    } else {
-      result = {
-        status: HttpStatus.BAD_REQUEST,
-        message: 'workflow_create_bad_request',
-        data: null,
-        errors: null
-      };
-    }
-
-    return result;
-  }
-
   @MessagePattern({ cmd: 'workflow_update_by_id' })
   public async workflowUpdateById(params: {
     workflow: IWorkflow;

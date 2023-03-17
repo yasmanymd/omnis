@@ -22,6 +22,8 @@ import { WorkflowsService } from './workflows/workflows.service';
 import { WorkflowTemplate, WorkflowTemplateSchema } from './workflows/schemas/workflow.template.schema';
 import { WorkflowTemplatesController } from './workflows/templates.controller';
 import { WorkflowTemplatesService } from './workflows/templates.service';
+import { SettingsService } from './settings/settings.service';
+import { Settings, SettingsSchema } from './settings/schemas/settings.schema';
 
 @Module({
   imports: [
@@ -32,9 +34,10 @@ import { WorkflowTemplatesService } from './workflows/templates.service';
     MongooseModule.forFeature([{ name: WorkflowTemplate.name, schema: WorkflowTemplateSchema }]),
     MongooseModule.forFeature([{ name: Client.name, schema: ClientSchema }]),
     MongooseModule.forFeature([{ name: Job.name, schema: JobSchema }]),
+    MongooseModule.forFeature([{ name: Settings.name, schema: SettingsSchema }]),
     MongooseModule.forFeature([{ name: Token.name, schema: TokenSchema }])
   ],
   controllers: [CandidatesController, NotesController, WorkflowsController, WorkflowTemplatesController, TokenController, JobsController, ClientsController],
-  providers: [CandidatesService, NotesService, WorkflowsService, WorkflowTemplatesService, TokenService, JobsService, ClientsService],
+  providers: [CandidatesService, NotesService, WorkflowsService, WorkflowTemplatesService, TokenService, JobsService, ClientsService, SettingsService],
 })
 export class RecruimentModule { }

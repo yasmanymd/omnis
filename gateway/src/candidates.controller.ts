@@ -3,8 +3,7 @@ import { ClientProxy } from '@nestjs/microservices';
 import { ApiOkResponse, ApiCreatedResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { ResponseDto } from './interfaces/common/response.dto';
 import { CreateCandidateRequestDto } from './interfaces/candidates/dto/create-candidate-request.dto';
-import { firstValueFrom } from 'rxjs';
-import { IServiceResponse } from './interfaces/common/service-response.interface';
+import { Observable } from 'rxjs';
 import { AuthGuard } from '@nestjs/passport';
 import { Permissions } from './authz/permissions.decorator';
 import { PermissionsGuard } from './authz/permissions.guard';
@@ -27,29 +26,13 @@ export class CandidatesController {
   async createCandidate(
     @Req() req: { user: IUser },
     @Body() candidateRequest: CreateCandidateRequestDto
-  ): Promise<ResponseDto<ICandidate>> {
-    const createCandidateResponse: IServiceResponse<ICandidate> = await firstValueFrom(
-      this.recruitmentService.send({ cmd: 'candidate_create' },
-        {
-          ...candidateRequest,
-          created_by: req.user.email
-        }
-      )
+  ): Promise<Observable<ResponseDto<ICandidate>>> {
+    return this.recruitmentService.send({ cmd: 'candidate_create' },
+      {
+        ...candidateRequest,
+        created_by: req.user.email
+      }
     );
-
-    if (createCandidateResponse.status != HttpStatus.CREATED) {
-      throw new HttpException({
-        message: createCandidateResponse.message,
-        data: null,
-        errors: createCandidateResponse.errors,
-      },
-        createCandidateResponse.status);
-    }
-    return {
-      message: createCandidateResponse.message,
-      data: createCandidateResponse.data,
-      errors: null
-    };
   }
 
   @Get()
@@ -62,16 +45,8 @@ export class CandidatesController {
   })
   public async getCandidates(
     @Req() req: { user: IUser }
-  ): Promise<ResponseDto<ICandidate[]>> {
-    const candidatesResponse: IServiceResponse<ICandidate[]> = await firstValueFrom(
-      this.recruitmentService.send({ cmd: 'candidates_list' }, {}),
-    );
-
-    return {
-      message: candidatesResponse.message,
-      data: candidatesResponse.data,
-      errors: null,
-    };
+  ): Promise<Observable<ResponseDto<ICandidate[]>>> {
+    return this.recruitmentService.send({ cmd: 'candidates_list' }, {});
   }
 
   @Get(':id')
@@ -85,16 +60,8 @@ export class CandidatesController {
   public async getCandidate(
     @Req() req: { user: IUser },
     @Param('id') id: string,
-  ): Promise<ResponseDto<ICandidate>> {
-    const candidateResponse: IServiceResponse<ICandidate> = await firstValueFrom(
-      this.recruitmentService.send({ cmd: 'candidate_search_by_id' }, id),
-    );
-
-    return {
-      message: candidateResponse.message,
-      data: candidateResponse.data,
-      errors: null,
-    };
+  ): Promise<Observable<ResponseDto<ICandidate>>> {
+    return this.recruitmentService.send({ cmd: 'candidate_search_by_id' }, id);
   }
 
   @Delete(':id')
@@ -107,29 +74,10 @@ export class CandidatesController {
   })
   public async deleteCandidate(
     @Param('id') id: string,
-  ): Promise<ResponseDto<null>> {
-    const deleteCandidateResponse: IServiceResponse<null> = await firstValueFrom(
-      this.recruitmentService.send({ cmd: 'candidate_delete_by_id' }, {
-        id: id
-      }),
-    );
-
-    if (deleteCandidateResponse.status !== HttpStatus.OK) {
-      throw new HttpException(
-        {
-          message: deleteCandidateResponse.message,
-          errors: deleteCandidateResponse.errors,
-          data: null,
-        },
-        deleteCandidateResponse.status,
-      );
-    }
-
-    return {
-      message: deleteCandidateResponse.message,
-      data: null,
-      errors: null,
-    };
+  ): Promise<Observable<ResponseDto<null>>> {
+    return this.recruitmentService.send({ cmd: 'candidate_delete_by_id' }, {
+      id: id
+    });
   }
 
   @Put(':id')
@@ -144,31 +92,12 @@ export class CandidatesController {
     @Req() req: { user: IUser },
     @Param('id') id: string,
     @Body() candidateRequest: UpdateCandidateRequestDto,
-  ): Promise<ResponseDto<ICandidate>> {
-    const updateCandidateResponse: IServiceResponse<ICandidate> = await firstValueFrom(
-      this.recruitmentService.send({ cmd: 'candidate_update_by_id' }, {
-        id: id,
-        user: req.user.email,
-        candidate: candidateRequest,
-      }),
-    );
-
-    if (updateCandidateResponse.status !== HttpStatus.OK) {
-      throw new HttpException(
-        {
-          message: updateCandidateResponse.message,
-          errors: updateCandidateResponse.errors,
-          data: null,
-        },
-        updateCandidateResponse.status,
-      );
-    }
-
-    return {
-      message: updateCandidateResponse.message,
-      data: updateCandidateResponse.data,
-      errors: null,
-    };
+  ): Promise<Observable<ResponseDto<ICandidate>>> {
+    return this.recruitmentService.send({ cmd: 'candidate_update_by_id' }, {
+      id: id,
+      user: req.user.email,
+      candidate: candidateRequest,
+    });
   }
 
   @Post('import')
@@ -177,22 +106,7 @@ export class CandidatesController {
   })
   async importCandidate(
     @Body() candidateRequest: ImportCandidateRequestDto
-  ): Promise<ResponseDto<null>> {
-    const createCandidateResponse: IServiceResponse<ICandidate> = await firstValueFrom(
-      this.recruitmentService.send({ cmd: 'candidate_import' }, candidateRequest)
-    );
-
-    if (createCandidateResponse.status != HttpStatus.CREATED) {
-      throw new HttpException({
-        message: createCandidateResponse.message,
-        errors: createCandidateResponse.errors,
-      },
-        createCandidateResponse.status);
-    }
-    return {
-      message: createCandidateResponse.message,
-      data: null,
-      errors: null
-    };
+  ): Promise<Observable<ResponseDto<null>>> {
+    return this.recruitmentService.send({ cmd: 'candidate_import' }, candidateRequest)
   }
 }

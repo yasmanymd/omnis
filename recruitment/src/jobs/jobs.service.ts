@@ -11,11 +11,6 @@ export class JobsService {
     @InjectModel('Workflow') private readonly workflowModel: Model<WorkflowDocument>) { }
 
   public async createJob(job: IJob): Promise<IJob> {
-    const workflow = await this.workflowModel.create({
-      workflow_template_id: job.workflow_template_id,
-      candidates: []
-    });
-    job.workflow_id = workflow._id;
     return await this.jobModel.create(job);
   }
 

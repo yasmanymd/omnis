@@ -133,6 +133,19 @@ export const fetchWorkflowsTemplates = createAsyncThunk('appClients/fetchWorkflo
   return result.data;
 })
 
+// ** Fetch Workflow
+export const fetchWorkflow = createAsyncThunk('appJobs/fetchWorkflow', async (id) => {
+  const response = await fetch(encodeURI('/api/workflows/' + id), {
+    method: 'GET',
+    headers: {
+      'accept': 'application/json',
+      'Content-Type': 'application/json'
+    }
+  });
+  const result = await response.json();
+  return result.data;
+})
+
 export const appJobsSlice = createSlice({
   name: 'appJobs',
   initialState: {
@@ -140,7 +153,8 @@ export const appJobsSlice = createSlice({
     job: null,
     documents: [],
     clients: [],
-    workflowTemplates: []
+    workflowTemplates: [],
+    workflow: null
   },
   reducers: {},
   extraReducers: builder => {
@@ -156,8 +170,8 @@ export const appJobsSlice = createSlice({
     builder.addCase(fetchClients.fulfilled, (state, action) => {
       state.clients = action.payload || []
     })
-    builder.addCase(fetchWorkflowsTemplates.fulfilled, (state, action) => {
-      state.workflowTemplates = action.payload || []
+    builder.addCase(fetchWorkflow.fulfilled, (state, action) => {
+      state.workflow = action.payload || null
     })
   }
 })

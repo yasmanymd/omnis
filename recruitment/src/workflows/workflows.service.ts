@@ -3,14 +3,22 @@ import { InjectModel } from "@nestjs/mongoose";
 import { Model } from "mongoose";
 import { IWorkflow } from "./interfaces/workflow.interface";
 import { WorkflowDocument } from "./schemas/workflow.schema";
+import { WorkflowTemplateDocument } from "./schemas/workflow.template.schema";
 
 @Injectable()
 export class WorkflowsService {
-  constructor(@InjectModel('Workflow') private readonly workflowModel: Model<WorkflowDocument>) { }
+  constructor(@InjectModel('Workflow') private readonly workflowModel: Model<WorkflowDocument>,
+    @InjectModel('WorkflowTemplate') private readonly workflowTemplateModel: Model<WorkflowTemplateDocument>) { }
 
-  public async createWorkflow(workflow: IWorkflow): Promise<IWorkflow> {
-    delete workflow._id;
-    return await this.workflowModel.create(workflow);
+  public async createWorkflow(templateId: string): Promise<IWorkflow> {
+    if (!templateId) {
+      throw new Error('Default workflow template is not defined');
+    }
+    const workflowTemplate = await this.workflowTemplateModel.findById(templateId);
+    return await this.workflowModel.create({
+      status: workflowTemplate.status,
+      candidates: []
+    });
   }
 
   public async getWorkflowById(id: string): Promise<IWorkflow> {
