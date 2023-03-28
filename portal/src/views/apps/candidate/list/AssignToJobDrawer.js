@@ -1,18 +1,13 @@
 // ** React Imports
-import { useState } from 'react'
 
 // ** MUI Imports
 import Drawer from '@mui/material/Drawer'
-import Select from '@mui/material/Select'
 import Button from '@mui/material/Button'
-import MenuItem from '@mui/material/MenuItem'
 import { styled } from '@mui/material/styles'
 import TextField from '@mui/material/TextField'
-import InputLabel from '@mui/material/InputLabel'
 import Typography from '@mui/material/Typography'
 import Box from '@mui/material/Box'
 import FormControl from '@mui/material/FormControl'
-import FormHelperText from '@mui/material/FormHelperText'
 
 // ** Third Party Imports
 import * as yup from 'yup'
@@ -26,8 +21,8 @@ import Close from 'mdi-material-ui/Close'
 import { useDispatch } from 'react-redux'
 
 // ** Actions Imports
-import { createCandidate } from 'src/store/apps/candidate'
-import Autocomplete from '../../../../@core/theme/overrides/autocomplete'
+import MuiAutocomplete from '@mui/material/Autocomplete'
+import { assignCandidatesToJob } from 'src/store/apps/job'
 
 const Header = styled(Box)(({ theme }) => ({
   display: 'flex',
@@ -38,18 +33,16 @@ const Header = styled(Box)(({ theme }) => ({
 }))
 
 const schema = yup.object().shape({
-  name: yup.string().required("Job is a required field")
+  item: yup.object().required("Job is a required field")
 })
 
 const defaultValues = {
-  jobId: ''
+  item: null
 }
 
 const AssignToJobDrawer = props => {
   // ** Props
-  const { open, toggle } = props
-
-  const [jobs, setJobs] = useState([])
+  const { open, toggle, jobs, selectionCandidates } = props
 
   // ** Hooks
   const dispatch = useDispatch()
@@ -57,7 +50,6 @@ const AssignToJobDrawer = props => {
   const {
     reset,
     control,
-    setValue,
     handleSubmit,
     formState: { errors }
   } = useForm({
@@ -67,13 +59,12 @@ const AssignToJobDrawer = props => {
   })
 
   const onSubmit = data => {
-    //dispatch(createCandidate({ ...data }))
+    dispatch(assignCandidatesToJob({ candidates: selectionCandidates, job: data.item._id }))
     toggle()
     reset()
   }
 
   const handleClose = () => {
-    setValue('jobId', '')
     toggle()
     reset()
   }
@@ -92,41 +83,37 @@ const AssignToJobDrawer = props => {
         <Close fontSize='small' onClick={handleClose} sx={{ cursor: 'pointer' }} />
       </Header>
       <Box sx={{ p: 5 }}>
-        <form onSubmit={handleSubmit(onSubmit)}>
+        <form onSubmit={handleSubmit(onSubmit)} noValidate>
           <FormControl fullWidth sx={{ mb: 6 }}>
             <Controller
-              name="country"
-              as={
-                <Autocomplete
-                  options={options}
-                  getOptionLabel={option => getOpObj(option).name}
-                  getOptionSelected={(option, value) => {
-                    return option._id === getOpObj(value)._id;
-                  }}
-                  renderInput={params => <TextField {...params} label="Country" />}
-                />
-              }
-              onChange={([, obj]) => getOpObj(obj)._id}
               control={control}
-              defaultValue={options[0]}
-            />
-            {errors.name && <FormHelperText sx={{ color: 'error.main' }}>{errors.name.message}</FormHelperText>}
-          </FormControl>
-          <FormControl fullWidth sx={{ mb: 6 }}>
-            <Controller
-              name='title'
-              control={control}
+              name="item"
               rules={{ required: true }}
-              render={({ field: { value, onChange } }) => (
-                <TextField
+              render={({ field: { onChange, value } }) => (
+                <MuiAutocomplete
+                  onChange={(event, item) => {
+                    onChange(item);
+                  }}
                   value={value}
-                  label='Title'
-                  onChange={onChange}
-                  error={Boolean(errors.title)}
+                  options={jobs}
+                  getOptionLabel={(item) => (item.title ? item.title : "")}
+                  getOptionSelected={(option, value) =>
+                    value === undefined || value === "" || option._id === value._id
+                  }
+                  renderInput={(params) => (
+                    <TextField
+                      {...params}
+                      label="Jobs"
+                      margin="normal"
+                      variant="outlined"
+                      error={!!errors.item}
+                      helperText={errors.item && "item required"}
+
+                    />
+                  )}
                 />
               )}
             />
-            {errors.title && <FormHelperText sx={{ color: 'error.main' }}>{errors.title.message}</FormHelperText>}
           </FormControl>
           <Box sx={{ display: 'flex', alignItems: 'center' }}>
             <Button size='large' type='submit' variant='contained' sx={{ mr: 3 }}>

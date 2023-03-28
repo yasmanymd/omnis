@@ -11,7 +11,8 @@ export const Lane = ({
   name,
   cards,
   formatDate,
-  dragableOver
+  dragableOver,
+  height
 }) => {
   const { setNodeRef } = useDroppable({
     id
@@ -24,7 +25,7 @@ export const Lane = ({
           title={name}
         />
         <CardContent>
-          <Box sx={{ height: 'calc(100% - 42px)', maxHeight: '100%', overflow: 'auto' }}>
+          <Box sx={{ height: 'calc(' + height + ' - 102px)', overflow: 'auto' }}>
             {cards.sort((a, b) => b.date - a.date).map((card, index) =>
               <DragableCard
                 key={index}

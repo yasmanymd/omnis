@@ -1,5 +1,5 @@
 import { Box, Divider, Paper, Stack, Typography } from "@mui/material";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Lane } from "../Lane/Lane";
 import { DndContext, DragEndEvent, DragStartEvent, DragOverEvent, DragOverlay } from "@dnd-kit/core";
 import { Card } from "../Card/Card";
@@ -85,6 +85,7 @@ export const Board = ({
           cards={lane.cards}
           formatDate={formatDate}
           dragableOver={laneActive == lane.id}
+          height={height}
         />
         )}
       </Stack>

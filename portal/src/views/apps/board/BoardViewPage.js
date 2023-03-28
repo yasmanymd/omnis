@@ -38,7 +38,7 @@ const BoardViewPage = ({ id }) => {
         };
       }),
       formatDate: (date) => Intl.DateTimeFormat("en-US").format(date),
-      height: '440px'
+      height: '640px'
     };
     workflow.candidates?.map(candidate => {
       initBoard.initLanes[mapping[candidate.status]].cards.push({

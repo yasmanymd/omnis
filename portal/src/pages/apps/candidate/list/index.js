@@ -24,10 +24,12 @@ import { getInitials } from 'src/@core/utils/get-initials'
 
 // ** Actions Imports
 import { fetchCandidates } from 'src/store/apps/candidate'
+import { fetchJobs } from 'src/store/apps/job'
 
 // ** Custom Components Imports
 import TableHeader from 'src/views/apps/candidate/list/TableHeader'
 import AddUserDrawer from 'src/views/apps/candidate/list/AddUserDrawer'
+import AssignToJobDrawer from 'src/views/apps/candidate/list/AssignToJobDrawer'
 
 // ** Styled component for the link for the avatar without image
 const AvatarWithoutImageLink = styled(Link)(({ theme }) => ({
@@ -163,14 +165,16 @@ const CandidateList = () => {
   const [status, setStatus] = useState('')
   const [pageSize, setPageSize] = useState(10)
   const [addUserOpen, setAddUserOpen] = useState(false)
+  const [assignToJobOpen, setAssignToJobOpen] = useState(false)
+  const [selectionCandidates, setSelectionCandidates] = useState([])
 
   // ** Hooks
   const dispatch = useDispatch()
-  const store = useSelector(state => state.candidate)
+  const storeCandidate = useSelector(state => state.candidate)
+  const storeJob = useSelector(state => state.job)
   useEffect(() => {
-    dispatch(
-      fetchCandidates()
-    )
+    dispatch(fetchCandidates())
+    dispatch(fetchJobs())
   }, [dispatch, null])
 
   const handleFilter = useCallback(val => {
@@ -179,15 +183,17 @@ const CandidateList = () => {
 
   const toggleAddUserDrawer = () => setAddUserOpen(!addUserOpen)
 
+  const toggleAssignToJobDrawer = () => setAssignToJobOpen(!assignToJobOpen)
+
   return (
     <Grid container spacing={6}>
       <Grid item xs={12}>
         <Card>
-          <TableHeader value={value} handleFilter={handleFilter} toggle={toggleAddUserDrawer} />
+          <TableHeader value={value} handleFilter={handleFilter} toggle={toggleAddUserDrawer} assignToJob={toggleAssignToJobDrawer} selectionCandidates={selectionCandidates} />
           <DataGrid
             autoHeight
-            rows={store.candidates.length ?
-              store.candidates.map(candidate => {
+            rows={storeCandidate.candidates.length ?
+              storeCandidate.candidates.map(candidate => {
                 return {
                   id: candidate._id,
                   name: candidate.name,
@@ -207,11 +213,15 @@ const CandidateList = () => {
             filterModel={{
               items: [{ columnField: 'name', operatorValue: 'contains', value: value }]
             }}
+            onSelectionModelChange={(selectionModel, details) => {
+              setSelectionCandidates(selectionModel)
+            }}
           />
         </Card>
       </Grid>
 
       <AddUserDrawer open={addUserOpen} toggle={toggleAddUserDrawer} />
+      <AssignToJobDrawer open={assignToJobOpen} toggle={toggleAssignToJobDrawer} jobs={storeJob.jobs} selectionCandidates={selectionCandidates} />
     </Grid>
   )
 }

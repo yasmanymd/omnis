@@ -5,6 +5,7 @@ import { JobsService } from "./jobs.service";
 import { MessagePattern } from '@nestjs/microservices';
 import { WorkflowsService } from "../workflows/workflows.service";
 import { SettingsService } from "../settings/settings.service";
+import { IJobAssignCandidates } from "./interfaces/job-assign-candidates.interface";
 
 @Controller()
 export class JobsController {
@@ -69,6 +70,40 @@ export class JobsController {
       result = {
         status: HttpStatus.BAD_REQUEST,
         message: 'job_create_bad_request',
+        data: null,
+        errors: null
+      };
+    }
+
+    return result;
+  }
+
+  @MessagePattern({ cmd: 'job_assign_candidates' })
+  public async jobAssignCandidates({ candidates, job }: IJobAssignCandidates): Promise<IResponse<null>> {
+    let result: IResponse<null>;
+
+    if (candidates && candidates.length && job) {
+      try {
+        const { workflow_id } = await this.jobService.getJobById(job);
+        let workflow = await this.workflowsService.getWorkflowById(workflow_id);
+        await this.workflowsService.assignCandidates(workflow_id, candidates);
+        result = {
+          status: HttpStatus.OK,
+          message: 'job_assign_candidates_success',
+          errors: null
+        };
+      } catch (err) {
+        result = {
+          status: HttpStatus.PRECONDITION_FAILED,
+          message: 'job_assign_candidates_precondition_failed',
+          data: null,
+          errors: [{ message: err.message }]
+        };
+      }
+    } else {
+      result = {
+        status: HttpStatus.BAD_REQUEST,
+        message: 'job_assign_candidates_bad_request',
         data: null,
         errors: null
       };

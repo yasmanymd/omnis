@@ -86,6 +86,28 @@ export const createJob = createAsyncThunk('appJobs/createJob', async (job, { dis
   return result.data;
 })
 
+// ** Assign Candidates to Job
+export const assignCandidatesToJob = createAsyncThunk('appJobs/assignCandidates', async ({ candidates, job }, { dispatch }) => {
+  const response = await fetch(encodeURI('/api/jobs/' + job + '/assign'), {
+    method: 'POST',
+    headers: {
+      'accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      "candidates": candidates
+    })
+  });
+
+  const result = await response.json();
+  if (result?.errors) {
+    toast.error(<ErrorDetails message='Error assigning candidates.' errors={result?.errors} />);
+  } else {
+    toast.success('Candidate(s) included in job.');
+  }
+  return result.data;
+})
+
 // ** Fetch Documents
 export const fetchDocuments = createAsyncThunk('appJobs/fetchDocuments', async (entity_id) => {
   const response = await fetch(encodeURI('/api/docs/filter?entity_id=' + entity_id), {
@@ -172,6 +194,9 @@ export const appJobsSlice = createSlice({
     })
     builder.addCase(fetchWorkflow.fulfilled, (state, action) => {
       state.workflow = action.payload || null
+    })
+    builder.addCase(assignCandidatesToJob.fulfilled, (state, action) => {
+      state.workflow = null
     })
   }
 })

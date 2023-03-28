@@ -9,6 +9,7 @@ import { Permissions } from './authz/permissions.decorator';
 import { PermissionsGuard } from './authz/permissions.guard';
 import { IUser } from './interfaces/user/user.interface';
 import { IJob } from './interfaces/jobs/job.interface';
+import { AssignCandidatesToJobRequestDto } from './interfaces/jobs/dto/assign-candidates-job-request.dto';
 
 @Controller('jobs')
 export class JobsController {
@@ -25,6 +26,20 @@ export class JobsController {
     @Body() jobRequest: CreateUpdateJobRequestDto
   ): Promise<Observable<ResponseDto<IJob>>> {
     return this.recruitmentService.send({ cmd: 'job_create' }, jobRequest);
+  }
+
+  @Post(':id/assign')
+  @ApiCreatedResponse({
+    type: ResponseDto<null>
+  })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'), PermissionsGuard)
+  @Permissions('edit:workflow')
+  async assignCandidatesToJob(
+    @Param('id') job: string,
+    @Body() assignCandidatesToJobRequest: AssignCandidatesToJobRequestDto
+  ): Promise<Observable<ResponseDto<null>>> {
+    return this.recruitmentService.send({ cmd: 'job_assign_candidates' }, { ...assignCandidatesToJobRequest, job });
   }
 
   @Get()

@@ -1,20 +1,24 @@
 // ** MUI Imports
+import { IconButton } from '@mui/material'
 import Box from '@mui/material/Box'
 import Button from '@mui/material/Button'
 import TextField from '@mui/material/TextField'
+import { LocationEnter } from 'mdi-material-ui'
 
 // ** Icons Imports
 import ExportVariant from 'mdi-material-ui/ExportVariant'
 
 const TableHeader = props => {
   // ** Props
-  const { handleFilter, toggle, value } = props
+  const { handleFilter, toggle, value, assignToJob, selectionCandidates } = props
 
   return (
     <Box sx={{ p: 5, pb: 3, display: 'flex', flexWrap: 'wrap', alignItems: 'center', justifyContent: 'space-between' }}>
-      <Button sx={{ mr: 4, mb: 2 }} color='secondary' variant='outlined' startIcon={<ExportVariant fontSize='small' />}>
-        Export
-      </Button>
+      <Box>
+        <IconButton title='Assign to job' onClick={assignToJob} disabled={selectionCandidates.length === 0}>
+          <LocationEnter />
+        </IconButton>
+      </Box>
       <Box sx={{ display: 'flex', flexWrap: 'wrap', alignItems: 'center' }}>
         <TextField
           size='small'
