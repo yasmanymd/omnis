@@ -15,15 +15,56 @@ export class WorkflowTemplatesSeederService {
         name: 'Recruitment Workflow',
         status: [
           {
-            name: 'Init',
+            name: 'Pipeline',
             type: 'init'
           },
           {
-            name: 'In progress'
+            name: 'Wrong Target'
           },
           {
-            name: 'Done',
-            type: 'end'
+            name: 'Reached out'
+          },
+          {
+            name: 'No Go'
+          },
+          {
+            name: 'Relance'
+          },
+          {
+            name: 'No Go/Relance'
+          },
+          {
+            name: 'Relance 2'
+          },
+          {
+            name: 'No Go/Relance 2'
+          },
+          {
+            name: 'Evaluation'
+          },
+          {
+            name: 'No fit'
+          },
+          {
+            name: 'Depot'
+          },
+          {
+            name: 'Client Interview'
+          },
+          {
+            name: 'Inconclusive'
+          },
+          {
+            name: 'Reference Check'
+          },
+          {
+            name: 'Offer'
+          },
+          {
+            name: 'Hired'
+          },
+          {
+            name: 'Refused'
           }
         ]
       })
