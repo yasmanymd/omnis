@@ -39,7 +39,7 @@ export const Board = ({
     const card = event?.active?.data?.current;
     const laneSourceId = card?.laneId;
     const laneTargetId = event?.over?.id;
-    if (card && laneSourceId && laneTargetId && laneSourceId != laneTargetId) {
+    if (card && laneSourceId != null && laneTargetId != null && laneSourceId != laneTargetId) {
       setLanes((lanes) => {
         let result = [...lanes];
         let laneSourceIndex = lanes.findIndex(item => item.id == laneSourceId);
@@ -57,7 +57,7 @@ export const Board = ({
         if (onChange) {
           onChange({
             cardId: newCard.id,
-            laneId: laneTargetId,
+            laneName: lanes[laneTargetId].name,
             date: newCard.date
           });
         }

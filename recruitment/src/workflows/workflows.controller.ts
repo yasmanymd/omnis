@@ -109,4 +109,23 @@ export class WorkflowsController {
 
     return result;
   }
+
+  @MessagePattern({ cmd: 'workflow_change_candidate_status' })
+  public async changeCandidateStatus(params: {
+    workflowId: string,
+    candidateId: string,
+    status: string
+  }): Promise<IResponse<null>> {
+    let result: IResponse<null>;
+
+    await this.workflowsService.changeCandidateStatus(params.workflowId, params.candidateId, params.status);
+
+    result = {
+      status: HttpStatus.OK,
+      message: 'workflow_change_candidate_status_success',
+      data: null
+    };
+
+    return result;
+  }
 }

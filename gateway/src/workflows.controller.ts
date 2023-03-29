@@ -1,4 +1,4 @@
-import { Controller, Get, Inject, Param, UseGuards } from '@nestjs/common';
+import { Body, Controller, Get, Inject, Param, Post, UseGuards } from '@nestjs/common';
 import { ClientProxy } from '@nestjs/microservices';
 import { ApiOkResponse, ApiBearerAuth } from '@nestjs/swagger';
 import { ResponseDto } from './interfaces/common/response.dto';
@@ -8,6 +8,7 @@ import { Permissions } from './authz/permissions.decorator';
 import { PermissionsGuard } from './authz/permissions.guard';
 import { IWorkflowTemplate } from './interfaces/workflows/workflow.template.interface';
 import { IWorkflow } from './interfaces/workflows/workflow.interface';
+import { ChangeCandidateStatusRequestDto } from './interfaces/workflows/dto/change-candidate-status-request.dto';
 
 @Controller('workflows')
 export class WorkflowsController {
@@ -37,5 +38,19 @@ export class WorkflowsController {
   })
   public async getWorkflowTemplates(): Promise<Observable<ResponseDto<IWorkflowTemplate[]>>> {
     return this.recruitmentService.send({ cmd: 'workflow_templates_get' }, {});
+  }
+
+  @Post(':id/change-candidate-status')
+  @ApiOkResponse({
+    type: ResponseDto<null>
+  })
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'), PermissionsGuard)
+  @Permissions('edit:workflow')
+  async changeCandidateStatus(
+    @Param('id') workflowId: string,
+    @Body() changeCandidateStatusRequest: ChangeCandidateStatusRequestDto
+  ): Promise<Observable<ResponseDto<null>>> {
+    return this.recruitmentService.send({ cmd: 'workflow_change_candidate_status' }, { ...changeCandidateStatusRequest, workflowId });
   }
 }

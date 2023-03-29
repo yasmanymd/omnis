@@ -168,6 +168,30 @@ export const fetchWorkflow = createAsyncThunk('appJobs/fetchWorkflow', async (id
   return result.data;
 })
 
+// ** Change Candidate Status on Workflow
+export const changeWorkflowCandidateStatus = createAsyncThunk('appJobs/changeCandidateStatus', async ({ workflowId, candidateId, status }, { dispatch }) => {
+  const response = await fetch(encodeURI('/api/workflows/' + workflowId + '/change-candidate-status'), {
+    method: 'POST',
+    headers: {
+      'accept': 'application/json',
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      candidateId,
+      status
+    })
+  });
+
+  const result = await response.json();
+  dispatch(fetchWorkflow(workflowId))
+  if (result?.errors) {
+    toast.error(<ErrorDetails message='Error changing status of candidate.' errors={result?.errors} />);
+  } else {
+    toast.success('Candidate status was changed.');
+  }
+  return result.data;
+})
+
 export const appJobsSlice = createSlice({
   name: 'appJobs',
   initialState: {

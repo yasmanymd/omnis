@@ -12,7 +12,7 @@ import Alert from '@mui/material/Alert'
 import { useDispatch, useSelector } from 'react-redux'
 
 // ** Actions Imports
-import { fetchWorkflow } from 'src/store/apps/job'
+import { changeWorkflowCandidateStatus, fetchWorkflow } from 'src/store/apps/job'
 import { Board } from '../../../layouts/components/kanban/Board/Board'
 
 const BoardViewPage = ({ id }) => {
@@ -37,6 +37,13 @@ const BoardViewPage = ({ id }) => {
           cards: []
         };
       }),
+      onChange: ({ cardId, laneName, date }) => {
+        dispatch(changeWorkflowCandidateStatus({
+          workflowId: workflow._id,
+          candidateId: cardId,
+          status: laneName
+        }))
+      },
       formatDate: (date) => Intl.DateTimeFormat("en-US").format(date),
       height: '640px'
     };

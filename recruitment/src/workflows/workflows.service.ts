@@ -47,6 +47,15 @@ export class WorkflowsService {
     return true;
   }
 
+  public async changeCandidateStatus(workflow_id: string, candidate_id: string, status: string) {
+    return await this.workflowModel.findOneAndUpdate({ _id: workflow_id, 'candidates.candidate_id': candidate_id }, {
+      $set: {
+        'candidates.$.status': status,
+        'candidates.$.modified_date': +new Date()
+      }
+    });
+  }
+
   public async removeWorkflowById(id: string) {
     return await this.workflowModel.findOneAndDelete({ _id: id });
   }
