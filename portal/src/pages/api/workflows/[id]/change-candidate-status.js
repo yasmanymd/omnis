@@ -2,7 +2,6 @@ import { getAccessToken, withApiAuthRequired } from '@auth0/nextjs-auth0';
 
 export default withApiAuthRequired(async function handler(req, res) {
   const { method } = req;
-  console.log('aqui')
   const { accessToken } = await getAccessToken(req, res);
   const url = process.env.GATEWAY_API_URL;
   const baseUrl = url?.indexOf('http') === 0 ? url : `https://${url}`;

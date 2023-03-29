@@ -55,7 +55,6 @@ const SidebarAddJob = props => {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    console.log('useffect')
     dispatch(fetchClients())
   }, []);
 
