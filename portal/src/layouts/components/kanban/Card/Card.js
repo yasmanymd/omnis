@@ -2,6 +2,8 @@ import React from "react";
 import { useDraggable } from '@dnd-kit/core';
 import { Card as CardUI, CardContent, Typography, Box, Divider } from "@mui/material";
 
+import Link from 'next/link'
+
 // ** Hooks Imports
 import useBgColor from 'src/@core/hooks/useBgColor'
 
@@ -31,7 +33,11 @@ export const Card = ({
         flexDirection: 'column'
       }}
     >
-      <Typography sx={{ fontWeight: 500, fontSize: '0.875rem' }}>{name}</Typography>
+      <Link href={`/apps/candidate/view/${id}`} passHref>
+        <a target="_blank">
+          <Typography sx={{ fontWeight: 500, fontSize: '0.875rem' }}>{name}</Typography>
+        </a>
+      </Link>
       <Typography component='sub' variant='caption' sx={{ lineHeight: 1.5, alignSelf: 'flex-end' }}>
         {formatDate ? formatDate(date) : date}
       </Typography>

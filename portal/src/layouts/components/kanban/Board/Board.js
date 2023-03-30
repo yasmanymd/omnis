@@ -1,7 +1,7 @@
 import { Box, Divider, Paper, Stack, Typography } from "@mui/material";
 import React, { useEffect, useState } from "react";
 import { Lane } from "../Lane/Lane";
-import { DndContext, DragEndEvent, DragStartEvent, DragOverEvent, DragOverlay } from "@dnd-kit/core";
+import { DndContext, DragEndEvent, DragStartEvent, DragOverEvent, DragOverlay, useSensors, PointerSensor, useSensor } from "@dnd-kit/core";
 import { Card } from "../Card/Card";
 
 /**
@@ -69,12 +69,21 @@ export const Board = ({
     setLaneActive(null);
   }
 
+  const sensors = useSensors(
+    useSensor(PointerSensor, {
+      activationConstraint: {
+        delay: 100,
+        tolerance: 0
+      }
+    }));
+
   return (
     <DndContext
       onDragStart={handleDragStart}
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
       autoScroll={false}
+      sensors={sensors}
     >
 
       <Stack spacing={2} height={height} direction="row" overflow={"auto"}>
