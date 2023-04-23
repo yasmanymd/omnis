@@ -3,8 +3,6 @@ version: '3.8'
 services:
   portal:
     build:
-      args:
-        NPM_TOKEN: ${NPM_TOKEN}
       context: ./portal
     restart: always
     ports:
@@ -117,13 +115,3 @@ services:
     volumes:
       - ./recruitment:/usr/src/app
       - /usr/src/app/node_modules
-  #ngrok1:
-  #  image: shkoliar/ngrok:latest
-  #  ports:
-  #    - 4551:4551
-  #  links:
-  #    - portal
-  #  environment:
-  #    - DOMAIN=portal
-  #    - PORT=3000
-  #    - AUTH_TOKEN=2H3Ahvv4pV6UVFlyESfgtmExDbf_JkyHuWPrSVSAHjPBwFeD

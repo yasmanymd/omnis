@@ -26,10 +26,11 @@ import CallContent from 'src/views/apps/call/CallContent'
 import BlankLayoutWithAppBar from 'src/@core/layouts/BlankLayoutWithAppBar'
 
 import getConfig from 'next/config';
+
 const { publicRuntimeConfig } = getConfig();
 
 const AppCall = ({ meeting }) => {
-  const router = useRouter();  
+  const router = useRouter();
   if (!meeting) {
     router.push('/nomeeting');
   }
@@ -46,13 +47,13 @@ const AppCall = ({ meeting }) => {
   const dispatch = useDispatch()
   const hidden = useMediaQuery(theme.breakpoints.down('lg'))
   const store = useSelector(state => state.call)
-  
+
 
   // ** Vars
   const smAbove = useMediaQuery(theme.breakpoints.up('sm'))
   const sidebarWidth = smAbove ? 370 : 300
   const mdAbove = useMediaQuery(theme.breakpoints.up('md'))
-  const { skin, appBar, footer, layout, navHidden } = settings  
+  const { skin, appBar, footer, layout, navHidden } = settings
 
   const statusObj = {
     busy: 'error',
@@ -66,10 +67,9 @@ const AppCall = ({ meeting }) => {
   const handleUserProfileRightSidebarToggle = () => setUserProfileRightOpen(!userProfileRightOpen)
 
   const calculateAppHeight = () => {
-    return `(${
-      (appBar === 'hidden' ? 0 : theme.mixins.toolbar.minHeight) * (layout === 'horizontal' && !navHidden ? 2 : 1) +
+    return `(${(appBar === 'hidden' ? 0 : theme.mixins.toolbar.minHeight) * (layout === 'horizontal' && !navHidden ? 2 : 1) +
       (footer === 'hidden' ? 0 : 56)
-    }px + ${theme.spacing(6)} * 2)`
+      }px + ${theme.spacing(6)} * 2)`
   }
 
   return (
@@ -105,7 +105,7 @@ const AppCall = ({ meeting }) => {
         handleLeftSidebarToggle={handleLeftSidebarToggle}
         handleUserProfileLeftSidebarToggle={handleUserProfileLeftSidebarToggle}
       />
-      
+
       <CallContent
         signalingServerUrl={publicRuntimeConfig.signalingServerUrl}
         store={store}
@@ -120,7 +120,7 @@ const AppCall = ({ meeting }) => {
         handleLeftSidebarToggle={handleLeftSidebarToggle}
         handleUserProfileRightSidebarToggle={handleUserProfileRightSidebarToggle}
       />
-      
+
     </Box>
   )
 }
@@ -129,7 +129,7 @@ AppCall.getLayout = page => <BlankLayoutWithAppBar>{page}</BlankLayoutWithAppBar
 
 export async function getServerSideProps({ params }) {
   if (params.code === '123-456-789') {
-    return { 
+    return {
       props: {
         meeting: {
           _id: '6368494effdbe51b2f394763',
@@ -147,7 +147,7 @@ export async function getServerSideProps({ params }) {
           created_by: 'yasmany@gmail.com',
           __v: 0
         }
-      } 
+      }
     };
   }
 

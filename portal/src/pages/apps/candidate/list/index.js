@@ -122,6 +122,7 @@ const columns = [
   {
     flex: 0.15,
     field: 'tags',
+
     //minWidth: 150,
     headerName: 'Tags',
     renderCell: ({ row }) => {
@@ -139,6 +140,7 @@ const columns = [
   {
     flex: 0.15,
     field: 'linkedin',
+
     //minWidth: 150,
     headerName: 'LinkedIn',
     renderCell: ({ row }) => {

@@ -18,6 +18,7 @@ const readFile = (req, saveLocally, entity_id) => {
     }
   }
   const form = formidable(options);
+
   return new Promise((resolve, reject) => {
     form.parse(req, (err, fields, files) => {
       if (err) {

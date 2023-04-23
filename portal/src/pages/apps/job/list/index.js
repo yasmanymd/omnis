@@ -68,6 +68,7 @@ const columns = [
   {
     flex: 0.15,
     field: 'tags',
+
     //minWidth: 150,
     headerName: 'Tags',
     renderCell: ({ row }) => {
