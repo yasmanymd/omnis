@@ -5,6 +5,11 @@ jobs:
   ssh:
     runs-on: ubuntu-latest
     steps:
+    - name: Save Folder Name to Variable
+        run: |
+          folder_name=$(date +%Y-%m-%d)
+          echo "::set-output name=folder_name::$folder_name"
+        id: save-folder-name
     - name: Checkout code
       uses: actions/checkout@v2
     - name: SSH into remote machine and execute command
@@ -15,11 +20,9 @@ jobs:
         password: ${{ secrets.SSH_PASSWORD }}
         port: ${{ secrets.SSH_PORT }}
         script: |
-          workfolder = $(date +'%y-%m-%d-%H-%M')
-          echo "$workfolder"
           mkdir omnis
           cd omnis
-          mkdir $workfolder
-          cd $workfolder
+          mkdir ${{ steps.save-folder-name.outputs.folder_name }}
+          cd ${{ steps.save-folder-name.outputs.folder_name }}
           git clone https://github.com/yasmanymd/omnis.git
           ls
