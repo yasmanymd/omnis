@@ -6,8 +6,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Save Folder Name to Variable
-        run: echo "::set-output name=folder_name::$(date +'%Y-%m-%d')"
-        id: save-folder-name
+      run: echo "::set-output name=folder_name::$(date +'%Y-%m-%d')"
+      id: save-folder-name
     - name: Checkout code
       uses: actions/checkout@v2
     - name: SSH into remote machine and execute command
