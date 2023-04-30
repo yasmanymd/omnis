@@ -6,9 +6,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
     - name: Save Folder Name to Variable
-        run: |
-          folder_name=$(date +%Y-%m-%d)
-          echo "::set-output name=folder_name::$folder_name"
+        run: echo "::set-output name=folder_name::$(date +%Y-%m-%d)"
         id: save-folder-name
     - name: Checkout code
       uses: actions/checkout@v2
