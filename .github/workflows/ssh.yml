@@ -1,26 +1,34 @@
-name: Deploy Omnis
-on: [workflow_dispatch]
+name: Clone Repo via SSH to Remote Machine and Run Docker Compose
+
+on:
+  push:
+    branches:
+      - main
 
 jobs:
-  ssh:
+  clone-repo:
     runs-on: ubuntu-latest
     steps:
-    - name: Save Folder Name to Variable
-      run: echo "::set-output name=folder_name::$(date +'%Y-%m-%d')"
-      id: save-folder-name
-    - name: Checkout code
-      uses: actions/checkout@v2
-    - name: SSH into remote machine and execute command
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.SSH_HOST }}
-        username: ${{ secrets.SSH_USERNAME }}
-        password: ${{ secrets.SSH_PASSWORD }}
-        port: ${{ secrets.SSH_PORT }}
-        script: |
-          mkdir omnis
-          cd omnis
-          mkdir ${{ steps.save-folder-name.outputs.folder_name }}
-          cd ${{ steps.save-folder-name.outputs.folder_name }}
-          git clone https://github.com/yasmanymd/omnis.git
-          ls
+      - name: Connect to Remote Machine via SSH and Create Folder with Current Time
+        uses: appleboy/ssh-action@v0.2.0
+        with:
+          host: ${{ secrets.HOST }}
+          username: ${{ secrets.USERNAME }}
+          password: ${{ secrets.PASSWORD }}
+          port: ${{ secrets.PORT }}
+          script: |
+            folder_name=$(date +%Y-%m-%d-%H-%M-%S)
+            mkdir $folder_name
+
+      - name: Clone Repository via SSH
+        uses: actions/checkout@v2
+        with:
+          ssh-key: ${{ secrets.SSH_PRIVATE_KEY }}
+          ssh-known-hosts: ${{ secrets.SSH_KNOWN_HOSTS }}
+          repository: ssh://${{ secrets.GIT_SSH_USERNAME }}@${{ secrets.GIT_SSH_HOST }}:${{ secrets.GIT_SSH_PORT }}/${{ secrets.REPO_NAME }}
+          path: ./$folder_name/${{ secrets.REPO_NAME }}
+
+      - name: Run Docker Compose
+        run: |
+          cd ./$folder_name/${{ secrets.REPO_NAME }}
+          docker-compose up -d
