@@ -1,9 +1,6 @@
 name: Clone Repo via SSH to Remote Machine and Run Docker Compose
 
-on:
-  push:
-    branches:
-      - main
+on: [workflow_dispatch]
 
 jobs:
   clone-repo:
