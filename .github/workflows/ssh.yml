@@ -1,4 +1,4 @@
-name: Deploy Omnis
+name: Build Omnis
 on: [workflow_dispatch]
 
 jobs:
@@ -17,6 +17,7 @@ jobs:
         username: ${{ secrets.SSH_USERNAME }}
         password: ${{ secrets.SSH_PASSWORD }}
         port: ${{ secrets.SSH_PORT }}
+        command_timeout: 200m
         script: |
           mkdir code
           cd code
