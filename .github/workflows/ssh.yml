@@ -20,7 +20,7 @@ jobs:
         script: |
           mkdir code
           cd code
-          mkdir ${{ steps.save-folder-name.outputs.folder_name }}
+          git clone git@github.com:yasmanymd/omnis.git ${{ steps.save-folder-name.outputs.folder_name }}
+          sudo su
           cd ${{ steps.save-folder-name.outputs.folder_name }}
-          git clone git@github.com:yasmanymd/omnis.git
-          ls
+          docker compose -f docker-compose.yaml -f docker-compose.prod.build.yaml up -d
