@@ -6,7 +6,7 @@ services:
       - .prod.env
     build:
       context: ./portal
-      target: build
+      target: production
     restart: always
     ports:
       - ${PORTAL_PORT}:3000
@@ -30,7 +30,7 @@ services:
       - .prod.env
     build:
       context: ./gateway
-      target: build
+      target: production
     restart: always
     ports:
       - ${GATEWAY_PORT}:3000
@@ -73,7 +73,7 @@ services:
       - .prod.env
     build:
       context: ./recruitment
-      target: build
+      target: production
     restart: always
     stdin_open: true
     environment:

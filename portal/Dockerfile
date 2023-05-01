@@ -57,11 +57,9 @@ RUN npm config rm proxy
 
 RUN npm config set registry "https://registry.npmjs.org"
 
-RUN yarn install --network-timeout 100000
-
 RUN yarn install --production --network-timeout 100000
 
-COPY --from=build /usr/src/app/.next  ./.next
+COPY --from=build /usr/src/app/.next ./.next
 
 EXPOSE 3000
 
