@@ -1,14 +1,14 @@
 version: '3.8'
 
 services:
-  portal:
-    image: yasmany/portal:latest
-    environment:
-      GATEWAY_API_URL: ${GATEWAY_API_URL}
-      GATEWAY_AUTH0_AUDIENCE: ${GATEWAY_AUTH0_AUDIENCE}
-      NEXT_PUBLIC_SIGNALING_SERVER_URL: ${NEXT_PUBLIC_SIGNALING_SERVER_URL}
-    depends_on:
-      - gateway
+  # portal:
+  #   image: yasmany/portal:latest
+  #   environment:
+  #     GATEWAY_API_URL: ${GATEWAY_API_URL}
+  #     GATEWAY_AUTH0_AUDIENCE: ${GATEWAY_AUTH0_AUDIENCE}
+  #     NEXT_PUBLIC_SIGNALING_SERVER_URL: ${NEXT_PUBLIC_SIGNALING_SERVER_URL}
+  #   depends_on:
+  #     - gateway
 
   rabbitmq:
     image: rabbitmq:3-management-alpine
