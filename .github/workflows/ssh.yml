@@ -24,5 +24,4 @@ jobs:
           git clone git@github.com:yasmanymd/omnis.git
           mv omnis ${{ steps.save-folder-name.outputs.folder_name }}
           cd ${{ steps.save-folder-name.outputs.folder_name }}
-          sudo docker compose -f docker-compose.yaml -f docker-compose.prod.build.yaml build
-          sudo docker compose -f docker-compose.yaml -f docker-compose.prod.yaml up -d
+          sudo docker compose -f docker-compose.yaml -f docker-compose.prod.build.yaml build & sudo docker compose -f docker-compose.yaml -f docker-compose.prod.yaml up -d
