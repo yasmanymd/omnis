@@ -30,7 +30,7 @@ services:
       - .prod.env
     build:
       context: ./gateway
-      target: build
+      target: production
     environment:
       NODE_ENV: production
   # meetings:
@@ -69,6 +69,6 @@ services:
       - .prod.env
     build:
       context: ./recruitment
-      target: build
+      target: production
     environment:
       NODE_ENV: production
