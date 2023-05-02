@@ -5,24 +5,10 @@ jobs:
   ssh:
     runs-on: ubuntu-latest
     steps:
-    - name: Save Folder Name to Variable
-      run: echo "::set-output name=folder_name::$(date +'%Y-%m-%d')"
-      id: save-folder-name
-    - name: Checkout code
-      uses: actions/checkout@v2
-    - name: SSH into remote machine and execute command
-      uses: appleboy/ssh-action@master
-      with:
-        host: ${{ secrets.SSH_HOST }}
-        username: ${{ secrets.SSH_USERNAME }}
-        password: ${{ secrets.SSH_PASSWORD }}
-        port: ${{ secrets.SSH_PORT }}
-        command_timeout: 200m
-        script: |
-          mkdir code
-          cd code
-          git clone git@github.com:yasmanymd/omnis.git
-          mv omnis ${{ steps.save-folder-name.outputs.folder_name }}
-          cd ${{ steps.save-folder-name.outputs.folder_name }}
-          sudo DOCKER_BUILDKIT=1 docker compose -f docker-compose.yaml -f docker-compose.prod.build.yaml build
-          sudo DOCKER_BUILDKIT=1 docker compose -f docker-compose.yaml -f docker-compose.prod.yaml up -d 
+      - uses: actions/checkout@v3
+      - uses: isbang/compose-action@v1.4.1
+        with:
+          compose-file: |
+            "./docker-compose.yml"
+            "./docker-compose.prod.build.yml"
+    
