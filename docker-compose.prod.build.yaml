@@ -25,16 +25,6 @@ services:
   #     ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGODB_ROOT_PASSWORD}
   #     ME_CONFIG_MONGODB_URL: ${MONGO_DSN}
 
-  gatewayb:
-    image: gatewayb
-    env_file:
-      - .prod.env
-    build:
-      context: ./gateway
-      target: build
-    environment:
-      NODE_ENV: production
-
   gateway:
     env_file:
       - .prod.env

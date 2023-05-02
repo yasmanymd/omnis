@@ -9,19 +9,19 @@ jobs:
       run: echo "::set-output name=folder_name::$(date +'%Y-%m-%d')"
       id: save-folder-name
     - name: Checkout code
-      uses: actions/checkout@v3
-    - name: Run Docker compose 
-      run: |
-        docker compose -f docker-compose.yaml -f docker-compose.prod.build.yaml build gatewayb
-        docker compose -f docker-compose.yaml -f docker-compose.prod.build.yaml build
-        docker compose -f docker-compose.yaml -f docker-compose.prod.yaml up -d
-        docker save gateway > gateway.tar
-        docker save recruitment > recruitment.tar
-    - name: Copy folder content recursively to remote
-      uses: garygrossgarten/github-action-scp@release
+      uses: actions/checkout@v2
+    - name: SSH into remote machine and execute command
+      uses: appleboy/ssh-action@master
       with:
-        local: gateway.tar
-        remote: images/gateway.tar
         host: ${{ secrets.SSH_HOST }}
         username: ${{ secrets.SSH_USERNAME }}
         password: ${{ secrets.SSH_PASSWORD }}
+        port: ${{ secrets.SSH_PORT }}
+        command_timeout: 200m
+        script: |
+          mkdir code
+          cd code
+          git clone git@github.com:yasmanymd/omnis.git
+          mv omnis ${{ steps.save-folder-name.outputs.folder_name }}
+          cd ${{ steps.save-folder-name.outputs.folder_name }}
+          sudo DOCKER_BUILDKIT=1 docker compose -f docker-compose.yaml -f docker-compose.prod.yaml up -d 

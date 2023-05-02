@@ -24,7 +24,7 @@ RUN npm install
 
 COPY . .
 
-CMD ["npm", "run", "build"]
+RUN npm run build
 
 # Production environment
 FROM node:18.9.1-alpine as production
