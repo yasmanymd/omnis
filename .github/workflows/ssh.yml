@@ -12,6 +12,7 @@ jobs:
       uses: actions/checkout@v3
     - name: Run Docker compose 
       run: |
+        docker compose -f docker-compose.yaml -f docker-compose.prod.build.yaml build gatewayb
         docker compose -f docker-compose.yaml -f docker-compose.prod.build.yaml build
         docker compose -f docker-compose.yaml -f docker-compose.prod.yaml up -d
         docker save gateway > gateway.tar

@@ -37,7 +37,7 @@ COPY package*.json ./
 
 RUN npm install --production
 
-COPY --from=build /usr/src/app/dist ./dist
+COPY --from=gatewayb /usr/src/app/dist ./dist
 
 CMD ["npm", "run", "start:prod"]
 
