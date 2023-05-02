@@ -1,18 +1,16 @@
 version: '3.8'
 
 services:
-  # portal:
-  #   env_file:
-  #     - .prod.env
-  #   build:
-  #     context: ./portal
-  #     target: production
-  #   restart: always
-  #   ports:
-  #     - ${PORTAL_PORT}:3000
-  #   environment:
-  #     NODE_ENV: production
-  #   stdin_open: true
+  portal:
+    env_file:
+      - .prod.env
+    restart: always
+    ports:
+      - ${PORTAL_PORT}:3000
+    environment:
+      NODE_ENV: production
+    stdin_open: true
+
   # mongo-express:
   #   image: mongo-express
   #   depends_on:
