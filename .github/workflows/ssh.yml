@@ -5,10 +5,22 @@ jobs:
   ssh:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
-      - uses: isbang/compose-action@v1.4.1
-        with:
-          compose-file: |
-            "./docker-compose.yml"
-            "./docker-compose.prod.build.yml"
-    
+    - name: Save Folder Name to Variable
+      run: echo "::set-output name=folder_name::$(date +'%Y-%m-%d')"
+      id: save-folder-name
+    - name: Checkout code
+      uses: actions/checkout@v3
+    - name: Run Docker compose 
+      run: |
+        docker compose -f docker-compose.yaml -f docker-compose.prod.build.yaml build
+        docker compose -f docker-compose.yaml -f docker-compose.prod.yaml up -d
+        docker save gateway > gateway.tar
+        docker save recruitment > recruitment.tar
+    - name: Copy folder content recursively to remote
+      uses: garygrossgarten/github-action-scp@release
+      with:
+        local: *.tar
+        remote: images/
+        host: ${{ secrets.SSH_HOST }}
+        username: ${{ secrets.SSH_USERNAME }}
+        password: ${{ secrets.SSH_PASSWORD }}
