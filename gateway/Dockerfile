@@ -26,6 +26,8 @@ COPY . .
 
 CMD ["npm", "run", "build"]
 
+FROM yasmany/gatewayb:latest as gatewayb
+
 # Production environment
 FROM node:18.9.1-alpine as production
 
@@ -37,7 +39,7 @@ COPY package*.json ./
 
 RUN npm install --production
 
-COPY --from=build /usr/src/app/dist ./dist
+COPY --from=gatewayb /usr/src/app/dist ./dist
 
 CMD ["npm", "run", "start:prod"]
 
