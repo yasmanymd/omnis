@@ -8,28 +8,19 @@ import { useRouter } from 'next/router'
 import Spinner from 'src/@core/components/spinner'
 
 // ** Hook Imports
-import { useUser } from '@auth0/nextjs-auth0';
+import { useSession } from 'next-auth/react'
 
 const Home = () => {
   // ** Hooks
-  const { user, error, isLoading } = useUser();
-
+  const session = useSession()
   const router = useRouter()
-
   useEffect(() => {
-    if (!router.isReady) {
-      return
-    }
-
-    if (user) {
+    if (session.status === 'authenticated') {
       // Redirect user to Home URL
       router.replace('/home')
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
-
-  if (isLoading) return <div>Loading...</div>;
-  if (error) return <div>{error.message}</div>;
 
   return <Spinner />
 }

@@ -1,8 +1,7 @@
-import { withApiAuthRequired } from '@auth0/nextjs-auth0';
 import fs from 'fs/promises';
 import path from 'path';
 
-export default withApiAuthRequired(async function documents(req, res) {
+export default async function documents(req, res) {
   const { method } = req;
   const { entity_id } = req.query;
   let files;
@@ -24,4 +23,4 @@ export default withApiAuthRequired(async function documents(req, res) {
       });
       break;
   }
-});
+};

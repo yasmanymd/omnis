@@ -21,7 +21,7 @@ export class NotesController {
   })
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
-  @Permissions('create:note')
+  @Permissions('create-note')
   async createNote(
     @Req() req: { user: IUser },
     @Body() noteRequest: CreateNoteRequestDto
@@ -38,7 +38,7 @@ export class NotesController {
   @Get('/search?')
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
-  @Permissions('read:note')
+  @Permissions('read-note')
   @ApiOkResponse({
     type: ResponseDto<INote[]>,
     description: 'List of notes of candidate'
@@ -52,7 +52,7 @@ export class NotesController {
   @Get(':id')
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
-  @Permissions('read:note')
+  @Permissions('read-note')
   @ApiOkResponse({
     type: ResponseDto<INote>,
     description: 'Note'
@@ -66,7 +66,7 @@ export class NotesController {
   @Delete(':id')
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
-  @Permissions('delete:note')
+  @Permissions('delete-note')
   @ApiOkResponse({
     type: ResponseDto<null>,
     description: 'Delete note'
@@ -82,7 +82,7 @@ export class NotesController {
   @Put(':id')
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
-  @Permissions('edit:note')
+  @Permissions('update-note')
   @ApiOkResponse({
     type: ResponseDto<INote>,
     description: 'Update note'

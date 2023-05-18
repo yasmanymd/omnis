@@ -21,7 +21,7 @@ export class JobsController {
   })
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
-  @Permissions('create:job')
+  @Permissions('create-job')
   async createJob(
     @Body() jobRequest: CreateUpdateJobRequestDto
   ): Promise<Observable<ResponseDto<IJob>>> {
@@ -34,7 +34,7 @@ export class JobsController {
   })
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
-  @Permissions('edit:workflow')
+  @Permissions('update-workflow')
   async assignCandidatesToJob(
     @Param('id') job: string,
     @Body() assignCandidatesToJobRequest: AssignCandidatesToJobRequestDto
@@ -45,7 +45,7 @@ export class JobsController {
   @Get()
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
-  @Permissions('read:job')
+  @Permissions('read-job')
   @ApiOkResponse({
     type: ResponseDto<IJob[]>,
     description: 'List of jobs of user'
@@ -57,7 +57,7 @@ export class JobsController {
   @Get(':id')
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
-  @Permissions('read:job')
+  @Permissions('read-job')
   @ApiOkResponse({
     type: ResponseDto<IJob>,
     description: 'Job'
@@ -71,7 +71,7 @@ export class JobsController {
   @Delete(':id')
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
-  @Permissions('delete:job')
+  @Permissions('delete-job')
   @ApiOkResponse({
     type: ResponseDto<null>,
     description: 'Delete job'
@@ -85,7 +85,7 @@ export class JobsController {
   @Put(':id')
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
-  @Permissions('edit:job')
+  @Permissions('update-job')
   @ApiOkResponse({
     type: ResponseDto<IJob>,
     description: 'Update job'

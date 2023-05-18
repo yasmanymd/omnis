@@ -22,7 +22,7 @@ export class CandidatesController {
   })
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
-  @Permissions('create:candidate')
+  @Permissions('create-candidate')
   async createCandidate(
     @Req() req: { user: IUser },
     @Body() candidateRequest: CreateCandidateRequestDto
@@ -38,7 +38,7 @@ export class CandidatesController {
   @Get()
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
-  @Permissions('read:candidate')
+  @Permissions('read-candidate')
   @ApiOkResponse({
     type: ResponseDto<ICandidate[]>,
     description: 'List of candidates of user'
@@ -52,7 +52,7 @@ export class CandidatesController {
   @Get(':id')
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
-  @Permissions('read:candidate')
+  @Permissions('read-candidate')
   @ApiOkResponse({
     type: ResponseDto<ICandidate>,
     description: 'Candidate'
@@ -67,7 +67,7 @@ export class CandidatesController {
   @Delete(':id')
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
-  @Permissions('delete:candidate')
+  @Permissions('delete-candidate')
   @ApiOkResponse({
     type: ResponseDto<null>,
     description: 'Delete candidate'
@@ -83,7 +83,7 @@ export class CandidatesController {
   @Put(':id')
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
-  @Permissions('edit:candidate')
+  @Permissions('update-candidate')
   @ApiOkResponse({
     type: ResponseDto<ICandidate>,
     description: 'Update candidate'

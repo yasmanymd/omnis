@@ -17,7 +17,6 @@ import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import DatePicker from 'react-datepicker';
 import { useForm, Controller } from 'react-hook-form';
-import { useUser } from '@auth0/nextjs-auth0';
 
 // ** Icons Imports
 import Close from 'mdi-material-ui/Close';
@@ -52,7 +51,7 @@ const AddMeetingSidebar = props => {
 
   // ** States
   const [values, setValues] = useState(defaultValues);
-  const { user } = useUser();
+  const user = {};
 
   const schema = yup.object().shape({
     name: yup.string().required('Name is a required field.'),

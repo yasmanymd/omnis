@@ -4,7 +4,7 @@ import { Reflector } from '@nestjs/core';
 
 @Injectable()
 export class PermissionsGuard implements CanActivate {
-  constructor(private readonly reflector: Reflector) {}
+  constructor(private readonly reflector: Reflector) { }
 
   canActivate(
     context: ExecutionContext,
@@ -14,7 +14,7 @@ export class PermissionsGuard implements CanActivate {
       context.getHandler(),
     );
 
-    const userPermissions = context.getArgs()[0].user.permissions;
+    const userPermissions = context.getArgs()[0].user.resource_access.omnis_client.roles;
 
     if (!routePermissions) {
       return true;

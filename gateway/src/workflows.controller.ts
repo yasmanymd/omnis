@@ -17,7 +17,7 @@ export class WorkflowsController {
   @Get(':id')
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
-  @Permissions('read:workflow')
+  @Permissions('read-workflow')
   @ApiOkResponse({
     type: ResponseDto<IWorkflow>,
     description: 'Workflow'
@@ -31,7 +31,7 @@ export class WorkflowsController {
   @Get('templates')
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
-  @Permissions('read:workflow')
+  @Permissions('read-workflow')
   @ApiOkResponse({
     type: ResponseDto<IWorkflowTemplate[]>,
     description: 'List of workflows templates'
@@ -46,7 +46,7 @@ export class WorkflowsController {
   })
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
-  @Permissions('edit:workflow')
+  @Permissions('update-workflow')
   async changeCandidateStatus(
     @Param('id') workflowId: string,
     @Body() changeCandidateStatusRequest: ChangeCandidateStatusRequestDto

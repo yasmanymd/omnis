@@ -14,20 +14,25 @@ import { buildAbilityFor } from 'src/configs/acl'
 import NotAuthorized from 'src/pages/401'
 import BlankLayout from 'src/@core/layouts/BlankLayout'
 
-import { useUser } from '@auth0/nextjs-auth0';
+import { useSession } from 'next-auth/react'
 
 const AclGuard = props => {
   // ** Props
-  const { aclAbilities, children } = props
+  const { aclAbilities, children, guestGuard } = props
   const [ability, setAbility] = useState(undefined)
 
   // ** Hooks
   const router = useRouter()
-  const user = useUser();
+  const session = useSession()
+
+  // If guestGuard is true and user is not logged in or its an error page, render the page without checking access
+  if (guestGuard || router.route === '/404' || router.route === '/500' || router.route === '/') {
+    return <>{children}</>
+  }
 
   // User is logged in, build ability for the user based on his role
-  if (user && !ability) {
-    setAbility(buildAbilityFor("", aclAbilities.subject))
+  if (session.data && session.data.user && session.data.user.role && !ability) {
+    setAbility(buildAbilityFor(session.data.user.role, aclAbilities.subject))
   }
 
   // Check the access of current user and render pages

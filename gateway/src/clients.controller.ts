@@ -20,7 +20,7 @@ export class ClientsController {
   })
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
-  @Permissions('create:client')
+  @Permissions('create-client')
   async createClient(
     @Body() clientRequest: CreateUpdateClientRequestDto
   ): Promise<Observable<ResponseDto<IClient>>> {
@@ -30,7 +30,7 @@ export class ClientsController {
   @Get()
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
-  @Permissions('read:client')
+  @Permissions('read-client')
   @ApiOkResponse({
     type: ResponseDto<IClient[]>,
     description: 'List of clients of user'
@@ -42,7 +42,7 @@ export class ClientsController {
   @Get(':id')
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
-  @Permissions('read:client')
+  @Permissions('read-client')
   @ApiOkResponse({
     type: ResponseDto<IClient>,
     description: 'Client'
@@ -56,7 +56,7 @@ export class ClientsController {
   @Delete(':id')
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
-  @Permissions('delete:client')
+  @Permissions('delete-client')
   @ApiOkResponse({
     type: ResponseDto<null>,
     description: 'Delete client'
@@ -72,7 +72,7 @@ export class ClientsController {
   @Put(':id')
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
-  @Permissions('edit:client')
+  @Permissions('update-client')
   @ApiOkResponse({
     type: ResponseDto<IClient>,
     description: 'Update client'

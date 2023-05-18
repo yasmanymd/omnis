@@ -23,7 +23,7 @@ import AccountOutline from 'mdi-material-ui/AccountOutline'
 import MessageOutline from 'mdi-material-ui/MessageOutline'
 import HelpCircleOutline from 'mdi-material-ui/HelpCircleOutline'
 
-import { useUser } from '@auth0/nextjs-auth0';
+import { signOut } from 'next-auth/react'
 
 // ** Styled Components
 const BadgeContentSpan = styled('span')(({ theme }) => ({
@@ -38,7 +38,7 @@ const UserDropdown = props => {
   // ** Props
   const { settings } = props
 
-  const { user } = useUser();
+  const { user } = {};
   const username = user ? user.name : '';
 
   // ** States
@@ -62,8 +62,10 @@ const UserDropdown = props => {
   }
 
   const handleLogout = () => {
+    signOut({ callbackUrl: '/', redirect: false }).then(() => {
+      router.asPath = '/'
+    })
     handleDropdownClose()
-    router.push('/api/auth/logout')
   }
 
   const styles = {

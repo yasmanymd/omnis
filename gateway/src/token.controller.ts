@@ -15,7 +15,7 @@ export class TokenController {
   @Get()
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
-  @Permissions('read:token')
+  @Permissions('read-token')
   @ApiOkResponse({
     type: TokenDto,
     description: 'Read token'
@@ -29,7 +29,7 @@ export class TokenController {
   @Put()
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
-  @Permissions('edit:token')
+  @Permissions('update-token')
   @ApiOkResponse({
     type: TokenDto,
     description: 'Regenerate token'

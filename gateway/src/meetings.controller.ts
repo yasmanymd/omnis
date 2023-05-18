@@ -21,7 +21,7 @@ export class MeetingsController {
   })
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
-  @Permissions('create:meeting')
+  @Permissions('create-meeting')
   async createMeeting(
     @Req() req: { user: IUser },
     @Body() meetingRequest: CreateMeetingRequestDto
@@ -37,7 +37,7 @@ export class MeetingsController {
   @Get()
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
-  @Permissions('read:meeting')
+  @Permissions('read-meeting')
   @ApiOkResponse({
     type: ResponseDto<IMeeting[]>,
     description: 'List of meetings of user'
@@ -51,7 +51,7 @@ export class MeetingsController {
   @Delete(':id')
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
-  @Permissions('delete:meeting')
+  @Permissions('delete-meeting')
   @ApiOkResponse({
     type: ResponseDto<null>,
     description: 'Delete meeting'
@@ -69,7 +69,7 @@ export class MeetingsController {
   @Put(':id')
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
-  @Permissions('edit:meeting')
+  @Permissions('update-meeting')
   @ApiOkResponse({
     type: ResponseDto<IMeeting>,
     description: 'Update meeting'

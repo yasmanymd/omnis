@@ -5,10 +5,15 @@ services:
     image: yasmany/portal:latest
     environment:
       GATEWAY_API_URL: ${GATEWAY_API_URL}
-      GATEWAY_AUTH0_AUDIENCE: ${GATEWAY_AUTH0_AUDIENCE}
       NEXT_PUBLIC_SIGNALING_SERVER_URL: ${NEXT_PUBLIC_SIGNALING_SERVER_URL}
+      AUTH_CLIENT_ID: omnis_client
+      AUTH_CLIENT_SECRET: g8oaKVT3XgbpviaS6bMprPgAodMt2ajd
+      AUTH_ISSUER: http://omnis.ca:8082/auth/realms/omnis
+      NEXTAUTH_SECRET: 5eOeuEjXnLMEmPG20u3EpBSQrIcJtO77
+      NEXTAUTH_URL: http://omnis.ca:3000
     depends_on:
       - gateway
+      - keycloack
 
   rabbitmq:
     image: rabbitmq:3-management-alpine
@@ -32,8 +37,7 @@ services:
     image: yasmany/gateway:latest
     environment:
       RABBITMQ_DSN: ${RABBITMQ_DSN}
-      AUTH0_AUDIENCE: ${GATEWAY_AUTH0_AUDIENCE}
-      AUTH0_ISSUER_URL: ${GATEWAY_AUTH0_ISSUER_URL}
+      KEYCLOACK_PUBLIC_KEY: ${KEYCLOACK_PUBLIC_KEY}
     depends_on:
       - rabbitmq
 
@@ -65,7 +69,7 @@ services:
       DB_SCHEMA: public
       DB_PASSWORD: password
       KEYCLOAK_USER: admin
-      KEYCLOAK_PASSWORD: Pa55w0rd
+      KEYCLOAK_PASSWORD: password
       # Uncomment the line below if you want to specify JDBC parameters. The parameter below is just an example, and it shouldn't be used in production without knowledge. It is highly recommended that you read the PostgreSQL JDBC driver documentation in order to use it.
       #JDBC_PARAMS: "ssl=true"
     ports:
