@@ -64,7 +64,6 @@ const UserDropdown = props => {
   }
 
   const handleLogout = () => {
-    debugger;
     signOut({ callbackUrl: '/', redirect: false }).then(() => {
       router.asPath = '/'
     })

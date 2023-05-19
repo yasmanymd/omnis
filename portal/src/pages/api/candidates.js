@@ -13,8 +13,6 @@ export default async function candidates(req, res) {
 
     switch (method) {
       case 'GET':
-        console.log('req')
-        console.log(accessToken)
         response = await fetch(encodeURI(baseUrl + '/candidates'), {
           headers: {
             'accept': 'application/json',
@@ -24,7 +22,6 @@ export default async function candidates(req, res) {
           method: 'GET'
         });
         result = await response.json();
-        console.log(result)
         res.status(200).json(result);
         break;
       case 'POST':

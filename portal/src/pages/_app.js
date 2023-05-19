@@ -54,6 +54,7 @@ import 'react-perfect-scrollbar/dist/css/styles.css'
 
 // ** Global css styles
 import '../../styles/globals.css'
+import AclGuard from 'src/layouts/components/auth/UserAclGuard'
 
 const clientSideEmotionCache = createEmotionCache()
 
@@ -112,7 +113,9 @@ const App = props => {
                   <ThemeComponent settings={settings}>
                     <WindowWrapper>
                       <Guard authGuard={authGuard} guestGuard={guestGuard}>
-                        {getLayout(<Component {...pageProps} />)}
+                        <AclGuard aclAbilities={aclAbilities} guestGuard={guestGuard}>
+                          {getLayout(<Component {...pageProps} />)}
+                        </AclGuard>
                       </Guard>
                     </WindowWrapper>
                     <ReactHotToast>
