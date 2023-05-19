@@ -40,7 +40,7 @@ const UserDropdown = props => {
 
   const session = useSession()
 
-  const { user } = session?.data;
+  const user = session?.data?.user;
   const username = user ? user.name : '';
 
   // ** States
@@ -64,6 +64,7 @@ const UserDropdown = props => {
   }
 
   const handleLogout = () => {
+    debugger;
     signOut({ callbackUrl: '/', redirect: false }).then(() => {
       router.asPath = '/'
     })
