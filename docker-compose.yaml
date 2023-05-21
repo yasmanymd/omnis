@@ -6,6 +6,8 @@ services:
     environment:
       GATEWAY_API_URL: ${GATEWAY_API_URL}
       NEXT_PUBLIC_SIGNALING_SERVER_URL: ${NEXT_PUBLIC_SIGNALING_SERVER_URL}
+      NEXT_PUBLIC_PORTAL_URL: ${PORTAL_URL}
+      NEXT_PUBLIC_KEYCLOAK_URL: ${KEYCLOAK_URL}
       AUTH_CLIENT_ID: omnis_client
       AUTH_CLIENT_SECRET: g8oaKVT3XgbpviaS6bMprPgAodMt2ajd
       AUTH_ISSUER: http://omnis.ca:8082/auth/realms/omnis
@@ -13,7 +15,7 @@ services:
       NEXTAUTH_URL: http://omnis.ca:3000
     depends_on:
       - gateway
-      - keycloack
+      - keycloak
 
   rabbitmq:
     image: rabbitmq:3-management-alpine

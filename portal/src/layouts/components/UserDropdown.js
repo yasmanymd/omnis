@@ -25,6 +25,8 @@ import HelpCircleOutline from 'mdi-material-ui/HelpCircleOutline'
 
 import { signOut, useSession } from 'next-auth/react'
 
+import Keycloak from 'keycloak-js';
+
 // ** Styled Components
 const BadgeContentSpan = styled('span')(({ theme }) => ({
   width: 8,
@@ -65,7 +67,13 @@ const UserDropdown = props => {
 
   const handleLogout = () => {
     signOut({ callbackUrl: '/', redirect: false }).then(() => {
-      router.asPath = '/'
+      const keycloak = new Keycloak({
+        url: `${process.env.NEXT_PUBLIC_KEYCLOAK_URL}/auth`,
+        realm: 'omnis',
+        clientId: 'omnis_client',
+      });
+      keycloak.init({});
+      keycloak.logout({ redirectUri: `${process.env.NEXT_PUBLIC_PORTAL_URL}` })
     })
     handleDropdownClose()
   }
