@@ -17,6 +17,7 @@ export const authOptions = {
         token.accessToken = account.access_token
         token.id = profile.id
       }
+
       return token
     },
     async session({ session, token, user }) {
