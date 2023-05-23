@@ -11,6 +11,14 @@ services:
       NODE_ENV: production
     stdin_open: true
 
+  rabbitmq:
+    env_file:
+      - .prod.env
+
+  omnisdb:
+    env_file:
+      - .prod.env
+
   # mongo-express:
   #   image: mongo-express
   #   depends_on:
@@ -70,3 +78,11 @@ services:
     environment:
       NODE_ENV: production
     stdin_open: true
+
+  postgres:
+    env_file:
+      - .prod.env
+
+  keycloak:
+    env_file:
+      - .prod.env

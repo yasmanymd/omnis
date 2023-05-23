@@ -18,6 +18,14 @@ services:
       - /usr/src/app/node_modules
       - /usr/src/app/.next
 
+  rabbitmq:
+    env_file:
+      - .env
+
+  omnisdb:
+    env_file:
+      - .env
+
   mongo-express:
     env_file:
       - .env
@@ -94,3 +102,11 @@ services:
     volumes:
       - ./recruitment:/usr/src/app
       - /usr/src/app/node_modules
+
+  postgres:
+    env_file:
+      - .env
+
+  keycloak:
+    env_file:
+      - .env

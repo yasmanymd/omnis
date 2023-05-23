@@ -8,11 +8,11 @@ services:
       NEXT_PUBLIC_SIGNALING_SERVER_URL: ${NEXT_PUBLIC_SIGNALING_SERVER_URL}
       NEXT_PUBLIC_PORTAL_URL: ${PORTAL_URL}
       NEXT_PUBLIC_KEYCLOAK_URL: ${KEYCLOAK_URL}
-      AUTH_CLIENT_ID: omnis_client
-      AUTH_CLIENT_SECRET: g8oaKVT3XgbpviaS6bMprPgAodMt2ajd
-      AUTH_ISSUER: http://omnis.ca:8082/auth/realms/omnis
-      NEXTAUTH_SECRET: 5eOeuEjXnLMEmPG20u3EpBSQrIcJtO77
-      NEXTAUTH_URL: http://omnis.ca:3000
+      AUTH_CLIENT_ID: ${AUTH_CLIENT_ID}
+      AUTH_CLIENT_SECRET: ${AUTH_CLIENT_SECRET}
+      AUTH_ISSUER: ${AUTH_ISSUER}
+      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
+      NEXTAUTH_URL: ${NEXTAUTH_URL}
     depends_on:
       - gateway
       - keycloak
@@ -57,21 +57,21 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     environment:
-      POSTGRES_DB: keycloak
-      POSTGRES_USER: keycloak
-      POSTGRES_PASSWORD: password
+      POSTGRES_DB: ${POSTGRES_DB}
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
 
   keycloak:
     image: quay.io/keycloak/keycloak:legacy
     environment:
       DB_VENDOR: POSTGRES
       DB_ADDR: postgres
-      DB_DATABASE: keycloak
-      DB_USER: keycloak
       DB_SCHEMA: public
-      DB_PASSWORD: password
-      KEYCLOAK_USER: admin
-      KEYCLOAK_PASSWORD: password
+      DB_DATABASE: ${DB_DATABASE}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}
+      KEYCLOAK_USER: ${KEYCLOAK_USER}
+      KEYCLOAK_PASSWORD: ${KEYCLOAK_PASSWORD}
       # Uncomment the line below if you want to specify JDBC parameters. The parameter below is just an example, and it shouldn't be used in production without knowledge. It is highly recommended that you read the PostgreSQL JDBC driver documentation in order to use it.
       #JDBC_PARAMS: "ssl=true"
     ports:
