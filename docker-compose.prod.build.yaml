@@ -3,7 +3,7 @@ version: '3.8'
 services:
   portal:
     env_file:
-      - .prod.env
+      - .env.prod
     build:
       context: ./portal
       target: production
@@ -23,7 +23,7 @@ services:
 
   gateway:
     env_file:
-      - .prod.env
+      - .env.prod
     build:
       context: ./gateway
       target: production
@@ -62,7 +62,7 @@ services:
 
   recruitment:
     env_file:
-      - .prod.env
+      - .env.prod
     build:
       context: ./recruitment
       target: production

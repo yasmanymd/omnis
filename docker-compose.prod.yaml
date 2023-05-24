@@ -3,21 +3,21 @@ version: '3.8'
 services:
   portal:
     env_file:
-      - .prod.env
+      - .env.prod
     restart: always
     ports:
-      - ${PORTAL_PORT}:3000
+      - ${OMNIS_PORT}:3000
     environment:
       NODE_ENV: production
     stdin_open: true
 
   rabbitmq:
     env_file:
-      - .prod.env
+      - .env.prod
 
   omnisdb:
     env_file:
-      - .prod.env
+      - .env.prod
 
   # mongo-express:
   #   image: mongo-express
@@ -33,7 +33,7 @@ services:
 
   gateway:
     env_file:
-      - .prod.env
+      - .env.prod
     restart: always
     ports:
       - ${GATEWAY_PORT}:3000
@@ -73,7 +73,7 @@ services:
 
   recruitment:
     env_file:
-      - .prod.env
+      - .env.prod
     restart: always
     environment:
       NODE_ENV: production
@@ -81,8 +81,8 @@ services:
 
   postgres:
     env_file:
-      - .prod.env
+      - .env.prod
 
   keycloak:
     env_file:
-      - .prod.env
+      - .env.prod

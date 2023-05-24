@@ -5,9 +5,6 @@ jobs:
   ssh:
     runs-on: ubuntu-latest
     steps:
-    - name: Save Folder Name to Variable
-      run: echo "::set-output name=folder_name::$(date +'%Y-%m-%d-%H-%M')"
-      id: save-folder-name
     - name: Checkout code
       uses: actions/checkout@v2
     - name: SSH into remote machine and execute command
@@ -22,7 +19,6 @@ jobs:
           mkdir code
           cd code
           git clone git@github.com:yasmanymd/omnis.git
-          mv omnis ${{ steps.save-folder-name.outputs.folder_name }}
-          cd ${{ steps.save-folder-name.outputs.folder_name }}
+          cd omnis
           sudo docker compose -f docker-compose.yaml -f docker-compose.prod.build.yaml build
           sudo docker compose -f docker-compose.yaml -f docker-compose.prod.yaml up -d

@@ -2,22 +2,16 @@ version: '3.8'
 
 services:
   portal:
+    env_file:
+      - .env
     image: yasmany/portal:latest
-    environment:
-      GATEWAY_API_URL: ${GATEWAY_API_URL}
-      NEXT_PUBLIC_SIGNALING_SERVER_URL: ${NEXT_PUBLIC_SIGNALING_SERVER_URL}
-      NEXT_PUBLIC_PORTAL_URL: ${PORTAL_URL}
-      NEXT_PUBLIC_KEYCLOAK_URL: ${KEYCLOAK_URL}
-      AUTH_CLIENT_ID: ${AUTH_CLIENT_ID}
-      AUTH_CLIENT_SECRET: ${AUTH_CLIENT_SECRET}
-      AUTH_ISSUER: ${AUTH_ISSUER}
-      NEXTAUTH_SECRET: ${NEXTAUTH_SECRET}
-      NEXTAUTH_URL: ${NEXTAUTH_URL}
     depends_on:
       - gateway
       - keycloak
 
   rabbitmq:
+    env_file:
+      - .env
     image: rabbitmq:3-management-alpine
     restart: always
     ports:
@@ -25,53 +19,45 @@ services:
       - 15672:15672
 
   omnisdb:
+    env_file:
+      - .env
     image: 'mongo:6.0.2-focal'
     restart: always
     ports:
       - 27017:27017
-    environment:
-      MONGO_INITDB_ROOT_USERNAME: ${MONGODB_ROOT_USER}
-      MONGO_INITDB_ROOT_PASSWORD: ${MONGODB_ROOT_PASSWORD}
     volumes:
       - omnisdb-data:/data/db
 
   gateway:
+    env_file:
+      - .env
     image: yasmany/gateway:latest
-    environment:
-      RABBITMQ_DSN: ${RABBITMQ_DSN}
-      KEYCLOACK_PUBLIC_KEY: ${KEYCLOACK_PUBLIC_KEY}
     depends_on:
       - rabbitmq
 
   recruitment:
+    env_file:
+      - .env
     image: yasmany/recruitment:latest
     depends_on:
       - rabbitmq
       - omnisdb
-    environment:
-      MONGO_DSN: ${MONGO_DSN}
-      RABBITMQ_DSN: ${RABBITMQ_DSN}
 
   postgres:
+    env_file:
+      - .env
     image: postgres
     volumes:
       - postgres_data:/var/lib/postgresql/data
-    environment:
-      POSTGRES_DB: ${POSTGRES_DB}
-      POSTGRES_USER: ${POSTGRES_USER}
-      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
 
   keycloak:
+    env_file:
+      - .env
     image: quay.io/keycloak/keycloak:legacy
     environment:
       DB_VENDOR: POSTGRES
       DB_ADDR: postgres
       DB_SCHEMA: public
-      DB_DATABASE: ${DB_DATABASE}
-      DB_USER: ${DB_USER}
-      DB_PASSWORD: ${DB_PASSWORD}
-      KEYCLOAK_USER: ${KEYCLOAK_USER}
-      KEYCLOAK_PASSWORD: ${KEYCLOAK_PASSWORD}
       # Uncomment the line below if you want to specify JDBC parameters. The parameter below is just an example, and it shouldn't be used in production without knowledge. It is highly recommended that you read the PostgreSQL JDBC driver documentation in order to use it.
       #JDBC_PARAMS: "ssl=true"
     ports:

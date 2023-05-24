@@ -73,7 +73,7 @@ const UserDropdown = props => {
         clientId: 'omnis_client',
       });
       keycloak.init({});
-      keycloak.logout({ redirectUri: `${process.env.NEXT_PUBLIC_PORTAL_URL}` })
+      keycloak.logout({ redirectUri: `${process.env.NEXT_PUBLIC_OMNIS_URL}` })
     })
     handleDropdownClose()
   }
