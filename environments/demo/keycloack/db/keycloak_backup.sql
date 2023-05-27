@@ -2025,7 +2025,6 @@ fb7e96db-c69e-41e3-b6f0-fa171d76a8d8	Allowed Protocol Mapper Types	97c3a519-e834
 360308b8-22c2-4aa2-abaa-2d6422673ec9	Allowed Client Scopes	97c3a519-e834-45b3-aeca-7eb9552a7e49	allowed-client-templates	org.keycloak.services.clientregistration.policy.ClientRegistrationPolicy	97c3a519-e834-45b3-aeca-7eb9552a7e49	anonymous
 6f7cc781-792a-464c-b6f3-705f84891582	Allowed Protocol Mapper Types	97c3a519-e834-45b3-aeca-7eb9552a7e49	allowed-protocol-mappers	org.keycloak.services.clientregistration.policy.ClientRegistrationPolicy	97c3a519-e834-45b3-aeca-7eb9552a7e49	authenticated
 7e953725-f70c-424b-83a1-06a55ed28904	Allowed Client Scopes	97c3a519-e834-45b3-aeca-7eb9552a7e49	allowed-client-templates	org.keycloak.services.clientregistration.policy.ClientRegistrationPolicy	97c3a519-e834-45b3-aeca-7eb9552a7e49	authenticated
-c13b027c-2122-4ec1-854d-acbf7a434b22	\N	97c3a519-e834-45b3-aeca-7eb9552a7e49	declarative-user-profile	org.keycloak.userprofile.UserProfileProvider	97c3a519-e834-45b3-aeca-7eb9552a7e49	\N
 7d88d1a3-079c-446e-97b1-9f7ceff2f905	\N	c801dbb6-9ca3-4c23-ad63-1946842fef6b	declarative-user-profile	org.keycloak.userprofile.UserProfileProvider	c801dbb6-9ca3-4c23-ad63-1946842fef6b	\N
 \.
 
@@ -3064,8 +3063,8 @@ f7a55b84-5b3f-4b30-abb8-f98c53148eb1	String	jsonType.label
 --
 
 COPY public.realm (id, access_code_lifespan, user_action_lifespan, access_token_lifespan, account_theme, admin_theme, email_theme, enabled, events_enabled, events_expiration, login_theme, name, not_before, password_policy, registration_allowed, remember_me, reset_password_allowed, social, ssl_required, sso_idle_timeout, sso_max_lifespan, update_profile_on_soc_login, verify_email, master_admin_client, login_lifespan, internationalization_enabled, default_locale, reg_email_as_username, admin_events_enabled, admin_events_details_enabled, edit_username_allowed, otp_policy_counter, otp_policy_window, otp_policy_period, otp_policy_digits, otp_policy_alg, otp_policy_type, browser_flow, registration_flow, direct_grant_flow, reset_credentials_flow, client_auth_flow, offline_session_idle_timeout, revoke_refresh_token, access_token_life_implicit, login_with_email_allowed, duplicate_emails_allowed, docker_auth_flow, refresh_token_max_reuse, allow_user_managed_access, sso_max_lifespan_remember_me, sso_idle_timeout_remember_me, default_role) FROM stdin;
-97c3a519-e834-45b3-aeca-7eb9552a7e49	60	300	1800	\N	\N	\N	t	f	0	\N	omnis	0	\N	f	f	f	f	EXTERNAL	1800	36000	f	f	7ca1ce99-6a05-4290-b9a9-8070dab16cf0	1800	f	\N	f	f	f	f	0	1	30	6	HmacSHA1	totp	fb085973-11fe-4281-b99a-830d590400a7	950c9283-a286-440e-9aa3-7d9875fc1f56	922b8906-98e1-4e42-a2b1-40c2b5a59fa5	0052c724-45cb-4d54-83f6-ac139887234f	a6b50ec9-28ad-40af-aea6-cd9c1e0854a8	2592000	f	900	t	f	2917b054-52ab-4465-8140-a7e259c3173a	0	f	0	0	1c4dee70-4cf0-4218-9fa9-b95c0a710886
 c801dbb6-9ca3-4c23-ad63-1946842fef6b	60	300	60	\N	\N	\N	t	f	0	\N	master	0	\N	f	f	f	f	NONE	1800	36000	f	f	a6441220-7d8d-4c25-a07a-db8b6dcaaff0	1800	f	\N	f	f	f	f	0	1	30	6	HmacSHA1	totp	f1e309d5-3c71-4cb8-9f98-0d05cd190041	e152966d-24d4-42e1-8ada-8e7606ebdbc4	12c50607-69b9-4641-bb6e-ca0caefde962	f5e1958d-126b-41cb-acf0-3fadee0634d3	e7f727ef-0567-42a4-b1f3-615fdaf1de6c	2592000	f	900	t	f	5717052e-4d87-492a-8547-212df6178d0f	0	f	0	0	6537ee5a-325e-45fe-a57d-68e71ca3a991
+97c3a519-e834-45b3-aeca-7eb9552a7e49	60	300	1800	\N	\N	\N	t	f	0	\N	omnis	0	\N	f	f	f	f	NONE	1800	36000	f	f	7ca1ce99-6a05-4290-b9a9-8070dab16cf0	1800	f	\N	f	f	f	f	0	1	30	6	HmacSHA1	totp	fb085973-11fe-4281-b99a-830d590400a7	950c9283-a286-440e-9aa3-7d9875fc1f56	922b8906-98e1-4e42-a2b1-40c2b5a59fa5	0052c724-45cb-4d54-83f6-ac139887234f	a6b50ec9-28ad-40af-aea6-cd9c1e0854a8	2592000	f	900	t	f	2917b054-52ab-4465-8140-a7e259c3173a	0	f	0	0	1c4dee70-4cf0-4218-9fa9-b95c0a710886
 \.
 
 
@@ -3085,50 +3084,10 @@ actionTokenGeneratedByUserLifespan-verify-email	97c3a519-e834-45b3-aeca-7eb9552a
 actionTokenGeneratedByUserLifespan-idp-verify-account-via-email	97c3a519-e834-45b3-aeca-7eb9552a7e49	
 actionTokenGeneratedByUserLifespan-reset-credentials	97c3a519-e834-45b3-aeca-7eb9552a7e49	
 actionTokenGeneratedByUserLifespan-execute-actions	97c3a519-e834-45b3-aeca-7eb9552a7e49	
-bruteForceProtected	97c3a519-e834-45b3-aeca-7eb9552a7e49	false
-permanentLockout	97c3a519-e834-45b3-aeca-7eb9552a7e49	false
-maxFailureWaitSeconds	97c3a519-e834-45b3-aeca-7eb9552a7e49	900
-minimumQuickLoginWaitSeconds	97c3a519-e834-45b3-aeca-7eb9552a7e49	60
-waitIncrementSeconds	97c3a519-e834-45b3-aeca-7eb9552a7e49	60
-quickLoginCheckMilliSeconds	97c3a519-e834-45b3-aeca-7eb9552a7e49	1000
-maxDeltaTimeSeconds	97c3a519-e834-45b3-aeca-7eb9552a7e49	43200
-failureFactor	97c3a519-e834-45b3-aeca-7eb9552a7e49	30
-actionTokenGeneratedByAdminLifespan	97c3a519-e834-45b3-aeca-7eb9552a7e49	43200
-actionTokenGeneratedByUserLifespan	97c3a519-e834-45b3-aeca-7eb9552a7e49	300
-defaultSignatureAlgorithm	97c3a519-e834-45b3-aeca-7eb9552a7e49	RS256
-offlineSessionMaxLifespanEnabled	97c3a519-e834-45b3-aeca-7eb9552a7e49	false
-offlineSessionMaxLifespan	97c3a519-e834-45b3-aeca-7eb9552a7e49	5184000
 clientSessionIdleTimeout	97c3a519-e834-45b3-aeca-7eb9552a7e49	0
 clientSessionMaxLifespan	97c3a519-e834-45b3-aeca-7eb9552a7e49	0
 clientOfflineSessionIdleTimeout	97c3a519-e834-45b3-aeca-7eb9552a7e49	0
 clientOfflineSessionMaxLifespan	97c3a519-e834-45b3-aeca-7eb9552a7e49	0
-webAuthnPolicyRpEntityName	97c3a519-e834-45b3-aeca-7eb9552a7e49	keycloak
-webAuthnPolicySignatureAlgorithms	97c3a519-e834-45b3-aeca-7eb9552a7e49	ES256
-webAuthnPolicyRpId	97c3a519-e834-45b3-aeca-7eb9552a7e49	
-webAuthnPolicyAttestationConveyancePreference	97c3a519-e834-45b3-aeca-7eb9552a7e49	not specified
-webAuthnPolicyAuthenticatorAttachment	97c3a519-e834-45b3-aeca-7eb9552a7e49	not specified
-webAuthnPolicyRequireResidentKey	97c3a519-e834-45b3-aeca-7eb9552a7e49	not specified
-webAuthnPolicyUserVerificationRequirement	97c3a519-e834-45b3-aeca-7eb9552a7e49	not specified
-webAuthnPolicyCreateTimeout	97c3a519-e834-45b3-aeca-7eb9552a7e49	0
-webAuthnPolicyAvoidSameAuthenticatorRegister	97c3a519-e834-45b3-aeca-7eb9552a7e49	false
-webAuthnPolicyRpEntityNamePasswordless	97c3a519-e834-45b3-aeca-7eb9552a7e49	keycloak
-webAuthnPolicySignatureAlgorithmsPasswordless	97c3a519-e834-45b3-aeca-7eb9552a7e49	ES256
-webAuthnPolicyRpIdPasswordless	97c3a519-e834-45b3-aeca-7eb9552a7e49	
-webAuthnPolicyAttestationConveyancePreferencePasswordless	97c3a519-e834-45b3-aeca-7eb9552a7e49	not specified
-webAuthnPolicyAuthenticatorAttachmentPasswordless	97c3a519-e834-45b3-aeca-7eb9552a7e49	not specified
-webAuthnPolicyRequireResidentKeyPasswordless	97c3a519-e834-45b3-aeca-7eb9552a7e49	not specified
-webAuthnPolicyUserVerificationRequirementPasswordless	97c3a519-e834-45b3-aeca-7eb9552a7e49	not specified
-webAuthnPolicyCreateTimeoutPasswordless	97c3a519-e834-45b3-aeca-7eb9552a7e49	0
-webAuthnPolicyAvoidSameAuthenticatorRegisterPasswordless	97c3a519-e834-45b3-aeca-7eb9552a7e49	false
-client-policies.profiles	97c3a519-e834-45b3-aeca-7eb9552a7e49	{"profiles":[]}
-client-policies.policies	97c3a519-e834-45b3-aeca-7eb9552a7e49	{"policies":[]}
-_browser_header.contentSecurityPolicyReportOnly	97c3a519-e834-45b3-aeca-7eb9552a7e49	
-_browser_header.xContentTypeOptions	97c3a519-e834-45b3-aeca-7eb9552a7e49	nosniff
-_browser_header.xRobotsTag	97c3a519-e834-45b3-aeca-7eb9552a7e49	none
-_browser_header.xFrameOptions	97c3a519-e834-45b3-aeca-7eb9552a7e49	SAMEORIGIN
-_browser_header.contentSecurityPolicy	97c3a519-e834-45b3-aeca-7eb9552a7e49	frame-src 'self'; frame-ancestors 'self'; object-src 'none';
-_browser_header.xXSSProtection	97c3a519-e834-45b3-aeca-7eb9552a7e49	1; mode=block
-_browser_header.strictTransportSecurity	97c3a519-e834-45b3-aeca-7eb9552a7e49	max-age=31536000; includeSubDomains
 cibaBackchannelTokenDeliveryMode	c801dbb6-9ca3-4c23-ad63-1946842fef6b	poll
 cibaExpiresIn	c801dbb6-9ca3-4c23-ad63-1946842fef6b	120
 cibaAuthRequestedUserHint	c801dbb6-9ca3-4c23-ad63-1946842fef6b	login_hint
@@ -3182,6 +3141,50 @@ _browser_header.xFrameOptions	c801dbb6-9ca3-4c23-ad63-1946842fef6b	SAMEORIGIN
 _browser_header.xXSSProtection	c801dbb6-9ca3-4c23-ad63-1946842fef6b	1; mode=block
 _browser_header.contentSecurityPolicy	c801dbb6-9ca3-4c23-ad63-1946842fef6b	frame-src 'self'; frame-ancestors 'self'; object-src 'none';
 _browser_header.strictTransportSecurity	c801dbb6-9ca3-4c23-ad63-1946842fef6b	max-age=31536000; includeSubDomains
+acr.loa.map	97c3a519-e834-45b3-aeca-7eb9552a7e49	[]
+frontendUrl	97c3a519-e834-45b3-aeca-7eb9552a7e49	
+displayName	97c3a519-e834-45b3-aeca-7eb9552a7e49	
+displayNameHtml	97c3a519-e834-45b3-aeca-7eb9552a7e49	
+bruteForceProtected	97c3a519-e834-45b3-aeca-7eb9552a7e49	false
+permanentLockout	97c3a519-e834-45b3-aeca-7eb9552a7e49	false
+maxFailureWaitSeconds	97c3a519-e834-45b3-aeca-7eb9552a7e49	900
+minimumQuickLoginWaitSeconds	97c3a519-e834-45b3-aeca-7eb9552a7e49	60
+waitIncrementSeconds	97c3a519-e834-45b3-aeca-7eb9552a7e49	60
+quickLoginCheckMilliSeconds	97c3a519-e834-45b3-aeca-7eb9552a7e49	1000
+maxDeltaTimeSeconds	97c3a519-e834-45b3-aeca-7eb9552a7e49	43200
+failureFactor	97c3a519-e834-45b3-aeca-7eb9552a7e49	30
+actionTokenGeneratedByAdminLifespan	97c3a519-e834-45b3-aeca-7eb9552a7e49	43200
+actionTokenGeneratedByUserLifespan	97c3a519-e834-45b3-aeca-7eb9552a7e49	300
+defaultSignatureAlgorithm	97c3a519-e834-45b3-aeca-7eb9552a7e49	RS256
+offlineSessionMaxLifespanEnabled	97c3a519-e834-45b3-aeca-7eb9552a7e49	false
+offlineSessionMaxLifespan	97c3a519-e834-45b3-aeca-7eb9552a7e49	5184000
+webAuthnPolicyRpEntityName	97c3a519-e834-45b3-aeca-7eb9552a7e49	keycloak
+webAuthnPolicySignatureAlgorithms	97c3a519-e834-45b3-aeca-7eb9552a7e49	ES256
+webAuthnPolicyRpId	97c3a519-e834-45b3-aeca-7eb9552a7e49	
+webAuthnPolicyAttestationConveyancePreference	97c3a519-e834-45b3-aeca-7eb9552a7e49	not specified
+webAuthnPolicyAuthenticatorAttachment	97c3a519-e834-45b3-aeca-7eb9552a7e49	not specified
+webAuthnPolicyRequireResidentKey	97c3a519-e834-45b3-aeca-7eb9552a7e49	not specified
+webAuthnPolicyUserVerificationRequirement	97c3a519-e834-45b3-aeca-7eb9552a7e49	not specified
+webAuthnPolicyCreateTimeout	97c3a519-e834-45b3-aeca-7eb9552a7e49	0
+webAuthnPolicyAvoidSameAuthenticatorRegister	97c3a519-e834-45b3-aeca-7eb9552a7e49	false
+webAuthnPolicyRpEntityNamePasswordless	97c3a519-e834-45b3-aeca-7eb9552a7e49	keycloak
+webAuthnPolicySignatureAlgorithmsPasswordless	97c3a519-e834-45b3-aeca-7eb9552a7e49	ES256
+webAuthnPolicyRpIdPasswordless	97c3a519-e834-45b3-aeca-7eb9552a7e49	
+webAuthnPolicyAttestationConveyancePreferencePasswordless	97c3a519-e834-45b3-aeca-7eb9552a7e49	not specified
+webAuthnPolicyAuthenticatorAttachmentPasswordless	97c3a519-e834-45b3-aeca-7eb9552a7e49	not specified
+webAuthnPolicyRequireResidentKeyPasswordless	97c3a519-e834-45b3-aeca-7eb9552a7e49	not specified
+webAuthnPolicyUserVerificationRequirementPasswordless	97c3a519-e834-45b3-aeca-7eb9552a7e49	not specified
+webAuthnPolicyCreateTimeoutPasswordless	97c3a519-e834-45b3-aeca-7eb9552a7e49	0
+webAuthnPolicyAvoidSameAuthenticatorRegisterPasswordless	97c3a519-e834-45b3-aeca-7eb9552a7e49	false
+client-policies.profiles	97c3a519-e834-45b3-aeca-7eb9552a7e49	{"profiles":[]}
+client-policies.policies	97c3a519-e834-45b3-aeca-7eb9552a7e49	{"policies":[]}
+_browser_header.contentSecurityPolicyReportOnly	97c3a519-e834-45b3-aeca-7eb9552a7e49	
+_browser_header.xContentTypeOptions	97c3a519-e834-45b3-aeca-7eb9552a7e49	nosniff
+_browser_header.xRobotsTag	97c3a519-e834-45b3-aeca-7eb9552a7e49	none
+_browser_header.xFrameOptions	97c3a519-e834-45b3-aeca-7eb9552a7e49	SAMEORIGIN
+_browser_header.contentSecurityPolicy	97c3a519-e834-45b3-aeca-7eb9552a7e49	frame-src 'self'; frame-ancestors 'self'; object-src 'none';
+_browser_header.xXSSProtection	97c3a519-e834-45b3-aeca-7eb9552a7e49	1; mode=block
+_browser_header.strictTransportSecurity	97c3a519-e834-45b3-aeca-7eb9552a7e49	max-age=31536000; includeSubDomains
 \.
 
 
@@ -3206,8 +3209,8 @@ COPY public.realm_enabled_event_types (realm_id, value) FROM stdin;
 --
 
 COPY public.realm_events_listeners (realm_id, value) FROM stdin;
-97c3a519-e834-45b3-aeca-7eb9552a7e49	jboss-logging
 c801dbb6-9ca3-4c23-ad63-1946842fef6b	jboss-logging
+97c3a519-e834-45b3-aeca-7eb9552a7e49	jboss-logging
 \.
 
 
