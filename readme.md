@@ -2,13 +2,7 @@
 
 - [Introduction](#introduction)
 - [Feature roadmap](#feature-roadmap)
-- [Installation](#installation)
-- [Quick start](#quick-start)
-- [Documentation](#documentation)
-- [Contributing](#contributing)
-- [Special thanks](#special-thanks)
-- [License](#license)
-
+- [Set Developer Environment](#set-developer-environment)
 
 ---
 ## Introduction
@@ -47,7 +41,7 @@ $ docker compose up -d
 
 ### Environments 
 
-You can fin a demo environments on folder environments. Yo can restore this environment following the next steps: 
+You can fin a demo environments on folder environments. You can restore this environment following the next steps: 
 
 ```shell
 $ cd scripts
