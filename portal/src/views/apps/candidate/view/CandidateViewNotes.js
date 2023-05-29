@@ -30,7 +30,10 @@ const CandidateViewNotes = ({ notes, candidate_id }) => {
 
   // Handle Edit dialog
   const handleCreateClickOpen = () => setOpenDialog(true)
-  const handleClose = () => {
+  const handleClose = (event, reason) => {
+    if (reason && reason == "backdropClick") {
+      return;
+    }
     setNoteToEdit(-1)
     setOpenDialog(false)
   }
