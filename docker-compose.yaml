@@ -38,6 +38,22 @@ services:
     depends_on:
       - rabbitmq
 
+  signal:
+    env_file:
+      - .env
+    image: yasmany/signal:latest
+    depends_on:
+      - rabbitmq
+      - omnisdb
+
+  meetings:
+    env_file:
+      - .env
+    image: yasmany/meetings:latest
+    depends_on:
+      - rabbitmq
+      - omnisdb
+
   recruitment:
     env_file:
       - .env

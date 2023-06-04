@@ -56,36 +56,37 @@ services:
     volumes:
       - ./gateway:/usr/src/app
       - /usr/src/app/node_modules
-  # meetings:
-  #   build:
-  #     context: ./meetings
-  #   depends_on:
-  #     - rabbitmq
-  #     - omnisdb
-  #   container_name: meetings
-  #   ports:
-  #     - 9230:9229
-  #   restart: always
-  #   stdin_open: true
-  #   environment:
-  #     MONGO_DSN: ${MONGO_DSN}
-  #     RABBITMQ_DSN: ${RABBITMQ_DSN}
-  #   volumes:
-  #     - ./meetings:/usr/src/app
-  #     - /usr/src/app/node_modules
 
-  # signal:
-  #   build:
-  #     context: ./signal
-  #   container_name: signal
-  #   ports:
-  #     - ${SIGNAL_PORT}:3000
-  #     - 9231:9229
-  #   restart: always
-  #   stdin_open: true
-  #   volumes:
-  #     - ./signal:/usr/src/app
-  #     - /usr/src/app/node_modules
+  meetings:
+    env_file:
+      - .env
+    build:
+      context: ./meetings
+      target: development
+    ports:
+      - 9230:9229
+    restart: always
+    stdin_open: true
+    environment:
+      NODE_ENV: development
+    volumes:
+      - ./meetings:/usr/src/app
+      - /usr/src/app/node_modules
+
+  signal:
+    env_file:
+      - .env
+    build:
+      context: ./signal
+      target: development
+    ports:
+      - ${SIGNAL_PORT}:3000
+      - 9231:9229
+    restart: always
+    stdin_open: true
+    volumes:
+      - ./signal:/usr/src/app
+      - /usr/src/app/node_modules
 
   recruitment:
     env_file:
