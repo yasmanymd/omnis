@@ -1,5 +1,5 @@
 import { getServerSession } from "next-auth/next"
-import { authOptions } from "../"
+import { authOptions } from "./auth/[...nextauth]"
 import { getToken } from "next-auth/jwt"
 
 export default async function candidates(req, res) {
