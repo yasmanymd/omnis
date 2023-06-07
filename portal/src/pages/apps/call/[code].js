@@ -33,6 +33,7 @@ const { publicRuntimeConfig } = getConfig();
 const AppCall = ({ code }) => {
   const store = useSelector(state => state.call);
   const dispatch = useDispatch();
+  const router = useRouter();
 
   useEffect(() => {
     dispatch(fetchMeeting(code));
@@ -40,7 +41,6 @@ const AppCall = ({ code }) => {
 
   if (store?.currentCall) {
     if (store?.currentCall?.length == 0) {
-      const router = useRouter();
       router.push('/nomeeting');
     }
     if (store?.currentCall?.length == 1) {
