@@ -32,6 +32,28 @@ export class MeetingsController {
     return result;
   }
 
+  @MessagePattern({ cmd: 'meetings_search_by_code' })
+  public async meetingsSearchByCode(code: string): Promise<IResponse<IMeeting[]>> {
+    let result: IResponse<IMeeting[]>;
+
+    if (code) {
+      const meetings = await this.meetingService.getMeetingsByCode(code);
+      result = {
+        status: HttpStatus.OK,
+        message: 'meetings_search_by_code_success',
+        data: meetings
+      };
+    } else {
+      result = {
+        status: HttpStatus.BAD_REQUEST,
+        message: 'meetings_search_by_code_bad_request',
+        data: null
+      };
+    }
+
+    return result;
+  }
+
   @MessagePattern({ cmd: 'meeting_create' })
   public async meetingCreate(meeting: IMeeting): Promise<IResponse<IMeeting>> {
     let result: IResponse<IMeeting>;

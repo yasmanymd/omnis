@@ -6,7 +6,7 @@ import { MeetingDocument } from "./schemas/meeting.schema";
 
 @Injectable()
 export class MeetingsService {
-  constructor(@InjectModel('Meeting') private readonly meetingModel: Model<MeetingDocument>) {}
+  constructor(@InjectModel('Meeting') private readonly meetingModel: Model<MeetingDocument>) { }
 
   public async createMeeting(meeting: IMeeting): Promise<IMeeting> {
     const meetingModel = new this.meetingModel(meeting);
@@ -19,6 +19,10 @@ export class MeetingsService {
 
   public async getMeetingById(id: string): Promise<IMeeting> {
     return await this.meetingModel.findById(id);
+  }
+
+  public async getMeetingsByCode(code: string): Promise<IMeeting[]> {
+    return this.meetingModel.find({ code: code }).exec();
   }
 
   public async removeMeetingById(id: string) {

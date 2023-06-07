@@ -25,6 +25,7 @@ import DeleteOutline from 'mdi-material-ui/DeleteOutline';
 // ** Styled Components
 import DatePickerWrapper from 'src/@core/styles/libs/react-datepicker';
 import { fetchMeetings } from '../../../store/apps/calendar';
+import Link from 'next/link';
 
 const defaultValues = {
   name: '',
@@ -52,6 +53,7 @@ const AddMeetingSidebar = props => {
   // ** States
   const [values, setValues] = useState(defaultValues);
   const user = {};
+  const code = store?.selectedMeeting?.code || "";
 
   const schema = yup.object().shape({
     name: yup.string().required('Name is a required field.'),
@@ -179,9 +181,18 @@ const AddMeetingSidebar = props => {
           <Button size='large' type='submit' variant='contained' sx={{ mr: 4 }}>
             Update
           </Button>
-          <Button size='large' variant='outlined' color='secondary' onClick={resetToStoredValues}>
+          <Button size='large' variant='outlined' color='secondary' onClick={resetToStoredValues} sx={{ mr: 4 }}>
             Reset
           </Button>
+          {code && (
+            <Link href={`/apps/call/${code}`} passHref>
+              <a target="_blank">
+                <Button size='large' variant='outlined' color='secondary'>
+                  Call
+                </Button>
+              </a>
+            </Link>
+          )}
         </Fragment>
       )
     }

@@ -4,6 +4,19 @@ import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 // ** Axios Imports
 import axios from 'axios'
 
+// ** Fetch Meeting
+export const fetchMeeting = createAsyncThunk('appCall/fetchMeeting', async (code) => {
+  const response = await fetch(encodeURI('/api/call/' + code), {
+    method: 'GET',
+    headers: {
+      'accept': 'application/json',
+      'Content-Type': 'application/json'
+    }
+  });
+  const result = await response.json();
+  return result.data;
+})
+
 // ** Fetch User Profile
 export const fetchUserProfile = createAsyncThunk('appCall/fetchUserProfile', async () => {
   const response = await axios.get('/apps/call/users/profile-user')
@@ -51,7 +64,8 @@ export const appCallSlice = createSlice({
     calls: null,
     contacts: null,
     userProfile: null,
-    selectedCall: null
+    selectedCall: null,
+    currentCall: null
   },
   reducers: {
     removeSelectedCall: state => {
@@ -68,6 +82,13 @@ export const appCallSlice = createSlice({
     })
     builder.addCase(selectCall.fulfilled, (state, action) => {
       state.selectedCall = action.payload
+    })
+    builder.addCase(fetchMeeting.fulfilled, (state, action) => {
+      if (action?.payload) {
+        state.currentCall = action.payload;
+      } else {
+        state.currentCall = null;
+      }
     })
   }
 })

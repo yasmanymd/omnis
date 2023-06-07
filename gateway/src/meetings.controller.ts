@@ -48,6 +48,21 @@ export class MeetingsController {
     return this.meetingService.send({ cmd: 'meetings_search_by_user' }, req.user.email);
   }
 
+  @Get('/search?')
+  @ApiBearerAuth()
+  @UseGuards(AuthGuard('jwt'), PermissionsGuard)
+  @Permissions('read-meeting')
+  @ApiOkResponse({
+    type: ResponseDto<IMeeting[]>,
+    description: 'List of meetings'
+  })
+  public async getMeeting(
+    @Query('code') code: string
+  ): Promise<Observable<ResponseDto<IMeeting[]>>> {
+    return this.meetingService.send({ cmd: 'meetings_search_by_code' }, code);
+  }
+
+
   @Delete(':id')
   @ApiBearerAuth()
   @UseGuards(AuthGuard('jwt'), PermissionsGuard)
