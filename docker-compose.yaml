@@ -66,6 +66,7 @@ services:
     env_file:
       - .env
     image: postgres
+    restart: always
     volumes:
       - postgres_data:/var/lib/postgresql/data
 
@@ -73,6 +74,7 @@ services:
     env_file:
       - .env
     image: quay.io/keycloak/keycloak:legacy
+    restart: always
     environment:
       DB_VENDOR: POSTGRES
       DB_ADDR: postgres

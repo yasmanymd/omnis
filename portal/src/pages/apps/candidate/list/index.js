@@ -31,6 +31,9 @@ import TableHeader from 'src/views/apps/candidate/list/TableHeader'
 import AddUserDrawer from 'src/views/apps/candidate/list/AddUserDrawer'
 import AssignToJobDrawer from 'src/views/apps/candidate/list/AssignToJobDrawer'
 
+import PhoneInput from 'react-phone-input-2'
+import 'react-phone-input-2/lib/style.css'
+
 // ** Styled component for the link for the avatar without image
 const AvatarWithoutImageLink = styled(Link)(({ theme }) => ({
   textDecoration: 'none',
@@ -101,7 +104,7 @@ const columns = [
     renderCell: ({ row }) => {
       return (
         <Typography noWrap variant='body2'>
-          {row.contacts?.phone}
+          {row.contacts?.phone && (<PhoneInput value={row.contacts?.phone} disabled={true} />)}
         </Typography>
       )
     }

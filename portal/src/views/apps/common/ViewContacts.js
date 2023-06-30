@@ -22,6 +22,8 @@ import FormHelperText from '@mui/material/FormHelperText';
 import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm, Controller } from 'react-hook-form';
+import PhoneInput from 'react-phone-input-2'
+import 'react-phone-input-2/lib/style.css'
 
 const ViewContacts = ({ contacts, addEditContacts, deleteContacts }) => {
   const [openEdit, setOpenEdit] = useState(false)
@@ -100,7 +102,9 @@ const ViewContacts = ({ contacts, addEditContacts, deleteContacts }) => {
                     </Typography>
                   </TableCell>
                   <TableCell>
-                    {key != 'linkedin' ? value : (<Link target="_blank" href={value}>{value}</Link>)}
+                    {key == 'linkedin' && (<Link target="_blank" href={value}>{value}</Link>)}
+                    {key == 'phone' && (<PhoneInput value={value} disabled={true} />)}
+                    {key != 'linkedin' && key != 'phone' && (value)}
                   </TableCell>
                   <TableCell align='right'>
                     <IconButton aria-label="edit" onClick={() => {
@@ -156,9 +160,12 @@ const ViewContacts = ({ contacts, addEditContacts, deleteContacts }) => {
                       name='value'
                       control={control}
                       rules={{ required: true }}
-                      render={({ field: { value, onChange } }) => (
-                        <TextField label='Value' value={value} onChange={onChange} error={Boolean(errors.value)} />
-                      )}
+                      render={({ field: { value, onChange } }) => {
+                        if (control.fieldsRef.current.key.valueOf()._f.value == "phone") {
+                          return (<PhoneInput country={'ca'} value={value} onChange={onChange} error={Boolean(errors.value)} />)
+                        }
+                        return (<TextField label='Value' value={value} onChange={onChange} error={Boolean(errors.value)} />)
+                      }}
                     />
                     {errors.value && (
                       <FormHelperText sx={{ color: 'error.main' }} id='event-value-error'>
