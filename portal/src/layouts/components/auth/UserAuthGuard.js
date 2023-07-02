@@ -26,7 +26,7 @@ const AuthGuard = props => {
           signOut({ callbackUrl: router.asPath, redirect: false }).then(() => {
             router.replace({
               pathname: '/login',
-              query: { returnUrl: router.asPath }
+              //query: { returnUrl: router.asPath }
             })
           });
         } else {
