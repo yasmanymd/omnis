@@ -28,7 +28,6 @@ import { signOut, useSession } from 'next-auth/react'
 import Keycloak from 'keycloak-js';
 
 import getConfig from 'next/config';
-const { publicRuntimeConfig } = getConfig();
 
 // ** Styled Components
 const BadgeContentSpan = styled('span')(({ theme }) => ({
@@ -70,6 +69,7 @@ const UserDropdown = props => {
 
   const handleLogout = () => {
     signOut({ callbackUrl: '/', redirect: false }).then(() => {
+      const { publicRuntimeConfig } = getConfig();
       const keycloak = new Keycloak({
         url: `${publicRuntimeConfig.keycloakUrl}/auth`,
         realm: 'omnis',
@@ -160,13 +160,13 @@ const UserDropdown = props => {
         <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
           <Box sx={styles}>
             <AccountOutline sx={{ mr: 2 }} />
-            Profile
+            Profile ({publicRuntimeConfig.keycloakUrl})
           </Box>
         </MenuItem>
         <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
           <Box sx={styles}>
             <EmailOutline sx={{ mr: 2 }} />
-            Inbox
+            Inbox ({publicRuntimeConfig.omnisUrl})
           </Box>
         </MenuItem>
         <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
