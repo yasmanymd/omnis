@@ -42,6 +42,8 @@ const UserDropdown = props => {
   // ** Props
   const { settings } = props
 
+  const { publicRuntimeConfig } = getConfig();
+
   const session = useSession()
 
   const user = session?.data?.user;
@@ -69,7 +71,6 @@ const UserDropdown = props => {
 
   const handleLogout = () => {
     signOut({ callbackUrl: '/', redirect: false }).then(() => {
-      const { publicRuntimeConfig } = getConfig();
       const keycloak = new Keycloak({
         url: `${publicRuntimeConfig.keycloakUrl}/auth`,
         realm: 'omnis',
