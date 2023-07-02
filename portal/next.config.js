@@ -13,7 +13,9 @@ const withTM = require('next-transpile-modules')([
 
 module.exports = withTM({
   publicRuntimeConfig: {
-    signalingServerUrl: process.env.NEXT_PUBLIC_SIGNALING_SERVER_URL
+    signalingServerUrl: process.env.NEXT_PUBLIC_SIGNALING_SERVER_URL,
+    keycloakUrl: process.env.NEXT_PUBLIC_KEYCLOAK_URL,
+    omnisUrl: process.env.NEXT_PUBLIC_OMNIS_URL
   },
   trailingSlash: true,
   reactStrictMode: false,
