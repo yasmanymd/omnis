@@ -27,7 +27,7 @@ import { signOut, useSession } from 'next-auth/react'
 
 import Keycloak from 'keycloak-js';
 
-import getConfig from 'next/config';
+import useConfig from 'src/hooks/useConfig'
 
 // ** Styled Components
 const BadgeContentSpan = styled('span')(({ theme }) => ({
@@ -42,7 +42,7 @@ const UserDropdown = props => {
   // ** Props
   const { settings } = props
 
-  const { publicRuntimeConfig } = getConfig();
+  const { keycloakUrl, omnisUrl } = useConfig();
 
   const session = useSession()
 
@@ -72,12 +72,12 @@ const UserDropdown = props => {
   const handleLogout = () => {
     signOut({ callbackUrl: '/', redirect: false }).then(() => {
       const keycloak = new Keycloak({
-        url: `${publicRuntimeConfig.keycloakUrl}/auth`,
+        url: `${keycloakUrl}/auth`,
         realm: 'omnis',
         clientId: 'omnis_client',
       });
       keycloak.init({});
-      keycloak.logout({ redirectUri: `${publicRuntimeConfig.omnisUrl}` })
+      keycloak.logout({ redirectUri: `${omnisUrl}` })
     })
     handleDropdownClose()
   }
@@ -161,13 +161,13 @@ const UserDropdown = props => {
         <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
           <Box sx={styles}>
             <AccountOutline sx={{ mr: 2 }} />
-            Profile ({publicRuntimeConfig.keycloakUrl})
+            Profile
           </Box>
         </MenuItem>
         <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>
           <Box sx={styles}>
             <EmailOutline sx={{ mr: 2 }} />
-            Inbox ({publicRuntimeConfig.omnisUrl})
+            Inbox
           </Box>
         </MenuItem>
         <MenuItem sx={{ p: 0 }} onClick={() => handleDropdownClose()}>

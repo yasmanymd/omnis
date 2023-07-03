@@ -28,8 +28,6 @@ import BlankLayoutWithAppBar from 'src/@core/layouts/BlankLayoutWithAppBar'
 import getConfig from 'next/config';
 import AppCallViewPage from 'src/views/apps/call/AppCallViewPage'
 
-const { publicRuntimeConfig } = getConfig();
-
 const AppCall = ({ code }) => {
   const store = useSelector(state => state.call);
   const dispatch = useDispatch();

@@ -25,8 +25,10 @@ import CallContent from 'src/views/apps/call/CallContent'
 // ** Layout Import
 import BlankLayoutWithAppBar from 'src/@core/layouts/BlankLayoutWithAppBar'
 
-import getConfig from 'next/config';
-const { publicRuntimeConfig } = getConfig();
+import useConfig from 'src/hooks/useConfig'
+
+const { signalingServerUrl } = useConfig();
+
 
 const AppCallViewPage = () => {
   // ** States
@@ -101,7 +103,7 @@ const AppCallViewPage = () => {
       />
 
       <CallContent
-        signalingServerUrl={publicRuntimeConfig.signalingServerUrl}
+        signalingServerUrl={signalingServerUrl}
         store={store}
         hidden={hidden}
         sendMsg={sendMsg}
