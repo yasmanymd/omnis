@@ -25,9 +25,7 @@ import CallContent from 'src/views/apps/call/CallContent'
 // ** Layout Import
 import BlankLayoutWithAppBar from 'src/@core/layouts/BlankLayoutWithAppBar'
 
-import useConfig from 'src/hooks/useConfig'
-
-const { signalingServerUrl } = useConfig();
+import { ConfigConsumer } from 'src/@core/context/configContext'
 
 
 const AppCallViewPage = () => {
@@ -102,20 +100,26 @@ const AppCallViewPage = () => {
         handleUserProfileLeftSidebarToggle={handleUserProfileLeftSidebarToggle}
       />
 
-      <CallContent
-        signalingServerUrl={signalingServerUrl}
-        store={store}
-        hidden={hidden}
-        sendMsg={sendMsg}
-        mdAbove={mdAbove}
-        dispatch={dispatch}
-        statusObj={statusObj}
-        getInitials={getInitials}
-        sidebarWidth={sidebarWidth}
-        userProfileRightOpen={userProfileRightOpen}
-        handleLeftSidebarToggle={handleLeftSidebarToggle}
-        handleUserProfileRightSidebarToggle={handleUserProfileRightSidebarToggle}
-      />
+      <ConfigConsumer>
+        {({ config }) => {
+          return (
+            <CallContent
+              signalingServerUrl={config.signalingServerUrl}
+              store={store}
+              hidden={hidden}
+              sendMsg={sendMsg}
+              mdAbove={mdAbove}
+              dispatch={dispatch}
+              statusObj={statusObj}
+              getInitials={getInitials}
+              sidebarWidth={sidebarWidth}
+              userProfileRightOpen={userProfileRightOpen}
+              handleLeftSidebarToggle={handleLeftSidebarToggle}
+              handleUserProfileRightSidebarToggle={handleUserProfileRightSidebarToggle}
+            />
+          )
+        }}
+      </ConfigConsumer>
 
     </Box>
   )

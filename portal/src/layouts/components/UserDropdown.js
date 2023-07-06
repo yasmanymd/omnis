@@ -27,7 +27,7 @@ import { signOut, useSession } from 'next-auth/react'
 
 import Keycloak from 'keycloak-js';
 
-import useConfig from 'src/hooks/useConfig'
+import { ConfigConsumer } from 'src/@core/context/configContext'
 
 // ** Styled Components
 const BadgeContentSpan = styled('span')(({ theme }) => ({
@@ -41,8 +41,6 @@ const BadgeContentSpan = styled('span')(({ theme }) => ({
 const UserDropdown = props => {
   // ** Props
   const { settings } = props
-
-  const { keycloakUrl, omnisUrl } = useConfig();
 
   const session = useSession()
 
@@ -69,18 +67,6 @@ const UserDropdown = props => {
     setAnchorEl(null)
   }
 
-  const handleLogout = () => {
-    signOut({ callbackUrl: '/', redirect: false }).then(() => {
-      const keycloak = new Keycloak({
-        url: `${keycloakUrl}/auth`,
-        realm: 'omnis',
-        clientId: 'omnis_client',
-      });
-      keycloak.init({});
-      keycloak.logout({ redirectUri: `${omnisUrl}` })
-    })
-    handleDropdownClose()
-  }
 
   const styles = {
     py: 2,
@@ -196,16 +182,35 @@ const UserDropdown = props => {
           </Box>
         </MenuItem>
         <Divider />
-        <MenuItem sx={{ py: 2 }} onClick={handleLogout}>
-          <LogoutVariant
-            sx={{
-              mr: 2,
-              fontSize: '1.375rem',
-              color: 'text.secondary'
-            }}
-          />
-          Logout
-        </MenuItem>
+        <ConfigConsumer>
+          {({ config }) => {
+            const handleLogout = () => {
+              signOut({ callbackUrl: '/', redirect: false }).then(() => {
+                const keycloak = new Keycloak({
+                  url: `${config.keycloakUrl}/auth`,
+                  realm: 'omnis',
+                  clientId: 'omnis_client',
+                });
+                keycloak.init({});
+                keycloak.logout({ redirectUri: `${config.omnisUrl}` })
+              })
+              handleDropdownClose()
+            }
+
+            return (
+              <MenuItem sx={{ py: 2 }} onClick={handleLogout}>
+                <LogoutVariant
+                  sx={{
+                    mr: 2,
+                    fontSize: '1.375rem',
+                    color: 'text.secondary'
+                  }}
+                />
+                Logout
+              </MenuItem>
+            )
+          }}
+        </ConfigConsumer>
       </Menu>
     </Fragment>
   )
