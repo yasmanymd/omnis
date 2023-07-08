@@ -28,5 +28,5 @@ jobs:
           sudo docker compose -f docker-compose.yaml -f docker-compose.prod.build.yaml build
           sudo docker compose -f docker-compose.yaml -f docker-compose.prod.yaml up -d
           cd scripts
-          ./restore.sh ../environments/demo-prod
+          sudo ./restore.sh ../environments/demo-prod
           sudo docker compose restart
