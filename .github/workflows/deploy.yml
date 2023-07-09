@@ -27,7 +27,3 @@ jobs:
           cd omnis
           docker compose -f docker-compose.yaml -f docker-compose.prod.build.yaml build
           docker compose -f docker-compose.yaml -f docker-compose.prod.yaml up -d
-          cd scripts
-          ./restore.sh ~/code/omnis/environments/demo-prod
-          cd ..
-          docker compose restart
