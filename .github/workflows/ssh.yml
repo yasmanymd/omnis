@@ -16,17 +16,17 @@ jobs:
         port: ${{ secrets.SSH_PORT }}
         command_timeout: 200m
         script: |
-          sudo docker container stop $(sudo docker container ls -aq)
-          sudo docker container rm $(sudo docker container ls -aq)
-          sudo docker image rm $(sudo docker image ls -aq)
-          sudo docker volume rm $(sudo docker volume ls -q)
-          sudo rm -rf code
+          docker container stop $(docker container ls -aq)
+          docker container rm $(docker container ls -aq)
+          docker image rm $(docker image ls -aq)
+          docker volume rm $(docker volume ls -q)
+          rm -rf code
           mkdir code
           cd code
           git clone git@github.com:yasmanymd/omnis.git
           cd omnis
-          sudo docker compose -f docker-compose.yaml -f docker-compose.prod.build.yaml build
-          sudo docker compose -f docker-compose.yaml -f docker-compose.prod.yaml up -d
+          docker compose -f docker-compose.yaml -f docker-compose.prod.build.yaml build
+          docker compose -f docker-compose.yaml -f docker-compose.prod.yaml up -d
           cd scripts
           ./restore.sh ~/code/omnis/environments/demo-prod
-          sudo docker compose restart
+          docker compose restart
