@@ -26,19 +26,19 @@ services:
     env_file:
       - .env
 
-  mongo-express:
-    env_file:
-      - .env
-    image: mongo-express
-    depends_on:
-      - omnisdb
+  dbgate:
+    image: dbgate/dbgate
     restart: always
     ports:
-      - 8081:8081
+      - 8081:3000
+    volumes:
+      - dbgate-data:/root/.dbgate
     environment:
-      ME_CONFIG_MONGODB_ADMINUSERNAME: ${MONGODB_ROOT_USER}
-      ME_CONFIG_MONGODB_ADMINPASSWORD: ${MONGODB_ROOT_PASSWORD}
-      ME_CONFIG_MONGODB_URL: ${MONGO_DSN}
+      CONNECTIONS: con1
+
+      LABEL_con1: MongoDB
+      URL_con1: ${MONGO_DSN}
+      ENGINE_con1: mongo@dbgate-plugin-mongo
 
   gateway:
     env_file:
@@ -111,3 +111,6 @@ services:
   keycloak:
     env_file:
       - .env
+
+volumes:
+  dbgate-data:
