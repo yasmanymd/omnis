@@ -42,7 +42,7 @@ const JobViewRight = ({ job, documents, updateJob }) => {
     setValue(newValue)
   }
 
-  const addContacts = ({ key, value }) => {
+  const addEditContacts = ({ key, value }) => {
     let modifiedJob = {
       ...job,
       contacts: { ...job.contacts }
@@ -76,7 +76,7 @@ const JobViewRight = ({ job, documents, updateJob }) => {
         <TabPanel sx={{ p: 0 }} value='contacts'>
           <ViewContacts
             contacts={job.contacts}
-            addContacts={addContacts}
+            addEditContacts={addEditContacts}
             deleteContacts={deleteContacts} />
         </TabPanel>
         <TabPanel sx={{ p: 0 }} value='documents'>

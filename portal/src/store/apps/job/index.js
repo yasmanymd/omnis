@@ -40,7 +40,7 @@ export const updateJob = createAsyncThunk('appJobs/updateJob', async (job, { dis
       'Content-Type': 'application/json'
     },
     body: JSON.stringify({
-      "name": job.name,
+      "title": job.title,
       "description": job.description,
       "tags": job.tags || [],
       "contacts": job.contacts || {}
